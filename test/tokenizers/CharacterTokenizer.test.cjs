@@ -1,8 +1,8 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
-const assertComplete = require( './utils.cjs' );
 
 const { CharacterTokenizer } = require( '../../.test-dist/tokenizers/CharacterTokenizer.js' );
+const assertComplete = require( '../helpers/assertComplete.cjs' );
 
 
 test( 'CharacterTokenizer', async t => {
@@ -11,15 +11,15 @@ test( 'CharacterTokenizer', async t => {
   await t.test( 'tokenizes individual characters', () => {
     const tokens = tokenizer.tokenize( 'Hello' );
 
-    assert.deepEqual( tokens.map( token => token.value ), [ 'H', 'e', 'l', 'l', 'o' ] );
-    assert.ok( tokens.every( token => token.type === 'character' ) );
+    assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'H', 'e', 'l', 'l', 'o' ] );
+    assert.ok( tokens.every( ( { type } ) => type === 'character' ) );
     assertComplete( 'Hello', tokens );
   } );
 
   await t.test( 'keeps Unicode grapheme clusters intact', () => {
     const text = 'A😀e\u0301👨‍👩‍👧‍👦', tokens = tokenizer.tokenize( text );
 
-    assert.deepEqual( tokens.map( token => token.value ), [ 'A', '😀', 'e\u0301', '👨‍👩‍👧‍👦' ] );
+    assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'A', '😀', 'e\u0301', '👨‍👩‍👧‍👦' ] );
     assertComplete( text, tokens );
   } );
 
