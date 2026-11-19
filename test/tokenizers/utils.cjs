@@ -1,4 +1,7 @@
-export function assertComplete ( text, tokens ) {
+const assert = require( 'node:assert/strict' );
+
+
+module.exports = function assertComplete ( text, tokens ) {
   assert.equal( tokens.map( token => token.value ).join( '' ), text );
 
   let offset = 0;
@@ -11,4 +14,4 @@ export function assertComplete ( text, tokens ) {
   }
 
   assert.equal( offset, text.length );
-}
+};
