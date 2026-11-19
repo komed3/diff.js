@@ -12,9 +12,8 @@ export class SentenceTokenizer implements DiffTokenizer {
   public tokenize ( text: string ) : DiffToken[] {
     const tokens: DiffToken[] = [];
 
-    for ( const segment of this.segmenter.segment( text ) ) tokens.push( {
-      type: 'sentence', value: segment.segment, start: segment.index,
-      end: segment.index + segment.segment.length
+    for ( const { index, segment } of this.segmenter.segment( text ) ) tokens.push( {
+      type: 'sentence', value: segment, start: index, end: index + segment.length
     } );
 
     return tokens;

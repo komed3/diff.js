@@ -9,15 +9,13 @@ export class LineTokenizer implements DiffTokenizer {
     const tokens: DiffToken[] = [];
     let start = 0, match: RegExpExecArray | null;
 
-    while ( ( match = this.pattern.exec( text ) ) !== null ) {
-      const end = match.index + match[ 0 ].length;
+    const add = ( end: number ) => {
       tokens.push( { type: 'line', value: text.slice( start, end ), start, end } );
       start = end;
     }
 
-    if ( start < text.length ) tokens.push( {
-      type: 'line', value: text.slice( start ), start, end: text.length
-    } );
+    while ( ( match = this.pattern.exec( text ) ) !== null ) add( match.index + match[ 0 ].length );
+    if ( start < text.length ) add( text.length );
 
     return tokens;
   }

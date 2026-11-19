@@ -12,9 +12,8 @@ export class CharacterTokenizer implements DiffTokenizer {
   public tokenize ( text: string ) : DiffToken[] {
     const tokens: DiffToken[] = [];
 
-    for ( const segment of this.segmenter.segment( text ) ) tokens.push( {
-      type: 'character', value: segment.segment, start: segment.index,
-      end: segment.index + segment.segment.length
+    for ( const { index, segment } of this.segmenter.segment( text ) ) tokens.push( {
+      type: 'character', value: segment, start: index, end: index + segment.length
     } );
 
     return tokens;

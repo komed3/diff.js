@@ -13,12 +13,9 @@ export class WordTokenizer implements DiffTokenizer {
   public tokenize ( text: string ) : DiffToken[] {
     const tokens: DiffToken[] = [];
 
-    for ( const segment of this.segmenter.segment( text ) ) {
-      const value = segment.segment, type = segment.isWordLike
-        ? 'word' : this.whitespace.test( value )
-          ? 'whitespace' : 'punctuation';
-
-      tokens.push( { type, value, start: segment.index, end: segment.index + value.length } );
+    for ( const { index, segment, isWordLike } of this.segmenter.segment( text ) ) {
+      const type = isWordLike ? 'word' : this.whitespace.test( segment ) ? 'whitespace' : 'punctuation';
+      tokens.push( { type, value: segment, start: index, end: index + segment.length } );
     }
 
     return tokens;
