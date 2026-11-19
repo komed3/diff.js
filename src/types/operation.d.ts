@@ -22,3 +22,5 @@ export type DiffOperation = {
     readonly length: 0;
   };
 };
+
+export type DiffOperationType = DiffOperation[ 'type' ];
