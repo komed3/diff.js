@@ -29,7 +29,9 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "tsc --outDir .test-dist && node --test test/run.cjs"
+  },
   "devDependencies": {
     "tsc-alias": "^1.9.10",
     "typescript": "^7.0.2"
