@@ -14,5 +14,11 @@ export class LineTokenizer implements DiffTokenizer {
       tokens.push( { type: 'line', value: text.slice( start, end ), start, end } );
       start = end;
     }
+
+    if ( start < text.length ) tokens.push( {
+      type: 'line', value: text.slice( start ), start, end: text.length
+    } );
+
+    return tokens;
   }
 }
