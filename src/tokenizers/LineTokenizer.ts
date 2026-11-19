@@ -8,5 +8,11 @@ export class LineTokenizer implements DiffTokenizer {
   public tokenize ( text: string ) : DiffToken[] {
     const tokens: DiffToken[] = [];
     let start = 0, match: RegExpExecArray | null;
+
+    while ( ( match = this.pattern.exec( text ) ) !== null ) {
+      const end = match.index + match[ 0 ].length;
+      tokens.push( { type: 'line', value: text.slice( start, end ), start, end } );
+      start = end;
+    }
   }
 }
