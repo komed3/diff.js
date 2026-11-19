@@ -16,5 +16,36 @@ export class MyersAlgorithm implements DiffAlgorithm {
 
     frontier.fill( -1 );
     frontier[ offset + 1 ] = 0;
+
+    for ( ; distance <= maxDistance; distance++ ) {
+      for ( let diagonal = -distance; diagonal <= distance; diagonal += 2 ) {
+        const index = offset + diagonal;
+        let x = diagonal === -distance ||
+          ( diagonal !== distance && frontier[ index - 1 ] < frontier[ index + 1 ] )
+          ? frontier[ index + 1 ] : frontier[ index - 1 ] + 1;
+
+        let y = x - diagonal;
+
+        while (
+          x < originalLength && y < modifiedLength &&
+          original[ x ].value === modified[ y ].value
+        ) x++, y++;
+
+        frontier[ index ] = x;
+
+        if ( x >= originalLength && y >= modifiedLength ) {
+          finished = true;
+          break;
+        }
+      }
+
+      const layer = new Int32Array( distance * 2 + 3 );
+
+      for ( let diagonal = -distance - 1; diagonal <= distance + 1; diagonal++ )
+        layer[ diagonal + distance + 1 ] = frontier[ offset + diagonal ];
+
+      trace.push( layer );
+      if ( finished ) break;
+    }
   }
 }
