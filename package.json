@@ -1,0 +1,34 @@
+{
+  "name": "@komed3/diff.js",
+  "description": "Fast text diff library, written in TypeScript",
+  "license": "MIT",
+  "version": "1.0.0-alpha.1",
+  "author": {
+    "name": "komed3 (Paul Köhler)",
+    "email": "webmaster@komed3.de",
+    "url": "https://komed3.de"
+  },
+  "homepage": "https://github.com/komed3/diff.js",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/komed3/diff.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/komed3/diff.js/issues"
+  },
+  "funding": {
+    "type": "ko-fi",
+    "url": "https://ko-fi.com/komed3"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
