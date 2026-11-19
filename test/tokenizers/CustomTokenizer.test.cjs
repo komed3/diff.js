@@ -6,37 +6,20 @@ const { CustomTokenizer } = require( '../../.test-dist/tokenizers/CustomTokenize
 
 test( 'CustomTokenizer', async t => {
   await t.test( 'delegates tokenization to the callback', () => {
-    const tokenizer = new CustomTokenizer( text => [
-      {
-        type: 'custom',
-        value: text,
-        start: 0,
-        end: text.length
-      }
-    ]);
+    const tokenizer = new CustomTokenizer( text => [ {
+      type: 'custom', value: text, start: 0, end: text.length
+    } ] );
 
-    assert.deepEqual( tokenizer.tokenize( 'Hello' ), [
-      {
-        type: 'custom',
-        value: 'Hello',
-        start: 0,
-        end: 5
-      }
-    ]);
-  });
+    assert.deepEqual( tokenizer.tokenize( 'Hello' ), [ {
+      type: 'custom', value: 'Hello', start: 0, end: 5
+    } ] );
+  } );
 
   await t.test( 'preserves custom token properties', () => {
-    const tokenizer = new CustomTokenizer( text => [
-      {
-        type: 'identifier',
-        value: text,
-        start: 0,
-        end: text.length,
-        language: 'typescript',
-        scope: 'variable',
-        declaration: true
-      }
-    ]);
+    const tokenizer = new CustomTokenizer( text => [ {
+      type: 'identifier', value: text, start: 0, end: text.length,
+      language: 'typescript', scope: 'variable', declaration: true
+    } ] );
 
     const tokens = tokenizer.tokenize( 'customerId' );
 
@@ -44,7 +27,7 @@ test( 'CustomTokenizer', async t => {
     assert.equal( tokens[ 0 ].language, 'typescript' );
     assert.equal( tokens[ 0 ].scope, 'variable' );
     assert.equal( tokens[ 0 ].declaration, true );
-  });
+  } );
 
   await t.test( 'passes the original text to the callback', () => {
     let received = null;
@@ -52,10 +35,9 @@ test( 'CustomTokenizer', async t => {
     const tokenizer = new CustomTokenizer( text => {
       received = text;
       return [];
-    });
+    } );
 
     tokenizer.tokenize( 'Unicode 😀' );
-
     assert.equal( received, 'Unicode 😀' );
-  });
-});
+  } );
+} );
