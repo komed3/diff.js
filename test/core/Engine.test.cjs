@@ -1,15 +1,15 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
-const { DiffEngine } = require( '../../.test-dist/core/DiffEngine.js' );
+const { Engine } = require( '../../.test-dist/core/Engine.js' );
 const { MyersAlgorithm } = require( '../../.test-dist/algorithms/MyersAlgorithm.js' );
 const { CharacterTokenizer } = require( '../../.test-dist/tokenizers/CharacterTokenizer.js' );
 const { CustomTokenizer } = require( '../../.test-dist/tokenizers/CustomTokenizer.js' );
 
 
-test( 'DiffEngine', async t => {
+test( 'Engine', async t => {
   await t.test( 'tokenizes both texts and returns the diff result', () => {
-    const engine = new DiffEngine( new CharacterTokenizer(), new MyersAlgorithm() );
+    const engine = new Engine( new CharacterTokenizer(), new MyersAlgorithm() );
     const result = engine.diff( 'Hello', 'Hello!' );
 
     assert.deepEqual( result.original.map( token => token.value ), [ 'H', 'e', 'l', 'l', 'o' ] );
@@ -23,7 +23,7 @@ test( 'DiffEngine', async t => {
   } );
 
   await t.test( 'handles empty texts', () => {
-    const engine = new DiffEngine( new CharacterTokenizer(), new MyersAlgorithm() );
+    const engine = new Engine( new CharacterTokenizer(), new MyersAlgorithm() );
     const result = engine.diff( '', '' );
 
     assert.deepEqual( result.original, [] );
@@ -37,7 +37,7 @@ test( 'DiffEngine', async t => {
       language: 'typescript', scope: 'variable'
     } ] );
 
-    const engine = new DiffEngine( tokenizer, new MyersAlgorithm() );
+    const engine = new Engine( tokenizer, new MyersAlgorithm() );
     const result = engine.diff( 'customerId', 'accountId' );
 
     assert.equal( result.original[ 0 ].language, 'typescript' );

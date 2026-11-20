@@ -1,19 +1,19 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
-const { DiffAnalyzer } = require( '../../.test-dist/core/DiffAnalyzer.js' );
-const { DiffEngine } = require( '../../.test-dist/core/DiffEngine.js' );
+const { Analyzer } = require( '../../.test-dist/core/Analyzer.js' );
+const { Engine } = require( '../../.test-dist/core/Engine.js' );
 const { MyersAlgorithm } = require( '../../.test-dist/algorithms/MyersAlgorithm.js' );
 const { CharacterTokenizer } = require( '../../.test-dist/tokenizers/CharacterTokenizer.js' );
 
 
 const createAnalyzer = ( original, modified ) => {
-  const engine = new DiffEngine( new CharacterTokenizer(), new MyersAlgorithm() );
-  return new DiffAnalyzer( engine.diff( original, modified ) );
+  const engine = new Engine( new CharacterTokenizer(), new MyersAlgorithm() );
+  return new Analyzer( engine.diff( original, modified ) );
 };
 
 
-test( 'DiffAnalyzer', async t => {
+test( 'Analyzer', async t => {
   await t.test( 'calculates token statistics', () => {
     const stats = createAnalyzer( 'cat', 'cut!' ).getTokenStats();
 
