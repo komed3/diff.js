@@ -1,3 +1,9 @@
+export interface EditStep {
+  readonly type: 'equal' | 'insert' | 'delete';
+  readonly original: number;
+  readonly modified: number;
+}
+
 export interface OperationRange {
   readonly start: number;
   readonly length: number;
