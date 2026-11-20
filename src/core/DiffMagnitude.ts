@@ -8,6 +8,22 @@ import type {
 export class DiffMagnitude {
   private readonly stats: DiffMetricStats;
 
+  private getBaseValue ( base: DiffMagnitudeBase ) : number {
+    if ( typeof base === 'number' ) {
+      if ( ! Number.isFinite( base ) || base < 0 )
+        throw new RangeError( 'Magnitude base must be a finite non-negative number' );
+
+      return base;
+    }
+
+    switch ( base ) {
+      case 'original': return this.stats.original;
+      case 'modified': return this.stats.modified;
+      case 'combined': return this.stats.original + this.stats.modified;
+      case 'maximum': return Math.max( this.stats.original, this.stats.modified );
+    }
+  }
+
   public constructor ( stats: DiffMetricStats ) {
     this.stats = stats;
   }
