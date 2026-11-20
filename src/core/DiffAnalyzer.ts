@@ -31,21 +31,16 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
 
   public getTokenStats () : DiffTokenStats {
     return this.tokenStats ??= ( () => {
+      const { original: o, modified: m, operations } = this.result;
       let equal = 0, inserted = 0, deleted = 0;
 
-      for ( const operation of this.result.operations ) {
-        if ( operation.type === 'equal' ) equal += operation.original.length;
-        else if ( operation.type === 'insert' ) inserted += operation.modified.length;
-        else deleted += operation.original.length;
+      for ( const { type, original, modified } of operations ) {
+        if ( type === 'equal' ) equal += original.length;
+        else if ( type === 'insert' ) inserted += modified.length;
+        else deleted += original.length;
       }
 
-      return this.createMetricStats(
-        this.result.original.length,
-        this.result.modified.length,
-        equal,
-        inserted,
-        deleted
-      );
+      return this.createMetricStats( o.length, m.length, equal, inserted, deleted );
     } )();
   }
 }
