@@ -8,12 +8,7 @@ export class LineParser {
 
     const addLine = ( contentEnd: number, ending: string ) => {
       const end = contentEnd + ending.length;
-
-      lines.push( {
-        value: text.slice( start, contentEnd ), ending, start,
-        contentEnd, end
-      } );
-
+      lines.push( { value: text.slice( start, contentEnd ), ending, start, contentEnd, end } );
       start = end;
     };
 
