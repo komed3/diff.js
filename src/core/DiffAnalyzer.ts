@@ -1,6 +1,8 @@
-import type { DiffCharacterCounts, DiffCharacterStats, DiffMetricStats, DiffOperationStats, DiffTokenStats } from '../types/analyze';
+import type {
+  DiffCharacterCounts, DiffCharacterStats, DiffMetricStats,
+  DiffOperationStats, DiffTokenStats
+} from '../types/analyze';
 import type { DiffResult } from '../types/result';
-import type { DiffToken } from '../types/token';
 
 
 export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
@@ -57,11 +59,11 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
       };
 
       const stats = {
-        o: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 } as DiffCharacterCounts,
-        m: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 } as DiffCharacterCounts,
-        e: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 } as DiffCharacterCounts,
-        i: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 } as DiffCharacterCounts,
-        d: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 } as DiffCharacterCounts
+        o: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 },
+        m: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 },
+        e: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 },
+        i: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 },
+        d: { utf16CodeUnits: 0, unicodeCodePoints: 0, utf8Bytes: 0 }
       };
 
       for ( const { type, original, modified } of this.result.operations ) {
@@ -86,6 +88,45 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
           stats.i.utf8Bytes, stats.d.utf8Bytes
         )
       };
+    } )();
+  }
+
+  public getOperationStats () : DiffOperationStats {
+    return this.operationStats ??= ( () => {
+      const stats = {
+        total: this.result.operations.length, equal: 0, insert: 0, delete: 0,
+        changes: 0, changeBlocks: 0, insertionBlocks: 0, deletionBlocks: 0,
+        replacementBlocks: 0, insertionOnlyBlocks: 0, deletionOnlyBlocks: 0
+      };
+
+      let inBlock = false, hasInsert = false, hasDelete = false;
+
+      const finishBlock = () => {
+        if ( ! inBlock ) return;
+
+        stats.changeBlocks++;
+
+        if ( hasInsert ) stats.insertionBlocks++;
+        if ( hasDelete ) stats.deletionBlocks++;
+        if ( hasInsert && hasDelete ) stats.replacementBlocks++;
+        else if ( hasInsert ) stats.insertionOnlyBlocks++;
+        else if ( hasDelete ) stats.deletionOnlyBlocks++;
+
+        inBlock = hasInsert = hasDelete = false;
+      };
+
+      for ( const { type } of this.result.operations ) {
+        if ( type === 'equal' ) stats.equal++, finishBlock();
+        else {
+          stats.changes++, inBlock = true;
+
+          if ( type === 'insert' ) stats.insert++, hasInsert = true;
+          else stats.delete++, hasDelete = true;
+        }
+      }
+
+      finishBlock();
+      return stats;
     } )();
   }
 }
