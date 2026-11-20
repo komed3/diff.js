@@ -123,4 +123,26 @@ test( 'DiffAnalyzer', async t => {
     assert.equal( operations.total, 0 );
     assert.equal( operations.changeBlocks, 0 );
   } );
+
+  await t.test( 'handles pure insertions and deletions', () => {
+    const insertion = createAnalyzer( '', 'abc' ).getTokenStats();
+
+    assert.equal( insertion.inserted, 3 );
+    assert.equal( insertion.deleted, 0 );
+    assert.equal( insertion.insertionRate, 1 );
+    assert.equal( insertion.deletionRate, 0 );
+    assert.equal( insertion.retentionRate, 0 );
+    assert.equal( insertion.growthRate, null );
+    assert.equal( insertion.sizeRatio, null );
+
+    const deletion = createAnalyzer( 'abc', '' ).getTokenStats();
+
+    assert.equal( deletion.inserted, 0 );
+    assert.equal( deletion.deleted, 3 );
+    assert.equal( deletion.insertionRate, 0 );
+    assert.equal( deletion.deletionRate, 1 );
+    assert.equal( deletion.retentionRate, 0 );
+    assert.equal( deletion.growthRate, -1 );
+    assert.equal( deletion.sizeRatio, 0 );
+  } );
 } );
