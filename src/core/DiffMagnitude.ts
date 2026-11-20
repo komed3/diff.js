@@ -7,4 +7,12 @@ export class DiffMagnitude {
   public constructor ( stats: DiffMetricStats ) {
     this.stats = stats;
   }
+
+  public absolute () {}
+
+  public relative () {}
+
+  public percentage () {}
+
+  public boxes () {}
 }
