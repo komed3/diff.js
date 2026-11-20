@@ -52,8 +52,9 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
     return this.characterStats ??= ( () => {
       const add = ( counts: DiffCharacterCounts, v: string ) : void => {
         counts.utf16CodeUnits += v.length;
-        counts.unicodeCodePoints += v.length;
         counts.utf8Bytes += ( this.encoder ??= new TextEncoder() ).encode( v ).length;
+
+        for ( const _ of v ) counts.unicodeCodePoints++;
       };
 
       const process = ( s: number, l: number, counts: DiffCharacterCounts, key: 'modified' | 'original' ) => {
