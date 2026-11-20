@@ -7,4 +7,8 @@ import type { DiffTokenizer } from '../types/tokenizer';
 export class DiffEngine< T extends Record< string, unknown > = {} > {
   private readonly tokenizer: DiffTokenizer< T >;
   private readonly algorithm: DiffAlgorithm;
+
+  public constructor ( tokenizer: DiffTokenizer< T >, algorithm: DiffAlgorithm ) {
+    this.tokenizer = tokenizer, this.algorithm = algorithm;
+  }
 }
