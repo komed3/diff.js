@@ -65,4 +65,12 @@ test( 'Magnitude', async t => {
     assert.equal( magnitude.boxes( { base: 4, total: 10 } ).filled, 10 );
     assert.equal( magnitude.boxes( { base: 4, total: 10 } ).empty, 0 );
   } );
+
+  await t.test( 'handles zero bases', () => {
+    const magnitude = createMagnitude();
+
+    assert.deepEqual( magnitude.relative( { base: 0 } ), { value: 8, baseValue: 0, ratio: null } );
+    assert.equal( magnitude.percentage( { base: 0 } ).percentage, null );
+    assert.deepEqual( magnitude.boxes( { base: 0 } ), { value: 8, baseValue: 0, filled: null, empty: null, total: 10 } );
+  } );
 } );
