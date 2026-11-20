@@ -98,4 +98,29 @@ test( 'DiffAnalyzer', async t => {
     assert.equal( deletion.insertionOnlyBlocks, 0 );
     assert.equal( deletion.deletionOnlyBlocks, 1 );
   } );
+
+  await t.test( 'handles identical empty texts', () => {
+    const analyzer = createAnalyzer( '', '' );
+    const tokens = analyzer.getTokenStats();
+    const characters = analyzer.getCharacterStats();
+    const operations = analyzer.getOperationStats();
+
+    assert.equal( tokens.original, 0 );
+    assert.equal( tokens.modified, 0 );
+    assert.equal( tokens.similarity, 1 );
+    assert.equal( tokens.changeRate, 0 );
+    assert.equal( tokens.growthRate, null );
+    assert.equal( tokens.sizeRatio, null );
+
+    for ( const stats of Object.values( characters ) ) {
+      assert.equal( stats.original, 0 );
+      assert.equal( stats.modified, 0 );
+      assert.equal( stats.similarity, 1 );
+      assert.equal( stats.growthRate, null );
+      assert.equal( stats.sizeRatio, null );
+    }
+
+    assert.equal( operations.total, 0 );
+    assert.equal( operations.changeBlocks, 0 );
+  } );
 } );
