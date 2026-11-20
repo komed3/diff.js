@@ -57,4 +57,12 @@ test( 'Magnitude', async t => {
     assert.deepEqual( magnitude.boxes( { total: 20 } ), { value: 8, baseValue: 10, filled: 16, empty: 4, total: 20 } );
     assert.deepEqual( magnitude.boxes( { total: 5 } ), { value: 8, baseValue: 10, filled: 4, empty: 1, total: 5 } );
   } );
+
+  await t.test( 'rounds and limits box counts', () => {
+    const magnitude = createMagnitude();
+
+    assert.equal( magnitude.boxes( { base: 24, total: 10 } ).filled, 3 );
+    assert.equal( magnitude.boxes( { base: 4, total: 10 } ).filled, 10 );
+    assert.equal( magnitude.boxes( { base: 4, total: 10 } ).empty, 0 );
+  } );
 } );
