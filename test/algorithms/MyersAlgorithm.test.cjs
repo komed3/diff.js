@@ -167,6 +167,20 @@ test( 'MyersAlgorithm', async t => {
     assert.equal( distance, expected );
   } );
 
+  await t.test( 'handles long sequences with repeated token values', () => {
+    const orig = createTokens( [ ...Array( 128 ).fill( 'A' ), 'B', ...Array( 128 ).fill( 'A' ) ] );
+    const mod = createTokens( [ ...Array( 129 ).fill( 'A' ), 'B', ...Array( 127 ).fill( 'A' ) ] );
+
+    const operations = algorithm.diff( orig, mod );
+    const distance = assertDiffComplete( orig, mod, operations );
+    const expected = orig.length + mod.length - 2 * lcsLength(
+      orig.map( ( { value } ) => value ), mod.map( ( { value } ) => value )
+    );
+
+    assert.equal( distance, expected );
+    assert.equal( distance, 2 );
+  } );
+
   await t.test( 'returns a shortest edit script for all short sequences', () => {
     const sequences = createSequences( [ 'A', 'B' ], 4 );
 
