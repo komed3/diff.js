@@ -1,4 +1,4 @@
-export interface DiffMetricStats {
+export interface MetricStats {
   readonly original: number;
   readonly modified: number;
   readonly equal: number;
@@ -15,15 +15,15 @@ export interface DiffMetricStats {
   readonly sizeRatio: number | null;
 }
 
-export interface DiffTokenStats extends DiffMetricStats {}
+export interface TokenStats extends MetricStats {}
 
-export interface DiffCharacterStats {
-  readonly utf16CodeUnits: DiffMetricStats;
-  readonly unicodeCodePoints: DiffMetricStats;
-  readonly utf8Bytes: DiffMetricStats;
+export interface CharacterStats {
+  readonly utf16CodeUnits: MetricStats;
+  readonly unicodeCodePoints: MetricStats;
+  readonly utf8Bytes: MetricStats;
 }
 
-export interface DiffOperationStats {
+export interface OperationStats {
   readonly total: number;
   readonly equal: number;
   readonly insert: number;
@@ -37,7 +37,7 @@ export interface DiffOperationStats {
   readonly deletionOnlyBlocks: number;
 }
 
-export interface DiffCharacterCounts {
+export interface CharacterCounts {
   utf16CodeUnits: number;
   unicodeCodePoints: number;
   utf8Bytes: number;

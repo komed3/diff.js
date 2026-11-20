@@ -1,9 +1,9 @@
-import type { DiffOperation } from './operation';
-import type { DiffToken } from './token';
+import type { Operation } from './operation';
+import type { Token } from './token';
 
 
-export interface DiffResult< T extends Record< string, unknown > = {} > {
-  readonly original: readonly DiffToken< T >[];
-  readonly modified: readonly DiffToken< T >[];
-  readonly operations: readonly DiffOperation[];
+export interface Result< T extends Record< string, unknown > = {} > {
+  readonly original: readonly Token< T >[];
+  readonly modified: readonly Token< T >[];
+  readonly operations: readonly Operation[];
 }

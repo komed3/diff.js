@@ -1,6 +1,6 @@
-import type { DiffToken } from './token';
+import type { Token } from './token';
 
 
-export interface DiffTokenizer< T extends Record< string, unknown > = {} > {
-  tokenize ( text: string ) : DiffToken< T >[];
+export interface Tokenizer< T extends Record< string, unknown > = {} > {
+  tokenize ( text: string ) : Token< T >[];
 }

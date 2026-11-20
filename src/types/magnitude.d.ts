@@ -1,39 +1,39 @@
-import type { DiffMetricStats } from './analyze';
+import type { MetricStats } from './analyze';
 
 
-export type DiffMagnitudeBase = 'original' | 'modified' | 'combined' | 'maximum' | number;
+export type MagnitudeBase = 'original' | 'modified' | 'combined' | 'maximum' | number;
 
-export interface DiffMagnitudeOptions {
-  metric?: keyof DiffMetricStats;
-  base?: DiffMagnitudeBase;
+export interface MagnitudeOptions {
+  metric?: keyof MetricStats;
+  base?: MagnitudeBase;
 }
 
-export interface DiffMagnitudePercentageOptions extends DiffMagnitudeOptions {
+export interface MagnitudePercentageOptions extends MagnitudeOptions {
   precision?: number;
 }
 
-export interface DiffMagnitudeBoxesOptions extends DiffMagnitudeOptions {
+export interface MagnitudeBoxesOptions extends MagnitudeOptions {
   total?: number;
 }
 
-export interface DiffMagnitudeValue {
+export interface MagnitudeValue {
   readonly value: number | null;
   readonly baseValue: number;
 }
 
-export interface DiffMagnitudeAbsolute extends DiffMagnitudeValue {
+export interface MagnitudeAbsolute extends MagnitudeValue {
   readonly magnitude: number | null;
 }
 
-export interface DiffMagnitudeRelative extends DiffMagnitudeValue {
+export interface MagnitudeRelative extends MagnitudeValue {
   readonly ratio: number | null;
 }
 
-export interface DiffMagnitudePercentage extends DiffMagnitudeValue {
+export interface MagnitudePercentage extends MagnitudeValue {
   readonly percentage: number | null;
 }
 
-export interface DiffMagnitudeBoxes extends DiffMagnitudeValue {
+export interface MagnitudeBoxes extends MagnitudeValue {
   readonly filled: number | null;
   readonly empty: number | null;
   readonly total: number;
