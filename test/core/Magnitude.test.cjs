@@ -9,3 +9,15 @@ const createMagnitude = ( stats = {} ) => new Magnitude( {
   changeRate: 1 / 3, insertionRate: 6 / 14, deletionRate: 0.2, retentionRate: 0.8,
   similarity: 2 / 3, growthRate: 0.4, sizeRatio: 1.4, ...stats
 } );
+
+
+test( 'Magnitude', async t => {
+  await t.test( 'calculates absolute magnitudes', () => {
+    const magnitude = createMagnitude();
+
+    assert.deepEqual( magnitude.absolute(), { value: 8, baseValue: 10, magnitude: 8 } );
+    assert.deepEqual( magnitude.absolute( { metric: 'delta' } ), { value: 4, baseValue: 10, magnitude: 4 } );
+    assert.deepEqual( magnitude.absolute( { metric: 'delta', base: 'modified' } ), { value: 4, baseValue: 14, magnitude: 4 } );
+    assert.deepEqual( magnitude.absolute( { metric: 'delta', base: 20 } ), { value: 4, baseValue: 20, magnitude: 4 } );
+  } );
+} );
