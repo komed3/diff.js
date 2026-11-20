@@ -41,4 +41,12 @@ test( 'Magnitude', async t => {
     assert.equal( magnitude.percentage( { base: 20 } ).percentage, 40 );
     assert.equal( magnitude.percentage( { metric: 'delta', base: 20 } ).percentage, 20 );
   } );
+
+  await t.test( 'applies percentage precision', () => {
+    const magnitude = createMagnitude();
+
+    assert.equal( magnitude.percentage( { base: 'combined', precision: 0 } ).percentage, 33 );
+    assert.equal( magnitude.percentage( { base: 'combined', precision: 1 } ).percentage, 33.3 );
+    assert.equal( magnitude.percentage( { base: 'combined', precision: 2 } ).percentage, 33.33 );
+  } );
 } );
