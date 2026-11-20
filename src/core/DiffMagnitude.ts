@@ -1,5 +1,8 @@
 import type { DiffMetricStats } from '../types/analyze';
-import type { DiffMagnitudeOptions, DiffMagnitudeResult } from '../types/magnitude';
+import type {
+  DiffMagnitudeAbsolute, DiffMagnitudeBoxes, DiffMagnitudeOptions,
+  DiffMagnitudePercentage, DiffMagnitudeRelative, DiffMagnitudeResult
+} from '../types/magnitude';
 
 
 export class DiffMagnitude {
@@ -30,14 +33,14 @@ export class DiffMagnitude {
 
     const ratio = value === null || baseValue === 0 ? null : value / baseValue;
 
-    if ( mode === 'absolute' ) return { value };
-    if ( mode === 'relative' ) return { value: ratio, ratio, base: baseValue };
+    if ( mode === 'absolute' ) return { value } as DiffMagnitudeAbsolute;
+    if ( mode === 'relative' ) return { value: ratio, ratio, base: baseValue } as DiffMagnitudeRelative;
 
     if ( mode === 'percentage' ) {
       const factor = 10 ** precision;
       const percentage = ratio === null ? null : Math.round( ratio * 100 * factor ) / factor;
 
-      return { value: percentage, ratio, base: baseValue, precision };
+      return { value: percentage, ratio, base: baseValue, precision } as DiffMagnitudePercentage;
     }
 
     const fillRate = ratio === null ? null : Math.min( 1, Math.abs( ratio ) );
@@ -46,6 +49,6 @@ export class DiffMagnitude {
     return {
       value, ratio, base: baseValue, filled, empty: filled === null ? null : boxes - filled, total: boxes,
       direction: value === null ? null : value > 0 ? 'positive' : value < 0 ? 'negative' : 'neutral'
-    };
+    } as DiffMagnitudeBoxes;
   }
 }
