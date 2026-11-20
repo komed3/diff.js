@@ -5,4 +5,10 @@ import type {
 } from '../types/magnitude';
 
 
-export class DiffMagnitude {}
+export class DiffMagnitude {
+  private readonly stats: DiffMetricStats;
+
+  public constructor ( stats: DiffMetricStats ) {
+    this.stats = stats;
+  }
+}
