@@ -67,5 +67,43 @@ export class MyersAlgorithm implements DiffAlgorithm {
 
       x = previousX, y = previousY;
     }
+
+    while ( x > 0 && y > 0 ) edits.push( 'equal' ), x--, y--;
+    while ( x > 0 ) edits.push( 'delete' ), x--;
+    while ( y > 0 ) edits.push( 'insert' ), y--;
+
+    edits.reverse();
+
+    const operations: DiffOperation[] = [];
+    let originalIndex = 0, modifiedIndex = 0;
+
+    for ( let i = 0; i < edits.length; ) {
+      const type = edits[ i ], start = i;
+
+      while ( i < edits.length && edits[ i ] === type ) i++;
+
+      const length = i - start;
+
+      if ( type === 'equal' ) operations.push( {
+        type,
+        original: { start: originalIndex, length },
+        modified: { start: modifiedIndex, length }
+      } );
+      else if ( type === 'insert' ) operations.push( {
+        type,
+        original: { start: originalIndex, length: 0 },
+        modified: { start: modifiedIndex, length }
+      } );
+      else operations.push( {
+        type,
+        original: { start: originalIndex, length },
+        modified: { start: modifiedIndex, length: 0 }
+      } );
+
+      if ( type !== 'insert' ) originalIndex += length;
+      if ( type !== 'delete' ) modifiedIndex += length;
+    }
+
+    return operations;
   }
 }
