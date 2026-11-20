@@ -153,6 +153,20 @@ test( 'MyersAlgorithm', async t => {
     ) );
   } );
 
+  await t.test( 'handles highly unbalanced sequences', () => {
+    const orig = createTokens( [ 'A', 'B' ] ), mod = createTokens( [
+      ...Array( 128 ).fill( 'X' ), 'A', ...Array( 128 ).fill( 'Y' )
+    ] );
+
+    const operations = algorithm.diff( orig, mod );
+    const distance = assertDiffComplete( orig, mod, operations );
+    const expected = orig.length + mod.length - 2 * lcsLength(
+      orig.map( ( { value } ) => value ), mod.map( ( { value } ) => value )
+    );
+
+    assert.equal( distance, expected );
+  } );
+
   await t.test( 'returns a shortest edit script for all short sequences', () => {
     const sequences = createSequences( [ 'A', 'B' ], 4 );
 
