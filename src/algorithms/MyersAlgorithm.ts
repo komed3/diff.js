@@ -93,5 +93,7 @@ export class MyersAlgorithm implements DiffAlgorithm {
         steps.push( { type: 'equal', original: prefix + x, modified: prefix + y } );
       }
     }
+
+    for ( let i = prefix - 1; i >= 0; i-- ) steps.push( { type: 'equal', original: i, modified: i } );
   }
 }
