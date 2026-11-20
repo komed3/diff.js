@@ -1,6 +1,6 @@
-export type TokenMeta = Record< string, unknown >;
+export type TokenBaseMeta = Record< string, unknown >;
 
-export interface Token< T extends TokenMeta = {} > {
+export interface Token< T extends TokenBaseMeta = {} > {
   readonly value: string;
   readonly start: number;
   readonly end: number;
