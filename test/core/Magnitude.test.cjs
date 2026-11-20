@@ -49,4 +49,12 @@ test( 'Magnitude', async t => {
     assert.equal( magnitude.percentage( { base: 'combined', precision: 1 } ).percentage, 33.3 );
     assert.equal( magnitude.percentage( { base: 'combined', precision: 2 } ).percentage, 33.33 );
   } );
+
+  await t.test( 'calculates boxes', () => {
+    const magnitude = createMagnitude();
+
+    assert.deepEqual( magnitude.boxes(), { value: 8, baseValue: 10, filled: 8, empty: 2, total: 10 } );
+    assert.deepEqual( magnitude.boxes( { total: 20 } ), { value: 8, baseValue: 10, filled: 16, empty: 4, total: 20 } );
+    assert.deepEqual( magnitude.boxes( { total: 5 } ), { value: 8, baseValue: 10, filled: 4, empty: 1, total: 5 } );
+  } );
 } );
