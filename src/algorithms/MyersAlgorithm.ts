@@ -12,10 +12,11 @@ export class MyersAlgorithm implements DiffAlgorithm {
     const maxDistance = originalLength + modifiedLength, offset = maxDistance + 1;
     const frontier = new Int32Array( maxDistance * 2 + 3 );
     const trace: Int32Array[] = [], edits: DiffOperationType[] = [];
-    let distance = 0, finished = false;
 
     frontier.fill( -1 );
     frontier[ offset + 1 ] = 0;
+
+    let distance = 0, finished = false;
 
     for ( ; distance <= maxDistance; distance++ ) {
       for ( let diagonal = -distance; diagonal <= distance; diagonal += 2 ) {
@@ -46,6 +47,25 @@ export class MyersAlgorithm implements DiffAlgorithm {
 
       trace.push( layer );
       if ( finished ) break;
+    }
+
+    let x = originalLength, y = modifiedLength;
+
+    for ( let d = distance; d > 0; d-- ) {
+      const previous = trace[ d - 1 ], diagonal = x - y;
+      const previousDiagonal = diagonal === -d ||
+        ( diagonal !== d && previous[ diagonal + d - 1 ] < previous[ diagonal + d + 1 ] )
+        ? diagonal + 1 : diagonal - 1;
+
+      const previousX = previous[ previousDiagonal + d ];
+      const previousY = previousX - previousDiagonal;
+
+      while ( x > previousX && y > previousY ) edits.push( 'equal' ), x--, y--;
+
+      if ( x === previousX ) edits.push( 'insert' ), y--;
+      else edits.push( 'delete' ), x--;
+
+      x = previousX, y = previousY;
     }
   }
 }
