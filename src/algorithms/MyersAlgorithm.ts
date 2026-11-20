@@ -95,5 +95,57 @@ export class MyersAlgorithm implements DiffAlgorithm {
     }
 
     for ( let i = prefix - 1; i >= 0; i-- ) steps.push( { type: 'equal', original: i, modified: i } );
+
+    steps.reverse();
+    const operations: Operation[] = [];
+    let oStart = 0, mStart = 0, oCount = 0, mCount = 0;
+    let type: EditStep[ 'type' ] | null = null;
+
+    const flush = () => {
+      if ( ! type ) return;
+
+      if ( type === 'equal' ) operations.push( {
+        type,
+        original: { start: oStart, length: oCount },
+        modified: { start: mStart, length: mCount }
+      } );
+
+      else if ( type === 'insert' ) operations.push( {
+        type,
+        original: { start: oStart, length: 0 },
+        modified: { start: mStart, length: mCount }
+      } );
+
+      else operations.push( {
+        type,
+        original: { start: oStart, length: oCount },
+        modified: { start: mStart, length: 0 }
+      } );
+
+      type = null, oCount = 0, mCount = 0;
+    };
+
+    for ( const step of steps ) {
+      const continues = type === step.type && ( step.type === 'equal'
+        ? step.original === oStart + oCount && step.modified === mStart + mCount
+        : step.type === 'insert'
+          ? step.original === oStart && step.modified === mStart + mCount
+          : step.original === oStart + oCount && step.modified === mStart
+      );
+
+      if ( ! continues ) {
+        flush();
+
+        type = step.type;
+        oStart = step.original;
+        mStart = step.modified;
+      }
+
+      if ( step.type !== 'insert' ) oCount++;
+      if ( step.type !== 'delete' ) mCount++;
+    }
+
+    flush();
+    return operations;
   }
 }
