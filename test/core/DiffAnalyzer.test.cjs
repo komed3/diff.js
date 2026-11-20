@@ -23,4 +23,17 @@ test( 'DiffAnalyzer', async t => {
       similarity: 4 / 7, growthRate: 1 / 3, sizeRatio: 4 / 3
     } );
   } );
+
+  await t.test( 'calculates character statistics', () => {
+    const stats = createAnalyzer( 'cat', 'cut!' ).getCharacterStats();
+
+    assert.deepEqual( stats.utf16CodeUnits, {
+      original: 3, modified: 4, equal: 2, inserted: 2, deleted: 1, changed: 3, delta: 1,
+      changeRate: 3 / 7, insertionRate: 0.5, deletionRate: 1 / 3, retentionRate: 2 / 3,
+      similarity: 4 / 7, growthRate: 1 / 3, sizeRatio: 4 / 3
+    } );
+
+    assert.deepEqual( stats.unicodeCodePoints, stats.utf16CodeUnits );
+    assert.deepEqual( stats.utf8Bytes, stats.utf16CodeUnits );
+  } );
 } );
