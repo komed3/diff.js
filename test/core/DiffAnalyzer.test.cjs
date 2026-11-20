@@ -67,4 +67,15 @@ test( 'DiffAnalyzer', async t => {
       deletionBlocks: 1, replacementBlocks: 1, insertionOnlyBlocks: 0, deletionOnlyBlocks: 0
     } );
   } );
+
+  await t.test( 'distinguishes multiple change blocks', () => {
+    const stats = createAnalyzer( 'abcde', 'axcye' ).getOperationStats();
+
+    assert.equal( stats.changeBlocks, 2 );
+    assert.equal( stats.insertionBlocks, 2 );
+    assert.equal( stats.deletionBlocks, 2 );
+    assert.equal( stats.replacementBlocks, 2 );
+    assert.equal( stats.insertionOnlyBlocks, 0 );
+    assert.equal( stats.deletionOnlyBlocks, 0 );
+  } );
 } );
