@@ -38,7 +38,7 @@ export interface DiffOperationStats {
 }
 
 export interface DiffCharacterCounts {
-  readonly utf16CodeUnits: number;
-  readonly unicodeCodePoints: number;
-  readonly utf8Bytes: number;
+  utf16CodeUnits: number;
+  unicodeCodePoints: number;
+  utf8Bytes: number;
 }
