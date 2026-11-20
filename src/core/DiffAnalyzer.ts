@@ -10,6 +10,21 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
   private operationStats?: DiffOperationStats;
   private encoder?: TextEncoder;
 
+  private createMetricStats ( original: number, modified: number, equal: number, inserted: number, deleted: number ) : DiffMetricStats {
+    const changed = inserted + deleted, total = original + modified;
+
+    return {
+      original, modified, equal, inserted, deleted, changed, delta: modified - original,
+      changeRate: total === 0 ? 0 : changed / total,
+      insertionRate: modified === 0 ? 0 : inserted / modified,
+      deletionRate: original === 0 ? 0 : deleted / original,
+      retentionRate: original === 0 ? 0 : equal / original,
+      similarity: total === 0 ? 1 : 1 - changed / total,
+      growthRate: original === 0 ? null : ( modified - original ) / original,
+      sizeRatio: original === 0 ? null : modified / original
+    };
+  }
+
   public constructor ( result: DiffResult< T > ) {
     this.result = result;
   }
