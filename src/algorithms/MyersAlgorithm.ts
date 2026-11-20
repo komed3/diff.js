@@ -55,6 +55,8 @@ export class MyersAlgorithm implements DiffAlgorithm {
     while ( x-- ) edits.push( 'delete' );
     while ( y-- ) edits.push( 'insert' );
 
+    edits.reverse();
+
     const operations: DiffOperation[] = [];
     let [ origIdx, modIdx ] = [ 0, 0 ];
 
@@ -66,7 +68,7 @@ export class MyersAlgorithm implements DiffAlgorithm {
       operations.push( {
         type,
         original: { start: origIdx, length: type === 'insert' ? 0 : length },
-        modified: { start: modIdx, length: type === 'equal' ? length : 0 }
+        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
       } as DiffOperation );
 
       if ( type !== 'insert' ) origIdx += length;
