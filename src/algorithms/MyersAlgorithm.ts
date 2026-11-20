@@ -21,23 +21,25 @@ export class MyersAlgorithm implements DiffAlgorithm {
     ) suffix++;
 
     const steps: EditStep[] = [];
-    for ( let i = suffix - 1; i >= 0; i-- ) steps.push( {
+
+    for ( let i = 0; i < suffix; i++ ) steps.push( {
       type: 'equal', original: n - i - 1, modified: m - i - 1
     } );
 
     const oLength = n - prefix - suffix, mLength = m - prefix - suffix;
     const max = oLength + mLength;
 
-    if ( max > 0 ) {
-      const vector = new Int32Array( max * 2 + 3 ), trace: Int32Array[] = [], offset = max + 1;
+    if ( max ) {
+      const vector = new Int32Array( max * 2 + 3 ), trace: Int32Array[] = [];
+      const offset = max + 1;
       let dist = 0, found = false;
 
       for ( let d = 0; d <= max; d++ ) {
         for ( let k = -d; k <= d; k += 2 ) {
           const i = offset + k;
-
           let x = k === -d || ( k !== d && vector[ i - 1 ] < vector[ i + 1 ] )
-            ? vector[ i + 1 ] : vector[ i - 1 ] + 1, y = x - k;
+            ? vector[ i + 1 ] : vector[ i - 1 ] + 1;
+          let y = x - k;
 
           while (
             x < oLength && y < mLength &&
@@ -52,7 +54,12 @@ export class MyersAlgorithm implements DiffAlgorithm {
           }
         }
 
-        trace.push( vector.slice() );
+        const layer = new Int32Array( d + 1 );
+
+        for ( let k = -d, j = 0; k <= d; k += 2, j++ )
+          layer[ j ] = vector[ offset + k ];
+
+        trace.push( layer );
         if ( found ) break;
       }
 
@@ -60,12 +67,11 @@ export class MyersAlgorithm implements DiffAlgorithm {
 
       for ( let d = dist; d > 0; d-- ) {
         const prev = trace[ d - 1 ], k = x - y;
+        const prevK = k === -d || (
+          k !== d && prev[ ( k - 1 + d - 1 ) / 2 ] < prev[ ( k + 1 + d - 1 ) / 2 ]
+        ) ? k + 1 : k - 1;
 
-        const prevK = k === -d || ( k !== d && prev[ offset + k - 1 ] < prev[ offset + k + 1 ] )
-          ? k + 1 : k - 1;
-
-        const prevX = prev[ offset + prevK ];
-        const prevY = prevX - prevK;
+        const prevX = prev[ ( prevK + d - 1 ) / 2 ], prevY = prevX - prevK;
 
         while ( x > prevX && y > prevY ) {
           x--, y--;
@@ -80,8 +86,7 @@ export class MyersAlgorithm implements DiffAlgorithm {
         } else {
           x--;
 
-          steps.push( {
-            type: 'delete', original: prefix + x, modified: prefix + y } );
+          steps.push( { type: 'delete', original: prefix + x, modified: prefix + y } );
         }
 
         x = prevX, y = prevY;
@@ -94,11 +99,14 @@ export class MyersAlgorithm implements DiffAlgorithm {
       }
     }
 
-    for ( let i = prefix - 1; i >= 0; i-- ) steps.push( { type: 'equal', original: i, modified: i } );
+    for ( let i = prefix - 1; i >= 0; i-- )
+      steps.push( { type: 'equal', original: i, modified: i } );
 
     steps.reverse();
+
     const operations: Operation[] = [];
     let oStart = 0, mStart = 0, oCount = 0, mCount = 0;
+    let oPos = 0, mPos = 0;
     let type: EditStep[ 'type' ] | null = null;
 
     const flush = () => {
@@ -109,13 +117,11 @@ export class MyersAlgorithm implements DiffAlgorithm {
         original: { start: oStart, length: oCount },
         modified: { start: mStart, length: mCount }
       } );
-
       else if ( type === 'insert' ) operations.push( {
         type,
         original: { start: oStart, length: 0 },
         modified: { start: mStart, length: mCount }
       } );
-
       else operations.push( {
         type,
         original: { start: oStart, length: oCount },
@@ -126,23 +132,16 @@ export class MyersAlgorithm implements DiffAlgorithm {
     };
 
     for ( const step of steps ) {
-      const continues = type === step.type && ( step.type === 'equal'
-        ? step.original === oStart + oCount && step.modified === mStart + mCount
-        : step.type === 'insert'
-          ? step.original === oStart && step.modified === mStart + mCount
-          : step.original === oStart + oCount && step.modified === mStart
-      );
-
-      if ( ! continues ) {
+      if ( type !== step.type ) {
         flush();
 
         type = step.type;
-        oStart = step.original;
-        mStart = step.modified;
+        oStart = oPos;
+        mStart = mPos;
       }
 
-      if ( step.type !== 'insert' ) oCount++;
-      if ( step.type !== 'delete' ) mCount++;
+      if ( step.type !== 'insert' ) oCount++, oPos++;
+      if ( step.type !== 'delete' ) mCount++, mPos++;
     }
 
     flush();
