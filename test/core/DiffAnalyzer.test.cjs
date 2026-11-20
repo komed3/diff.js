@@ -58,4 +58,13 @@ test( 'DiffAnalyzer', async t => {
     assert.equal( stats.utf8Bytes.inserted, 5 );
     assert.equal( stats.utf8Bytes.deleted, 4 );
   } );
+
+  await t.test( 'calculates operation statistics', () => {
+    const stats = createAnalyzer( 'abc', 'axc' ).getOperationStats();
+
+    assert.deepEqual( stats, {
+      total: 4, equal: 2, insert: 1, delete: 1, changes: 2, changeBlocks: 1, insertionBlocks: 1,
+      deletionBlocks: 1, replacementBlocks: 1, insertionOnlyBlocks: 0, deletionOnlyBlocks: 0
+    } );
+  } );
 } );
