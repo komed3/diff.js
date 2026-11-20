@@ -1,16 +1,15 @@
-import type { DiffAlgorithm } from '../types/algorithm';
-import type { DiffOperation, DiffOperationType } from '../types/operation';
-import type { DiffToken } from '../types/token';
+import type { Algorithm } from '../types/algorithm';
+import type { Operation, OperationType } from '../types/operation';
+import type { Token } from '../types/token';
 
 
-export class MyersAlgorithm implements DiffAlgorithm {
+export class MyersAlgorithm implements Algorithm {
   public diff < T extends Record< string, unknown > = {} > (
-    original: readonly DiffToken< T >[],
-    modified: readonly DiffToken< T >[]
-  ) : DiffOperation[] {
+    original: readonly Token< T >[], modified: readonly Token< T >[]
+  ) : Operation[] {
     const [ oLen, mLen ] = [ original.length, modified.length ];
     const maxDist = oLen + mLen, offset = maxDist + 1;
-    const edits: DiffOperationType[] = [], trace: Int32Array[] = [];
+    const edits: OperationType[] = [], trace: Int32Array[] = [];
 
     const frontier = new Int32Array( maxDist * 2 + 3 ).fill( -1 );
     frontier[ offset + 1 ] = 0;
@@ -57,7 +56,7 @@ export class MyersAlgorithm implements DiffAlgorithm {
 
     edits.reverse();
 
-    const operations: DiffOperation[] = [];
+    const operations: Operation[] = [];
     let [ origIdx, modIdx ] = [ 0, 0 ];
 
     for ( let i = 0; i < edits.length; ) {
@@ -69,7 +68,7 @@ export class MyersAlgorithm implements DiffAlgorithm {
         type,
         original: { start: origIdx, length: type === 'insert' ? 0 : length },
         modified: { start: modIdx, length: type === 'delete' ? 0 : length }
-      } as DiffOperation );
+      } as Operation );
 
       if ( type !== 'insert' ) origIdx += length;
       if ( type !== 'delete' ) modIdx += length;
