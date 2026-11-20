@@ -12,14 +12,16 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
   private operationStats?: DiffOperationStats;
   private encoder?: TextEncoder;
 
-  private createMetricStats ( original: number, modified: number, equal: number, ins: number, del: number ) : DiffMetricStats {
-    const changed = ins + del, total = original + modified;
+  private createMetricStats (
+    original: number, modified: number, equal: number, inserted: number, deleted: number
+  ) : DiffMetricStats {
+    const changed = inserted + deleted, total = original + modified;
 
     return {
-      original, modified, equal, inserted: ins, deleted: del, changed, delta: modified - original,
+      original, modified, equal, inserted, deleted, changed, delta: modified - original,
       changeRate: total === 0 ? 0 : changed / total,
-      insertionRate: modified === 0 ? 0 : ins / modified,
-      deletionRate: original === 0 ? 0 : del / original,
+      insertionRate: modified === 0 ? 0 : inserted / modified,
+      deletionRate: original === 0 ? 0 : deleted / original,
       retentionRate: original === 0 ? 0 : equal / original,
       similarity: total === 0 ? 1 : 1 - changed / total,
       growthRate: original === 0 ? null : ( modified - original ) / original,
@@ -48,14 +50,14 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
 
   public getCharacterStats () : DiffCharacterStats {
     return this.characterStats ??= ( () => {
-      const add = ( counts: DiffCharacterCounts, value: string ) : void => {
-        counts.utf16CodeUnits += value.length;
-        counts.unicodeCodePoints += value.length;
-        counts.utf8Bytes += ( this.encoder ??= new TextEncoder() ).encode( value ).length;
+      const add = ( counts: DiffCharacterCounts, v: string ) : void => {
+        counts.utf16CodeUnits += v.length;
+        counts.unicodeCodePoints += v.length;
+        counts.utf8Bytes += ( this.encoder ??= new TextEncoder() ).encode( v ).length;
       };
 
-      const process = ( start: number, length: number, counts: DiffCharacterCounts, key: 'modified' | 'original' ) => {
-        for ( let i = start; i < start + length; i++ ) add( counts, this.result[ key ][ i ].value );
+      const process = ( s: number, l: number, counts: DiffCharacterCounts, key: 'modified' | 'original' ) => {
+        for ( let i = s; i < s + l; i++ ) add( counts, this.result[ key ][ i ].value );
       };
 
       const stats = {
