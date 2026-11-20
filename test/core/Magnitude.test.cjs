@@ -30,4 +30,15 @@ test( 'Magnitude', async t => {
     assert.equal( magnitude.relative( { base: 'maximum' } ).ratio, 8 / 14 );
     assert.equal( magnitude.relative( { base: 20 } ).ratio, 0.4 );
   } );
+
+  await t.test( 'calculates percentages', () => {
+    const magnitude = createMagnitude();
+
+    assert.deepEqual( magnitude.percentage(), { value: 8, baseValue: 10, percentage: 80 } );
+    assert.equal( magnitude.percentage( { precision: 0 } ).percentage, 80 );
+    assert.equal( magnitude.percentage( { precision: 2 } ).percentage, 80 );
+    assert.equal( magnitude.percentage( { base: 'modified' } ).percentage, 57.1 );
+    assert.equal( magnitude.percentage( { base: 20 } ).percentage, 40 );
+    assert.equal( magnitude.percentage( { metric: 'delta', base: 20 } ).percentage, 20 );
+  } );
 } );
