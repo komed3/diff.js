@@ -1,14 +1,14 @@
-import type { DiffMetricStats } from '../types/analyze';
+import type { MetricStats } from '../types/analyze';
 import type {
-  DiffMagnitudeAbsolute, DiffMagnitudeBoxes, DiffMagnitudeBoxesOptions, DiffMagnitudeOptions,
-  DiffMagnitudePercentage, DiffMagnitudePercentageOptions, DiffMagnitudeRelative, DiffMagnitudeValue
+  MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudeOptions,
+  MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative, MagnitudeValue
 } from '../types/magnitude';
 
 
-export class DiffMagnitude {
-  private readonly stats: DiffMetricStats;
+export class Magnitude {
+  private readonly stats: MetricStats;
 
-  private getValue ( { metric = 'changed', base = 'original' }: DiffMagnitudeOptions = {} ) : DiffMagnitudeValue {
+  private getValue ( { metric = 'changed', base = 'original' }: MagnitudeOptions = {} ) : MagnitudeValue {
     return {
       value: this.stats[ metric ],
       baseValue: typeof base === 'number' ? base : base === 'original' ? this.stats.original
@@ -18,21 +18,21 @@ export class DiffMagnitude {
     };
   }
 
-  public constructor ( stats: DiffMetricStats ) {
+  public constructor ( stats: MetricStats ) {
     this.stats = stats;
   }
 
-  public absolute ( options: DiffMagnitudeOptions = {} ) : DiffMagnitudeAbsolute {
+  public absolute ( options: MagnitudeOptions = {} ) : MagnitudeAbsolute {
     const { value, baseValue } = this.getValue( options );
     return { value, baseValue, magnitude: value === null ? null : Math.abs( value ) };
   }
 
-  public relative ( options: DiffMagnitudeOptions = {} ) : DiffMagnitudeRelative {
+  public relative ( options: MagnitudeOptions = {} ) : MagnitudeRelative {
     const { value, baseValue } = this.getValue( options );
     return { value, baseValue, ratio: value === null || baseValue === 0 ? null : value / baseValue };
   }
 
-  public percentage ( { precision = 1, ...options }: DiffMagnitudePercentageOptions = {} ) : DiffMagnitudePercentage {
+  public percentage ( { precision = 1, ...options }: MagnitudePercentageOptions = {} ) : MagnitudePercentage {
     const { value, baseValue } = this.getValue( options ), factor = 10 ** precision;
 
     return {
@@ -42,7 +42,7 @@ export class DiffMagnitude {
     };
   }
 
-  public boxes ( { total = 10, ...options }: DiffMagnitudeBoxesOptions = {} ) : DiffMagnitudeBoxes {
+  public boxes ( { total = 10, ...options }: MagnitudeBoxesOptions = {} ) : MagnitudeBoxes {
     const { value, baseValue } = this.getValue( options );
     const ratio = value === null || baseValue === 0 ? null : Math.abs( value / baseValue );
     const filled = ratio === null ? null : Math.min( total, Math.round( ratio * total ) );

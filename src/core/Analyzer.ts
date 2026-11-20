@@ -1,20 +1,15 @@
-import type {
-  DiffCharacterCounts, DiffCharacterStats, DiffMetricStats,
-  DiffOperationStats, DiffTokenStats
-} from '../types/analyze';
-import type { DiffResult } from '../types/result';
+import type { CharacterCounts, CharacterStats, MetricStats, OperationStats, TokenStats } from '../types/analyze';
+import type { Result } from '../types/result';
 
 
-export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
-  private readonly result: DiffResult< T >;
-  private tokenStats?: DiffTokenStats;
-  private characterStats?: DiffCharacterStats;
-  private operationStats?: DiffOperationStats;
+export class Analyzer< T extends Record< string, unknown > = {} > {
+  private readonly result: Result< T >;
+  private tokenStats?: TokenStats;
+  private characterStats?: CharacterStats;
+  private operationStats?: OperationStats;
   private encoder?: TextEncoder;
 
-  private createMetricStats (
-    original: number, modified: number, equal: number, inserted: number, deleted: number
-  ) : DiffMetricStats {
+  private stats ( original: number, modified: number, equal: number, inserted: number, deleted: number ) : MetricStats {
     const changed = inserted + deleted, total = original + modified;
 
     return {
@@ -29,11 +24,11 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
     };
   }
 
-  public constructor ( result: DiffResult< T > ) {
+  public constructor ( result: Result< T > ) {
     this.result = result;
   }
 
-  public getTokenStats () : DiffTokenStats {
+  public getTokenStats () : TokenStats {
     return this.tokenStats ??= ( () => {
       const { original: o, modified: m, operations } = this.result;
       let equal = 0, ins = 0, del = 0;
@@ -44,20 +39,20 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
         else del += original.length;
       }
 
-      return this.createMetricStats( o.length, m.length, equal, ins, del );
+      return this.stats( o.length, m.length, equal, ins, del );
     } )();
   }
 
-  public getCharacterStats () : DiffCharacterStats {
+  public getCharacterStats () : CharacterStats {
     return this.characterStats ??= ( () => {
-      const add = ( counts: DiffCharacterCounts, v: string ) : void => {
+      const add = ( counts: CharacterCounts, v: string ) : void => {
         counts.utf16CodeUnits += v.length;
         counts.utf8Bytes += ( this.encoder ??= new TextEncoder() ).encode( v ).length;
 
         for ( const _ of v ) counts.unicodeCodePoints++;
       };
 
-      const process = ( s: number, l: number, counts: DiffCharacterCounts, key: 'modified' | 'original' ) => {
+      const process = ( s: number, l: number, counts: CharacterCounts, key: 'modified' | 'original' ) => {
         for ( let i = s; i < s + l; i++ ) add( counts, this.result[ key ][ i ].value );
       };
 
@@ -78,15 +73,15 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
       }
 
       return {
-        utf16CodeUnits: this.createMetricStats(
+        utf16CodeUnits: this.stats(
           stats.o.utf16CodeUnits, stats.m.utf16CodeUnits, stats.e.utf16CodeUnits,
           stats.i.utf16CodeUnits, stats.d.utf16CodeUnits
         ),
-        unicodeCodePoints: this.createMetricStats(
+        unicodeCodePoints: this.stats(
           stats.o.unicodeCodePoints, stats.m.unicodeCodePoints, stats.e.unicodeCodePoints,
           stats.i.unicodeCodePoints, stats.d.unicodeCodePoints
         ),
-        utf8Bytes: this.createMetricStats(
+        utf8Bytes: this.stats(
           stats.o.utf8Bytes, stats.m.utf8Bytes, stats.e.utf8Bytes,
           stats.i.utf8Bytes, stats.d.utf8Bytes
         )
@@ -94,7 +89,7 @@ export class DiffAnalyzer< T extends Record< string, unknown > = {} > {
     } )();
   }
 
-  public getOperationStats () : DiffOperationStats {
+  public getOperationStats () : OperationStats {
     return this.operationStats ??= ( () => {
       const stats = {
         total: this.result.operations.length, equal: 0, insert: 0, delete: 0,
