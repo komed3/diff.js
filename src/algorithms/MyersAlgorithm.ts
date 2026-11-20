@@ -3,148 +3,87 @@ import type { EditStep, Operation } from '../types/operation';
 
 
 export class MyersAlgorithm implements DiffAlgorithm {
-  public diff < T > (
-    original: readonly T[], modified: readonly T[],
-    equals: ( original: T, modified: T ) => boolean
-  ) : Operation[] {
-    const n = original.length, m = modified.length;
+  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
+    const [ n, m ] = [ original.length, modified.length ];
     let prefix = 0, suffix = 0;
 
-    while (
-      prefix < n && prefix < m &&
-      equals( original[ prefix ], modified[ prefix ] )
-    ) prefix++;
+    while ( prefix < n && prefix < m && equals( original[ prefix ], modified[ prefix ] ) ) prefix++;
+    while ( suffix < n - prefix && suffix < m - prefix && equals( original[ n - suffix - 1 ], modified[ m - suffix - 1 ] ) ) suffix++;
 
-    while (
-      suffix < n - prefix && suffix < m - prefix &&
-      equals( original[ n - suffix - 1 ], modified[ m - suffix - 1 ] )
-    ) suffix++;
+    const edits: EditStep[ 'type' ][] = [];
+    for ( let i = 0; i < suffix; i++ ) edits.push( 'equal' );
 
-    const steps: EditStep[] = [];
+    const [ oLen, mLen ] = [ n - prefix - suffix, m - prefix - suffix ];
+    const maxDist = oLen + mLen, offset = maxDist + 1;
 
-    for ( let i = 0; i < suffix; i++ ) steps.push( {
-      type: 'equal', original: n - i - 1, modified: m - i - 1
-    } );
+    if ( maxDist ) {
+      const frontier = new Int32Array( maxDist * 2 + 3 ), trace: Int32Array[] = [];
+      frontier[ offset + 1 ] = 0;
 
-    const oLength = n - prefix - suffix, mLength = m - prefix - suffix;
-    const max = oLength + mLength;
+      let dist = 0, finished = false;
 
-    if ( max ) {
-      const vector = new Int32Array( max * 2 + 3 ), trace: Int32Array[] = [];
-      const offset = max + 1;
-      let dist = 0, found = false;
+      for ( ; dist <= maxDist; dist++ ) {
+        for ( let diag = -dist; diag <= dist; diag += 2 ) {
+          const index = offset + diag;
 
-      for ( let d = 0; d <= max; d++ ) {
-        for ( let k = -d; k <= d; k += 2 ) {
-          const i = offset + k;
-          let x = k === -d || ( k !== d && vector[ i - 1 ] < vector[ i + 1 ] )
-            ? vector[ i + 1 ] : vector[ i - 1 ] + 1;
-          let y = x - k;
+          let x = diag === -dist || ( diag !== dist && frontier[ index - 1 ] < frontier[ index + 1 ] )
+            ? frontier[ index + 1 ] : frontier[ index - 1 ] + 1, y = x - diag;
 
-          while (
-            x < oLength && y < mLength &&
-            equals( original[ prefix + x ], modified[ prefix + y ] )
-          ) x++, y++;
+          while ( x < oLen && y < mLen && equals( original[ prefix + x ], modified[ prefix + y ] ) ) x++, y++;
+          frontier[ index ] = x;
 
-          vector[ i ] = x;
-
-          if ( x >= oLength && y >= mLength ) {
-            dist = d, found = true;
-            break;
-          }
+          if ( x >= oLen && y >= mLen ) { finished = true; break }
         }
 
-        const layer = new Int32Array( d + 1 );
-
-        for ( let k = -d, j = 0; k <= d; k += 2, j++ )
-          layer[ j ] = vector[ offset + k ];
-
+        const layer = new Int32Array( dist + 1 );
+        for ( let diag = -dist, i = 0; diag <= dist; diag += 2, i++ ) layer[ i ] = frontier[ offset + diag ];
         trace.push( layer );
-        if ( found ) break;
+
+        if ( finished ) break;
       }
 
-      let x = oLength, y = mLength;
+      let [ x, y ] = [ oLen, mLen ];
 
       for ( let d = dist; d > 0; d-- ) {
-        const prev = trace[ d - 1 ], k = x - y;
-        const prevK = k === -d || (
-          k !== d && prev[ ( k - 1 + d - 1 ) / 2 ] < prev[ ( k + 1 + d - 1 ) / 2 ]
-        ) ? k + 1 : k - 1;
+        const prev = trace[ d - 1 ], diag = x - y;
+        const prevDiag = diag === -d || ( diag !== d && prev[ ( diag + d - 2 ) / 2 ] < prev[ ( diag + d ) / 2 ] )
+          ? diag + 1 : diag - 1;
 
-        const prevX = prev[ ( prevK + d - 1 ) / 2 ], prevY = prevX - prevK;
+        const prevX = prev[ ( prevDiag + d - 1 ) / 2 ], prevY = prevX - prevDiag;
+        while ( x > prevX && y > prevY ) edits.push( 'equal' ), x--, y--;
 
-        while ( x > prevX && y > prevY ) {
-          x--, y--;
-
-          steps.push( { type: 'equal', original: prefix + x, modified: prefix + y } );
-        }
-
-        if ( x === prevX ) {
-          y--;
-
-          steps.push( { type: 'insert', original: prefix + x, modified: prefix + y } );
-        } else {
-          x--;
-
-          steps.push( { type: 'delete', original: prefix + x, modified: prefix + y } );
-        }
-
-        x = prevX, y = prevY;
+        edits.push( x === prevX ? 'insert' : 'delete' );
+        x === prevX ? y-- : x--;
+        [ x, y ] = [ prevX, prevY ];
       }
 
-      while ( x > 0 && y > 0 ) {
-        x--, y--;
-
-        steps.push( { type: 'equal', original: prefix + x, modified: prefix + y } );
-      }
+      while ( x > 0 && y > 0 ) edits.push( 'equal' ), x--, y--;
+      while ( x-- ) edits.push( 'delete' );
+      while ( y-- ) edits.push( 'insert' );
     }
 
-    for ( let i = prefix - 1; i >= 0; i-- )
-      steps.push( { type: 'equal', original: i, modified: i } );
+    for ( let i = 0; i < prefix; i++ ) edits.push( 'equal' );
 
-    steps.reverse();
+    edits.reverse();
 
     const operations: Operation[] = [];
-    let oStart = 0, mStart = 0, oCount = 0, mCount = 0;
-    let oPos = 0, mPos = 0;
-    let type: EditStep[ 'type' ] | null = null;
+    let [ origIdx, modIdx ] = [ 0, 0 ];
 
-    const flush = () => {
-      if ( ! type ) return;
+    for ( let i = 0; i < edits.length; ) {
+      const type = edits[ i ], start = i;
+      while ( i < edits.length && edits[ i ] === type ) i++;
+      const length = i - start;
 
-      if ( type === 'equal' ) operations.push( {
+      operations.push( {
         type,
-        original: { start: oStart, length: oCount },
-        modified: { start: mStart, length: mCount }
-      } );
-      else if ( type === 'insert' ) operations.push( {
-        type,
-        original: { start: oStart, length: 0 },
-        modified: { start: mStart, length: mCount }
-      } );
-      else operations.push( {
-        type,
-        original: { start: oStart, length: oCount },
-        modified: { start: mStart, length: 0 }
-      } );
+        original: { start: origIdx, length: type === 'insert' ? 0 : length },
+        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
+      } as Operation );
 
-      type = null, oCount = 0, mCount = 0;
-    };
-
-    for ( const step of steps ) {
-      if ( type !== step.type ) {
-        flush();
-
-        type = step.type;
-        oStart = oPos;
-        mStart = mPos;
-      }
-
-      if ( step.type !== 'insert' ) oCount++, oPos++;
-      if ( step.type !== 'delete' ) mCount++, mPos++;
+      if ( type !== 'insert' ) origIdx += length;
+      if ( type !== 'delete' ) modIdx += length;
     }
 
-    flush();
     return operations;
   }
 }
