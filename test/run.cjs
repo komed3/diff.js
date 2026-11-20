@@ -12,5 +12,5 @@ require( './algorithms/MyersAlgorithm.test.cjs' );
 
 // --- core classes ---
 
-require( './core/DiffAnalyzer.test.cjs' );
-require( './core/DiffEngine.test.cjs' );
+require( './core/Analyzer.test.cjs' );
+require( './core/Engine.test.cjs' );
