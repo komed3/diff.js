@@ -8,10 +8,6 @@ import type {
 export class DiffMagnitude {
   private readonly stats: DiffMetricStats;
 
-  public constructor ( stats: DiffMetricStats ) {
-    this.stats = stats;
-  }
-
   private getValue ( { metric = 'changed', base = 'original' }: DiffMagnitudeOptions = {} ) : DiffMagnitudeValue {
     return {
       value: this.stats[ metric ],
@@ -20,6 +16,10 @@ export class DiffMagnitude {
         : base === 'combined' ? this.stats.original + this.stats.modified
         : Math.max( this.stats.original, this.stats.modified )
     };
+  }
+
+  public constructor ( stats: DiffMetricStats ) {
+    this.stats = stats;
   }
 
   public absolute ( options: DiffMagnitudeOptions = {} ) : DiffMagnitudeAbsolute {
