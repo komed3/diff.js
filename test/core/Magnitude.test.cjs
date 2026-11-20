@@ -73,4 +73,15 @@ test( 'Magnitude', async t => {
     assert.equal( magnitude.percentage( { base: 0 } ).percentage, null );
     assert.deepEqual( magnitude.boxes( { base: 0 } ), { value: 8, baseValue: 0, filled: null, empty: null, total: 10 } );
   } );
+
+  await t.test( 'handles null metric values', () => {
+    const magnitude = createMagnitude( { growthRate: null } );
+
+    assert.deepEqual( magnitude.absolute( { metric: 'growthRate' } ), { value: null, baseValue: 10, magnitude: null } );
+    assert.deepEqual( magnitude.relative( { metric: 'growthRate' } ), { value: null, baseValue: 10, ratio: null } );
+    assert.deepEqual( magnitude.percentage( { metric: 'growthRate' } ), { value: null, baseValue: 10, percentage: null } );
+    assert.deepEqual( magnitude.boxes( { metric: 'growthRate' } ), {
+      value: null, baseValue: 10, filled: null, empty: null, total: 10
+    } );
+  } );
 } );
