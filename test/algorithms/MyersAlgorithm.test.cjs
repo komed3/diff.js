@@ -44,3 +44,32 @@ const reconstruct = ( o, m, operations ) => {
   assert.equal( oPos, o.length );
   assert.equal( mPos, m.length );
 };
+
+
+test( 'MyersAlgorithm', async t => {
+  await t.test( 'handles two empty sequences', () => {
+    assert.deepEqual( diff( [], [] ), [] );
+  } );
+
+  await t.test( 'handles an empty original sequence', () => {
+    const original = [], modified = [ 'a', 'b', 'c' ];
+    const operations = diff( original, modified );
+
+    assert.deepEqual( operations, [ {
+      type: 'insert', original: { start: 0, length: 0 }, modified: { start: 0, length: 3 }
+    } ] );
+
+    reconstruct( original, modified, operations );
+  } );
+
+  await t.test( 'handles an empty modified sequence', () => {
+    const original = [ 'a', 'b', 'c' ], modified = [];
+    const operations = diff( original, modified );
+
+    assert.deepEqual( operations, [ {
+      type: 'delete', original: { start: 0, length: 3 }, modified: { start: 0, length: 0 }
+    } ] );
+
+    reconstruct( original, modified, operations );
+  } );
+} );
