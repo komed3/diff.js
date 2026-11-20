@@ -20,4 +20,14 @@ test( 'Magnitude', async t => {
     assert.deepEqual( magnitude.absolute( { metric: 'delta', base: 'modified' } ), { value: 4, baseValue: 14, magnitude: 4 } );
     assert.deepEqual( magnitude.absolute( { metric: 'delta', base: 20 } ), { value: 4, baseValue: 20, magnitude: 4 } );
   } );
+
+  await t.test( 'calculates relative magnitudes', () => {
+    const magnitude = createMagnitude();
+
+    assert.deepEqual( magnitude.relative(), { value: 8, baseValue: 10, ratio: 0.8 } );
+    assert.equal( magnitude.relative( { base: 'modified' } ).ratio, 8 / 14 );
+    assert.equal( magnitude.relative( { base: 'combined' } ).ratio, 8 / 24 );
+    assert.equal( magnitude.relative( { base: 'maximum' } ).ratio, 8 / 14 );
+    assert.equal( magnitude.relative( { base: 20 } ).ratio, 0.4 );
+  } );
 } );
