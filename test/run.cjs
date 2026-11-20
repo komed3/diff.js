@@ -14,3 +14,4 @@ require( './algorithms/MyersAlgorithm.test.cjs' );
 
 require( './core/Analyzer.test.cjs' );
 require( './core/Engine.test.cjs' );
+require( './core/Magnitude.test.cjs' );
