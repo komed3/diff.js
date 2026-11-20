@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 const { WordTokenizer } = require( '../../.test-dist/tokenizers/WordTokenizer.js' );
-const assertComplete = require( '../helpers/assertComplete.cjs' );
+const assertTokenComplete = require( '../helpers/assertTokenComplete.cjs' );
 
 
 test( 'WordTokenizer', async t => {
@@ -15,7 +15,7 @@ test( 'WordTokenizer', async t => {
       'word', 'punctuation', 'whitespace', 'word', 'punctuation'
     ] );
 
-    assertComplete( 'Hello, world!', tokens );
+    assertTokenComplete( 'Hello, world!', tokens );
   } );
 
   await t.test( 'recognizes Unicode words', () => {
@@ -23,7 +23,7 @@ test( 'WordTokenizer', async t => {
 
     assert.ok( tokens.some( ( { value, type } ) => value === 'Grüße' && type === 'word' ) );
     assert.ok( tokens.some( ( { type } ) => type === 'word' ) );
-    assertComplete( text, tokens );
+    assertTokenComplete( text, tokens );
   } );
 
   await t.test( 'preserves whitespace and punctuation', () => {
@@ -31,7 +31,7 @@ test( 'WordTokenizer', async t => {
 
     assert.ok( tokens.some( ( { type } ) => type === 'whitespace' ) );
     assert.ok( tokens.some( ( { type } ) => type === 'punctuation' ) );
-    assertComplete( text, tokens );
+    assertTokenComplete( text, tokens );
   } );
 
   await t.test( 'handles empty input', () => {

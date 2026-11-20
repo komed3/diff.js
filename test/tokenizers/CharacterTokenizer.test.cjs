@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 const { CharacterTokenizer } = require( '../../.test-dist/tokenizers/CharacterTokenizer.js' );
-const assertComplete = require( '../helpers/assertComplete.cjs' );
+const assertTokenComplete = require( '../helpers/assertTokenComplete.cjs' );
 
 
 test( 'CharacterTokenizer', async t => {
@@ -13,14 +13,14 @@ test( 'CharacterTokenizer', async t => {
 
     assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'H', 'e', 'l', 'l', 'o' ] );
     assert.ok( tokens.every( ( { type } ) => type === 'character' ) );
-    assertComplete( 'Hello', tokens );
+    assertTokenComplete( 'Hello', tokens );
   } );
 
   await t.test( 'keeps Unicode grapheme clusters intact', () => {
     const text = 'A😀e\u0301👨‍👩‍👧‍👦', tokens = tokenizer.tokenize( text );
 
     assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'A', '😀', 'e\u0301', '👨‍👩‍👧‍👦' ] );
-    assertComplete( text, tokens );
+    assertTokenComplete( text, tokens );
   } );
 
   await t.test( 'handles empty input', () => {

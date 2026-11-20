@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 const { LineTokenizer } = require( '../../.test-dist/tokenizers/LineTokenizer.js' );
-const assertComplete = require( '../helpers/assertComplete.cjs' );
+const assertTokenComplete = require( '../helpers/assertTokenComplete.cjs' );
 
 
 test( 'LineTokenizer', async t => {
@@ -16,21 +16,21 @@ test( 'LineTokenizer', async t => {
       'First\n', 'Second\r\n', 'Third\r', 'Fourth\u2028', 'Fifth\u2029'
     ] );
 
-    assertComplete( text, tokens );
+    assertTokenComplete( text, tokens );
   } );
 
   await t.test( 'preserves empty lines', () => {
     const text = 'First\n\nThird', tokens = tokenizer.tokenize( text );
 
     assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'First\n', '\n', 'Third' ] );
-    assertComplete( text, tokens );
+    assertTokenComplete( text, tokens );
   } );
 
   await t.test( 'preserves a trailing line ending', () => {
     const text = 'First\n', tokens = tokenizer.tokenize( text );
 
     assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'First\n' ] );
-    assertComplete( text, tokens );
+    assertTokenComplete( text, tokens );
   } );
 
   await t.test( 'handles empty input', () => {
@@ -38,8 +38,8 @@ test( 'LineTokenizer', async t => {
   } );
 
   await t.test( 'can tokenize multiple texts consecutively', () => {
-    assertComplete( 'First\nSecond', tokenizer.tokenize( 'First\nSecond' ) );
-    assertComplete( 'Third\r\nFourth', tokenizer.tokenize( 'Third\r\nFourth' ) );
-    assertComplete( 'Fifth', tokenizer.tokenize( 'Fifth' ) );
+    assertTokenComplete( 'First\nSecond', tokenizer.tokenize( 'First\nSecond' ) );
+    assertTokenComplete( 'Third\r\nFourth', tokenizer.tokenize( 'Third\r\nFourth' ) );
+    assertTokenComplete( 'Fifth', tokenizer.tokenize( 'Fifth' ) );
   } );
 } );
