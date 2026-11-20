@@ -78,4 +78,24 @@ test( 'DiffAnalyzer', async t => {
     assert.equal( stats.insertionOnlyBlocks, 0 );
     assert.equal( stats.deletionOnlyBlocks, 0 );
   } );
+
+  await t.test( 'identifies insertion-only and deletion-only blocks', () => {
+    const insertion = createAnalyzer( 'abc', 'abc!' ).getOperationStats();
+
+    assert.equal( insertion.changeBlocks, 1 );
+    assert.equal( insertion.insertionBlocks, 1 );
+    assert.equal( insertion.deletionBlocks, 0 );
+    assert.equal( insertion.replacementBlocks, 0 );
+    assert.equal( insertion.insertionOnlyBlocks, 1 );
+    assert.equal( insertion.deletionOnlyBlocks, 0 );
+
+    const deletion = createAnalyzer( 'abc!', 'abc' ).getOperationStats();
+
+    assert.equal( deletion.changeBlocks, 1 );
+    assert.equal( deletion.insertionBlocks, 0 );
+    assert.equal( deletion.deletionBlocks, 1 );
+    assert.equal( deletion.replacementBlocks, 0 );
+    assert.equal( deletion.insertionOnlyBlocks, 0 );
+    assert.equal( deletion.deletionOnlyBlocks, 1 );
+  } );
 } );
