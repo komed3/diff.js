@@ -145,4 +145,12 @@ test( 'DiffAnalyzer', async t => {
     assert.equal( deletion.growthRate, -1 );
     assert.equal( deletion.sizeRatio, 0 );
   } );
+
+  await t.test( 'reuses cached statistics', () => {
+    const analyzer = createAnalyzer( 'original', 'modified' );
+
+    assert.strictEqual( analyzer.getTokenStats(), analyzer.getTokenStats() );
+    assert.strictEqual( analyzer.getCharacterStats(), analyzer.getCharacterStats() );
+    assert.strictEqual( analyzer.getOperationStats(), analyzer.getOperationStats() );
+  } );
 } );
