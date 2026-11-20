@@ -138,6 +138,21 @@ test( 'MyersAlgorithm', async t => {
     assert.equal( assertDiffComplete( orig, mod, operations ), 0 );
   } );
 
+  await t.test( 'handles long unchanged prefixes and suffixes', () => {
+    const prefix = Array( 256 ).fill( 'P' ), suffix = Array( 256 ).fill( 'S' );
+    const orig = createTokens( [ ...prefix, 'A', 'B', ...suffix ] );
+    const mod = createTokens( [ ...prefix, 'X', 'Y', ...suffix ] );
+
+    const operations = algorithm.diff( orig, mod );
+    const distance = assertDiffComplete( orig, mod, operations );
+
+    assert.equal( distance, 4 );
+    assert.deepEqual( operations.map( ( { type } ) => type ), [ 'equal', 'delete', 'insert', 'equal' ] );
+    assert.equal( distance, orig.length + mod.length - 2 * lcsLength(
+      orig.map( ( { value } ) => value ), mod.map( ( { value } ) => value )
+    ) );
+  } );
+
   await t.test( 'returns a shortest edit script for all short sequences', () => {
     const sequences = createSequences( [ 'A', 'B' ], 4 );
 
