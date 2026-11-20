@@ -36,4 +36,26 @@ test( 'DiffAnalyzer', async t => {
     assert.deepEqual( stats.unicodeCodePoints, stats.utf16CodeUnits );
     assert.deepEqual( stats.utf8Bytes, stats.utf16CodeUnits );
   } );
+
+  await t.test( 'distinguishes UTF-16 units, Unicode codepoints and UTF-8 bytes', () => {
+    const stats = createAnalyzer( 'A😀', 'A😃!' ).getCharacterStats();
+
+    assert.equal( stats.utf16CodeUnits.original, 3 );
+    assert.equal( stats.utf16CodeUnits.modified, 4 );
+    assert.equal( stats.utf16CodeUnits.equal, 1 );
+    assert.equal( stats.utf16CodeUnits.inserted, 3 );
+    assert.equal( stats.utf16CodeUnits.deleted, 2 );
+
+    assert.equal( stats.unicodeCodePoints.original, 2 );
+    assert.equal( stats.unicodeCodePoints.modified, 3 );
+    assert.equal( stats.unicodeCodePoints.equal, 1 );
+    assert.equal( stats.unicodeCodePoints.inserted, 2 );
+    assert.equal( stats.unicodeCodePoints.deleted, 1 );
+
+    assert.equal( stats.utf8Bytes.original, 5 );
+    assert.equal( stats.utf8Bytes.modified, 6 );
+    assert.equal( stats.utf8Bytes.equal, 1 );
+    assert.equal( stats.utf8Bytes.inserted, 5 );
+    assert.equal( stats.utf8Bytes.deleted, 4 );
+  } );
 } );
