@@ -46,4 +46,22 @@ test( 'Patience', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'detects changes between unique anchors', () => {
+    const original = [ 'start', 'old', 'middle', 'old2', 'end' ];
+    const modified = [ 'start', 'new', 'middle', 'new2', 'end' ];
+    const operations = d( original, modified );
+
+    assert.deepEqual( operations, [
+      { type: 'equal', original: { start: 0, length: 1 }, modified: { start: 0, length: 1 } },
+      { type: 'delete', original: { start: 1, length: 1 }, modified: { start: 1, length: 0 } },
+      { type: 'insert', original: { start: 2, length: 0 }, modified: { start: 1, length: 1 } },
+      { type: 'equal', original: { start: 2, length: 1 }, modified: { start: 2, length: 1 } },
+      { type: 'delete', original: { start: 3, length: 1 }, modified: { start: 3, length: 0 } },
+      { type: 'insert', original: { start: 4, length: 0 }, modified: { start: 3, length: 1 } },
+      { type: 'equal', original: { start: 4, length: 1 }, modified: { start: 4, length: 1 } }
+    ] );
+
+    reconstruct( original, modified, operations );
+  } );
 } );
