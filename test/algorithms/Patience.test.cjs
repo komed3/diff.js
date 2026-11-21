@@ -94,4 +94,25 @@ test( 'Patience', async t => {
 
     reconstruct( original, modified, operations, compare );
   } );
+
+  await t.test( 'uses the supplied key function', () => {
+    const algorithm = new Patience( { getKey: value => value.toLowerCase() } );
+    const original = [ 'Alpha', 'old', 'Beta' ];
+    const modified = [ 'alpha', 'new', 'BETA' ];
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
+
+    reconstruct( original, modified, operations, compare );
+    assert.equal( getOperationCount( operations, 'equal' ), 2 );
+    assert.equal( getOperationCount( operations, 'delete' ), 1 );
+    assert.equal( getOperationCount( operations, 'insert' ), 1 );
+  } );
+
+  await t.test( 'handles key collisions without treating unequal elements as equal', () => {
+    const algorithm = new Patience( { getKey: () => 'same' } );
+    const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
+    const operations = algorithm.diff( original, modified, equals );
+
+    reconstruct( original, modified, operations );
+  } );
 } );
