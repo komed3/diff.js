@@ -20,3 +20,7 @@ export interface HuntSzymanskiOptions {
 export interface PatienceOptions {
   readonly getKey?: ( value: unknown ) => PropertyKey;
 }
+
+export interface HistogramOptions {
+  readonly getKey?: ( value: unknown ) => PropertyKey;
+}
