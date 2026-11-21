@@ -42,17 +42,17 @@ module.exports = {
     assert.equal( mPos, m.length );
   },
   
-  editDistance: ( original, modified ) => {
-    const rows = Array.from( { length: original.length + 1 }, () => new Uint32Array( modified.length + 1 ) );
+  editDistance: ( o, m ) => {
+    const rows = Array.from( { length: o.length + 1 }, () => new Uint32Array( m.length + 1 ) );
 
-    for ( let i = 0; i <= original.length; i++ ) rows[ i ][ 0 ] = i;
-    for ( let i = 0; i <= modified.length; i++ ) rows[ 0 ][ i ] = i;
+    for ( let i = 0; i <= o.length; i++ ) rows[ i ][ 0 ] = i;
+    for ( let i = 0; i <= m.length; i++ ) rows[ 0 ][ i ] = i;
 
-    for ( let i = 1; i <= original.length; i++ ) for ( let j = 1; j <= modified.length; j++ )
-      rows[ i ][ j ] = original[ i - 1 ] === modified[ j - 1 ] ? rows[ i - 1 ][ j - 1 ] :
+    for ( let i = 1; i <= o.length; i++ ) for ( let j = 1; j <= m.length; j++ )
+      rows[ i ][ j ] = o[ i - 1 ] === m[ j - 1 ] ? rows[ i - 1 ][ j - 1 ] :
         Math.min( rows[ i - 1 ][ j ] + 1, rows[ i ][ j - 1 ] + 1 );
 
-    return rows[ original.length ][ modified.length ];
+    return rows[ o.length ][ m.length ];
   },
 
   getEditDistance: ( operations ) => operations.reduce( ( d, { type, original, modified } ) =>
