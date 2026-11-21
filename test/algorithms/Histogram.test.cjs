@@ -64,4 +64,13 @@ test( 'Histogram', async t => {
     reconstruct( original, modified, operations );
     assert.equal( getEqualLength( operations ), 4 );
   } );
+
+  await t.test( 'uses Myers for regions without common elements', () => {
+    const original = [ 'a', 'b' ], modified = [ 'c', 'd' ];
+    const operations = d( original, modified );
+
+    reconstruct( original, modified, operations );
+    assert.equal( getOperationCount( operations, 'delete' ), 1 );
+    assert.equal( getOperationCount( operations, 'insert' ), 1 );
+  } );
 } );
