@@ -102,4 +102,13 @@ test( 'Histogram', async t => {
     reconstruct( original, modified, operations );
     assert.equal( getEqualLength( operations ), 2 );
   } );
+
+  await t.test( 'does not modify input sequences', () => {
+    const original = [ 'a', 'b', 'b', 'c' ], modified = [ 'a', 'b', 'c', 'c' ];
+    const originalCopy = [ ...original ], modifiedCopy = [ ...modified ];
+
+    d( original, modified );
+    assert.deepEqual( original, originalCopy );
+    assert.deepEqual( modified, modifiedCopy );
+  } );
 } );
