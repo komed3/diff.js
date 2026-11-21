@@ -1,3 +1,4 @@
+import { appendOperations, createOperations } from '../core/EditScript';
 import type { Algorithm, PatienceOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 import { Myers } from './Myers';
@@ -81,16 +82,9 @@ export class Patience implements Algorithm {
 
       anchors.reverse();
 
-      if ( ! anchors.length ) {
-        for ( const op of fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals ) ) {
-          const code = op.type === 'equal' ? 0 : op.type === 'insert' ? 1 : 2;
-          const length = op.type === 'insert' ? op.modified.length : op.original.length;
-
-          for ( let i = 0; i < length; i++ ) edits.push( code );
-        }
-
-        return;
-      }
+      if ( ! anchors.length ) return appendOperations(
+        edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
+      );
 
       let [ origIdx, modIdx ] = [ oStart, mStart ];
 
@@ -105,25 +99,6 @@ export class Patience implements Algorithm {
     };
 
     process( 0, original.length, 0, modified.length );
-
-    const operations: Operation[] = [];
-    let [ origIdx, modIdx ] = [ 0, 0 ];
-
-    for ( let i = 0; i < edits.length; ) {
-      const code = edits[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
-      while ( i < edits.length && edits[ i ] === code ) i++;
-      const length = i - start;
-
-      operations.push( {
-        type,
-        original: { start: origIdx, length: type === 'insert' ? 0 : length },
-        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
-      } as Operation );
-
-      if ( type !== 'insert' ) origIdx += length;
-      if ( type !== 'delete' ) modIdx += length;
-    }
-
-    return operations;
+    return createOperations( edits );
   }
 }
