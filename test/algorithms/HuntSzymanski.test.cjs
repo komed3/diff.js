@@ -140,4 +140,55 @@ test( 'HuntSzymanski', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'uses deterministic deletion-first tie-breaking', () => {
+    const original = [ 'a', 'b' ], modified = [ 'b', 'a' ];
+    const operations = d( original, modified );
+
+    assert.deepEqual( operations, [
+      { type: 'delete', original: { start: 0, length: 1 }, modified: { start: 0, length: 0 } },
+      { type: 'equal', original: { start: 1, length: 1 }, modified: { start: 0, length: 1 } },
+      { type: 'insert', original: { start: 2, length: 0 }, modified: { start: 1, length: 1 } }
+    ] );
+
+    reconstruct( original, modified, operations );
+  } );
+
+  await t.test( 'does not modify input sequences', () => {
+    const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
+    const originalCopy = [ ...original ], modifiedCopy = [ ...modified ];
+
+    d( original, modified );
+    assert.deepEqual( original, originalCopy );
+    assert.deepEqual( modified, modifiedCopy );
+  } );
+
+  await t.test( 'produces minimal edit scripts for short sequences', () => {
+    const sequences = [ [] ];
+
+    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
+      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
+
+    for ( const original of sequences ) for ( const modified of sequences ) {
+      const operations = d( original, modified );
+
+      reconstruct( original, modified, operations );
+      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
+    }
+  } );
+
+  await t.test( 'produces minimal edit scripts with key indexing', () => {
+    const algorithm = new HuntSzymanski( { getKey: value => value } );
+    const sequences = [ [] ];
+
+    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
+      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
+
+    for ( const original of sequences ) for ( const modified of sequences ) {
+      const operations = algorithm.diff( original, modified, equals );
+
+      reconstruct( original, modified, operations );
+      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
+    }
+  } );
 } );
