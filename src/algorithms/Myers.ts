@@ -2,7 +2,7 @@ import type { Algorithm, MyersOptions } from '../types/algorithm';
 import type { EditStep, Operation } from '../types/operation';
 
 
-export class MyersAlgorithm implements Algorithm {
+export class Myers implements Algorithm {
   private readonly mode: 'fast' | 'minimal';
 
   public constructor ( options: MyersOptions = {} ) {
