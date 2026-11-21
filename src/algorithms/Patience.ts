@@ -1,7 +1,9 @@
 import type { Algorithm, PatienceOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
+import { appendOperations } from '../utils/appendOperations';
 import { createOperations } from '../utils/createOperations';
 import { processAnchors } from '../utils/processAnchors';
+import { Myers } from './Myers';
 
 
 export class Patience implements Algorithm {
@@ -12,7 +14,7 @@ export class Patience implements Algorithm {
   }
 
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const edits: ( 0 | 1 | 2 )[] = [];
+    const edits: ( 0 | 1 | 2 )[] = [], fallback = new Myers();
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
       const candidates: { original: number; modified: number }[] = [];
@@ -58,7 +60,9 @@ export class Patience implements Algorithm {
         }
       }
 
-      processAnchors( candidates, edits, original, modified, equals, oStart, oEnd, mStart, mEnd, process );
+      processAnchors( candidates, edits, oStart, oEnd, mStart, mEnd, process, () => appendOperations(
+        edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
+      ) );
     };
 
     process( 0, original.length, 0, modified.length );
