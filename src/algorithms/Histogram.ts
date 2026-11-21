@@ -1,6 +1,7 @@
 import type { Algorithm, HistogramOptions } from '../types/algorithm';
 import type { Operation, Pair } from '../types/operation';
 import { createOperations } from '../utils/createOperations';
+import { findCommonEdges } from '../utils/findCommonEdges';
 import { processAnchors } from '../utils/processAnchors';
 
 
@@ -15,8 +16,12 @@ export class Histogram implements Algorithm {
     const edits: ( 0 | 1 | 2 )[] = [];
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
+      const { prefix, suffix } = findCommonEdges( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals );
+      for ( let i = 0; i < prefix; i++ ) edits.push( 0 );
+
       const groups: { value: T; original: number[]; modified: number[] }[] = [];
       const buckets = this.getKey ? new Map< PropertyKey, typeof groups >() : undefined;
+      oStart += prefix, mStart += prefix, oEnd -= suffix, mEnd -= suffix;
 
       for ( let i = oStart; i < oEnd; i++ ) {
         const key = this.getKey?.( original[ i ] ), candidates = buckets ? buckets.get( key! ) ?? [] : groups;
@@ -60,6 +65,7 @@ export class Histogram implements Algorithm {
 
       candidates.sort( ( a, b ) => a.original - b.original );
       processAnchors( candidates, edits, original, modified, equals, oStart, oEnd, mStart, mEnd, process );
+      for ( let i = 0; i < suffix; i++ ) edits.push( 0 );
     };
 
     process( 0, original.length, 0, modified.length );
