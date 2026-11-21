@@ -24,7 +24,7 @@ export class LCS implements Algorithm {
           const index = ( i - 1 ) * mLen + j - 1;
 
           if ( equals( original[ prefix + i - 1 ], modified[ prefix + j - 1 ] ) ) current[ j ] = previous[ j - 1 ] + 1, dirs[ index ] = 1;
-          else if ( previous[ j ] >= current[ j - 1 ] ) current[ j ] = previous[ j ], dirs[ index ] = 2;
+          else if ( previous[ j ] > current[ j - 1 ] ) current[ j ] = previous[ j ], dirs[ index ] = 2;
           else current[ j ] = current[ j - 1 ], dirs[ index ] = 3;
         }
 
