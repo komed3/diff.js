@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
-const { diff, reconstruct, editDistance, getEditDistance, equals } = require( '../utils.cjs' );
+const { diff, reconstruct, getOperationCount, createSequences, assertMinimal, equals } = require( '../utils.cjs' );
 
 
 const algorithm = new Myers();
@@ -103,8 +103,8 @@ test( 'MyersAlgorithm', async t => {
     const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ], modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
     const operations = d( original, modified );
 
-    assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 1 );
-    assert.equal( operations.filter( ( { type } ) => type === 'delete' ).length, 1 );
+    assert.equal( getOperationCount( operations, 'insert' ), 1 );
+    assert.equal( getOperationCount( operations, 'delete' ), 1 );
     reconstruct( original, modified, operations );
   } );
 
@@ -112,19 +112,22 @@ test( 'MyersAlgorithm', async t => {
     const original = [ 'a', 'b', 'c', 'd', 'e' ], modified = [ 'a', 'x', 'c', 'y', 'e' ];
     const operations = d( original, modified );
 
-    assert.equal( operations.filter( ( { type } ) => type === 'equal' ).length, 3 );
-    assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 2 );
-    assert.equal( operations.filter( ( { type } ) => type === 'delete' ).length, 2 );
+    assert.equal( getOperationCount( operations, 'equal' ), 3 );
+    assert.equal( getOperationCount( operations, 'insert' ), 2 );
+    assert.equal( getOperationCount( operations, 'delete' ), 2 );
     reconstruct( original, modified, operations );
   } );
 
   await t.test( 'uses the supplied equality function', () => {
     const original = [ 'Alpha', 'Beta' ], modified = [ 'alpha', 'BETA' ];
-    const operations = algorithm.diff( original, modified, ( a, b ) => a.toLowerCase() === b.toLowerCase() );
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } }
     ] );
+
+    reconstruct( original, modified, operations, compare );
   } );
 
   await t.test( 'supports minimal mode', () => {
@@ -141,17 +144,10 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'produces minimal edit scripts for short sequences', () => {
     const algorithm = new Myers( { mode: 'minimal' } );
-    const sequences = [ [] ];
+    const sequences = createSequences();
 
-    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
-      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
-
-    for ( const original of sequences ) for ( const modified of sequences ) {
-      const operations = algorithm.diff( original, modified, equals );
-
-      reconstruct( original, modified, operations );
-      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
-    }
+    for ( const original of sequences ) for ( const modified of sequences )
+      assertMinimal( original, modified, algorithm.diff( original, modified, equals ) );
   } );
 
   await t.test( 'bounds fast-mode search and returns a valid fallback', () => {
