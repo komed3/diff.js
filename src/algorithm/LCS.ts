@@ -19,30 +19,29 @@ export class LCS implements Algorithm {
 
     if ( oLen && mLen ) {
       const dirs = new Uint8Array( oLen * mLen );
-      let previous = new Uint32Array( mLen + 1 ), current = new Uint32Array( mLen + 1 );
-      let temp = previous;
+      let prev = new Uint32Array( mLen + 1 ), curr = new Uint32Array( mLen + 1 ), temp = prev;
 
       for ( let i = 1; i <= oLen; i++ ) {
-        const originalValue = original[ prefix + i - 1 ], rowOffset = ( i - 1 ) * mLen;
+        const value = original[ prefix + i - 1 ], rowOffset = ( i - 1 ) * mLen;
 
         for ( let j = 1; j <= mLen; j++ ) {
           const index = rowOffset + j - 1;
 
-          if ( equals( originalValue, modified[ prefix + j - 1 ] ) ) current[ j ] = previous[ j - 1 ] + 1, dirs[ index ] = 1;
-          else if ( previous[ j ] > current[ j - 1 ] ) current[ j ] = previous[ j ], dirs[ index ] = 2;
-          else current[ j ] = current[ j - 1 ], dirs[ index ] = 3;
+          if ( equals( value, modified[ prefix + j - 1 ] ) ) curr[ j ] = prev[ j - 1 ] + 1, dirs[ index ] = 1;
+          else if ( prev[ j ] > curr[ j - 1 ] ) curr[ j ] = prev[ j ], dirs[ index ] = 2;
+          else curr[ j ] = curr[ j - 1 ], dirs[ index ] = 3;
         }
 
-        temp = previous, previous = current, current = temp;
+        temp = prev, prev = curr, curr = temp;
       }
 
       let i = oLen, j = mLen;
 
       while ( i && j ) {
-        const direction = dirs[ ( i - 1 ) * mLen + j - 1 ];
+        const dir = dirs[ ( i - 1 ) * mLen + j - 1 ];
 
-        if ( direction === 1 ) pushEdit( 0 ), i--, j--;
-        else if ( direction === 2 ) pushEdit( 2 ), i--;
+        if ( dir === 1 ) pushEdit( 0 ), i--, j--;
+        else if ( dir === 2 ) pushEdit( 2 ), i--;
         else pushEdit( 1 ), j--;
       }
 
