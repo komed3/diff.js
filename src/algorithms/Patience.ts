@@ -1,6 +1,7 @@
 import type { Algorithm, PatienceOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 import { createOperations } from '../utils/createOperations';
+import { findCommonEdges } from '../utils/findCommonEdges';
 import { processAnchors } from '../utils/processAnchors';
 
 
@@ -15,7 +16,11 @@ export class Patience implements Algorithm {
     const edits: ( 0 | 1 | 2 )[] = [];
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
+      const { prefix, suffix } = findCommonEdges( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals );
+      for ( let i = 0; i < prefix; i++ ) edits.push( 0 );
+
       const candidates: { original: number; modified: number }[] = [];
+      oStart += prefix, mStart += prefix, oEnd -= suffix, mEnd -= suffix;
 
       if ( this.getKey ) {
         const oPos = new Map< PropertyKey, { count: number; index: number } >();
@@ -60,6 +65,7 @@ export class Patience implements Algorithm {
       }
 
       processAnchors( candidates, edits, original, modified, equals, oStart, oEnd, mStart, mEnd, process );
+      for ( let i = 0; i < suffix; i++ ) edits.push( 0 );
     };
 
     process( 0, original.length, 0, modified.length );
