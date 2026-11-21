@@ -194,7 +194,7 @@ test( 'MyersAlgorithm', async t => {
   } );
 
   await t.test( 'produces minimal edit scripts for short sequences', () => {
-    const algorithm = new MyersAlgorithm( { mode: 'minimal' } );
+    const algorithm = new Myers( { mode: 'minimal' } );
     const sequences = [ [] ];
 
     for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
@@ -209,7 +209,7 @@ test( 'MyersAlgorithm', async t => {
   } );
 
   await t.test( 'bounds fast-mode search and returns a valid fallback', () => {
-    const algorithm = new MyersAlgorithm( { mode: 'fast' } );
+    const algorithm = new Myers( { mode: 'fast' } );
     const original = Array.from( { length: 2000 }, ( _, i ) => `a${ i }` );
     const modified = Array.from( { length: 2000 }, ( _, i ) => `b${ i }` );
     const operations = algorithm.diff( original, modified, equals );
