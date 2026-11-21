@@ -48,5 +48,48 @@ export class HuntSzymanski implements Algorithm {
         tails[ low ] = j, tailNodes[ low ] = node;
       }
     }
+
+    const matches: number[] = [];
+    let node = tailNodes[ tails.length - 1 ];
+
+    while ( node !== undefined && node >= 0 ) matches.push( node ), node = matchPrevious[ node ];
+
+    matches.reverse();
+
+    const edits: ( 0 | 1 | 2 )[] = [];
+    let [ origIdx, modIdx ] = [ 0, 0 ];
+
+    for ( const match of matches ) {
+      const i = matchOriginal[ match ], j = matchModified[ match ];
+
+      while ( origIdx < i ) edits.push( 2 ), origIdx++;
+      while ( modIdx < j ) edits.push( 1 ), modIdx++;
+
+      edits.push( 0 );
+      origIdx++, modIdx++;
+    }
+
+    while ( origIdx < original.length ) edits.push( 2 ), origIdx++;
+    while ( modIdx < modified.length ) edits.push( 1 ), modIdx++;
+
+    const operations: Operation[] = [];
+    [ origIdx, modIdx ] = [ 0, 0 ];
+
+    for ( let i = 0; i < edits.length; ) {
+      const code = edits[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
+      while ( i < edits.length && edits[ i ] === code ) i++;
+      const length = i - start;
+
+      operations.push( {
+        type,
+        original: { start: origIdx, length: type === 'insert' ? 0 : length },
+        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
+      } as Operation );
+
+      if ( type !== 'insert' ) origIdx += length;
+      if ( type !== 'delete' ) modIdx += length;
+    }
+
+    return operations;
   }
 }
