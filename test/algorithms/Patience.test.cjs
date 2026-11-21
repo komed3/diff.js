@@ -74,4 +74,12 @@ test( 'Patience', async t => {
     assert.equal( getOperationCount( operations, 'delete' ), 1 );
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'does not use elements that are not unique in both sequences as anchors', () => {
+    const original = [ 'a', 'b', 'b', 'c' ], modified = [ 'a', 'b', 'c' ];
+    const operations = d( original, modified );
+
+    reconstruct( original, modified, operations );
+    assert.equal( getOperationCount( operations, 'delete' ), 1 );
+  } );
 } );
