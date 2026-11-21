@@ -1,9 +1,7 @@
 import type { Algorithm, HistogramOptions } from '../types/algorithm';
 import type { Operation, Pair } from '../types/operation';
-import { appendOperations } from '../utils/appendOperations';
 import { createOperations } from '../utils/createOperations';
 import { processAnchors } from '../utils/processAnchors';
-import { Myers } from './Myers';
 
 
 export class Histogram implements Algorithm {
@@ -14,7 +12,7 @@ export class Histogram implements Algorithm {
   }
 
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const edits: ( 0 | 1 | 2 )[] = [], fallback = new Myers();
+    const edits: ( 0 | 1 | 2 )[] = [];
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
       const groups: { value: T; original: number[]; modified: number[] }[] = [];
@@ -63,9 +61,7 @@ export class Histogram implements Algorithm {
       }
 
       candidates.sort( ( a, b ) => a.original - b.original );
-      processAnchors( candidates, edits, oStart, oEnd, mStart, mEnd, process, () => appendOperations(
-        edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
-      ) );
+      processAnchors( candidates, edits, original, modified, equals, oStart, oEnd, mStart, mEnd, process );
     };
 
     process( 0, original.length, 0, modified.length );
