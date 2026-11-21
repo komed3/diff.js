@@ -193,12 +193,28 @@ test( 'MyersAlgorithm', async t => {
     reconstruct( original, modified, operations );
   } );
 
-  await t.test( 'keeps fast-mode fallback valid', () => {
-    const algorithm = new Myers( { mode: 'fast' } );
+  await t.test( 'produces minimal edit scripts for short sequences', () => {
+    const algorithm = new MyersAlgorithm( { mode: 'minimal' } );
+    const sequences = [ [] ];
+
+    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
+      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
+
+    for ( const original of sequences ) for ( const modified of sequences ) {
+      const operations = algorithm.diff( original, modified, equals );
+
+      reconstruct( original, modified, operations );
+      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
+    }
+  } );
+
+  await t.test( 'bounds fast-mode search and returns a valid fallback', () => {
+    const algorithm = new MyersAlgorithm( { mode: 'fast' } );
     const original = Array.from( { length: 2000 }, ( _, i ) => `a${ i }` );
     const modified = Array.from( { length: 2000 }, ( _, i ) => `b${ i }` );
     const operations = algorithm.diff( original, modified, equals );
 
+    assert.deepEqual( operations.map( ( { type } ) => type ), [ 'delete', 'insert' ] );
     reconstruct( original, modified, operations );
   } );
 } );
