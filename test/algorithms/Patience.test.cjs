@@ -64,4 +64,14 @@ test( 'Patience', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'uses Myers for regions without unique anchors', () => {
+    const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ];
+    const modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
+    const operations = d( original, modified );
+
+    assert.equal( getOperationCount( operations, 'insert' ), 1 );
+    assert.equal( getOperationCount( operations, 'delete' ), 1 );
+    reconstruct( original, modified, operations );
+  } );
 } );
