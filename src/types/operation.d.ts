@@ -1,3 +1,5 @@
+export type Pairs = { original: number; modified: number }[];
+
 export interface OperationRange {
   readonly start: number;
   readonly length: number;
