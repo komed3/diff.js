@@ -1,5 +1,5 @@
 import type { Algorithm, HistogramOptions } from '../types/algorithm';
-import type { Operation } from '../types/operation';
+import type { Operation, Pair } from '../types/operation';
 import { appendOperations, createOperations } from '../utils/EditScript';
 import { longestIncreasingSubsequence } from '../utils/LIS';
 import { Myers } from './Myers';
@@ -47,7 +47,7 @@ export class Histogram implements Algorithm {
         if ( group ) group.modified.push( j );
       }
 
-      const candidates: { original: number; modified: number }[] = [];
+      const candidates: Pair[] = [];
       let frequency = Infinity;
 
       for ( const group of groups ) {
@@ -62,30 +62,7 @@ export class Histogram implements Algorithm {
       }
 
       candidates.sort( ( a, b ) => a.original - b.original );
-
-      const tails: number[] = [], previous = new Int32Array( candidates.length );
-      previous.fill( -1 );
-
-      for ( let i = 0; i < candidates.length; i++ ) {
-        let low = 0, high = tails.length;
-
-        while ( low < high ) {
-          const middle = ( low + high ) >>> 1;
-
-          if ( candidates[ tails[ middle ] ].modified < candidates[ i ].modified ) low = middle + 1;
-          else high = middle;
-        }
-
-        if ( low ) previous[ i ] = tails[ low - 1 ];
-        tails[ low ] = i;
-      }
-
-      const anchors = [];
-      let node = tails[ tails.length - 1 ];
-
-      while ( node !== undefined && node >= 0 ) anchors.push( candidates[ node ] ), node = previous[ node ];
-
-      anchors.reverse();
+      const anchors = longestIncreasingSubsequence( candidates );
 
       if ( ! anchors.length ) return appendOperations(
         edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
