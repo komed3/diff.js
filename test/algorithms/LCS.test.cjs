@@ -34,4 +34,15 @@ test( 'LCS', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'handles identical sequences', () => {
+    const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'b', 'c' ];
+    const operations = diff( original, modified, algorithm );
+
+    assert.deepEqual( operations, [
+      { type: 'equal', original: { start: 0, length: 3 }, modified: { start: 0, length: 3 } }
+    ] );
+
+    reconstruct( original, modified, operations );
+  } );
 } );
