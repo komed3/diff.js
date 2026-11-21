@@ -5,8 +5,8 @@ import type { Operation } from '../types/operation';
 export class Myers implements Algorithm {
   private readonly mode: 'fast' | 'minimal';
 
-  public constructor ( options: MyersOptions = {} ) {
-    this.mode = options.mode ?? 'fast';
+  public constructor ( { mode = 'fast' }: MyersOptions = {} ) {
+    this.mode = mode;
   }
 
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
