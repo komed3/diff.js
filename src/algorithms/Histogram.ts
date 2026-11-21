@@ -16,18 +16,17 @@ export class Histogram implements Algorithm {
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
       const groups: { value: T; original: number[]; modified: number[] }[] = [];
-      const buckets = new Map< PropertyKey, typeof groups >();
+      const buckets = this.getKey ? new Map< PropertyKey, typeof groups >() : undefined;
 
       for ( let i = oStart; i < oEnd; i++ ) {
-        let candidates = groups, key: PropertyKey | undefined;
-        if ( this.getKey ) key = this.getKey( original[ i ] ), candidates = buckets.get( key ) ?? [];
+        const key = this.getKey?.( original[ i ] ), candidates = buckets ? buckets.get( key! ) ?? [] : groups;
         let group = candidates.find( ( { value } ) => equals( value, original[ i ] ) );
 
         if ( ! group ) {
           group = { value: original[ i ], original: [], modified: [] };
           groups.push( group );
 
-          if ( this.getKey ) {
+          if ( buckets ) {
             const bucket = buckets.get( key! );
 
             if ( bucket ) bucket.push( group );
@@ -39,10 +38,9 @@ export class Histogram implements Algorithm {
       }
 
       for ( let j = mStart; j < mEnd; j++ ) {
-        let candidates = groups;
-        if ( this.getKey ) candidates = buckets.get( this.getKey( modified[ j ] ) ) ?? [];
-
+        const candidates = buckets ? buckets.get( this.getKey!( modified[ j ] ) ) ?? [] : groups;
         const group = candidates.find( ( { value } ) => equals( value, modified[ j ] ) );
+
         if ( group ) group.modified.push( j );
       }
 
