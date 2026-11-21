@@ -106,4 +106,15 @@ test( 'HuntSzymanski', async t => {
     assert.equal( getEditDistance( operations ), 2 );
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'handles multiple separated changes', () => {
+    const original = [ 'a', 'b', 'c', 'd', 'e' ], modified = [ 'a', 'x', 'c', 'y', 'e' ];
+    const operations = d( original, modified );
+
+    assert.equal( operations.filter( ( { type } ) => type === 'equal' ).reduce(
+      ( length, { original } ) => length + original.length, 0
+    ), 3 );
+
+    reconstruct( original, modified, operations );
+  } );
 } );
