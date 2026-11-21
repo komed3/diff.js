@@ -1,10 +1,10 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
-const { MyersAlgorithm } = require( '../../.test-dist/algorithms/MyersAlgorithm.js' );
+const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
 
 
-const algorithm = new MyersAlgorithm();
+const algorithm = new Myers();
 
 const equals = ( a, b ) => a === b;
 const diff = ( o, m ) => algorithm.diff( o, m, equals );
@@ -165,7 +165,7 @@ test( 'MyersAlgorithm', async t => {
   } );
 
   await t.test( 'supports minimal mode', () => {
-    const algorithm = new MyersAlgorithm( { mode: 'minimal' } );
+    const algorithm = new Myers( { mode: 'minimal' } );
     const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
     const operations = algorithm.diff( original, modified, equals );
 
@@ -177,7 +177,7 @@ test( 'MyersAlgorithm', async t => {
   } );
 
   await t.test( 'keeps fast-mode fallback valid', () => {
-    const algorithm = new MyersAlgorithm( { mode: 'fast' } );
+    const algorithm = new Myers( { mode: 'fast' } );
     const original = Array.from( { length: 2000 }, ( _, i ) => `a${ i }` );
     const modified = Array.from( { length: 2000 }, ( _, i ) => `b${ i }` );
     const operations = algorithm.diff( original, modified, equals );

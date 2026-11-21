@@ -1,6 +1,6 @@
 // --- algorithms ---
 
-require( './algorithms/MyersAlgorithm.test.cjs' );
+require( './algorithms/Myers.test.cjs' );
 
 // --- core ---
 
