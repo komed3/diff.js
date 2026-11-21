@@ -10,7 +10,7 @@ export class Myers implements Algorithm {
     this.mode = mode;
   }
 
-  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
+  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
     const [ n, m ] = [ original.length, modified.length ];
     let prefix = 0, suffix = 0;
 

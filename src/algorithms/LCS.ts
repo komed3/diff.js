@@ -4,7 +4,7 @@ import { createOperations } from '../utils/EditScript';
 
 
 export class LCS implements Algorithm {
-  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
+  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
     const [ n, m ] = [ original.length, modified.length ];
     let prefix = 0, suffix = 0;
 

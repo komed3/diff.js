@@ -10,7 +10,7 @@ export class HuntSzymanski implements Algorithm {
     this.getKey = getKey;
   }
 
-  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
+  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
     const positions = new Map< PropertyKey, number[] >();
 
     if ( this.getKey ) for ( let j = 0; j < modified.length; j++ ) {
