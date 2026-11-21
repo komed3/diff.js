@@ -12,3 +12,7 @@ export interface Algorithm {
 export interface MyersOptions {
   readonly mode?: 'fast' | 'minimal';
 }
+
+export interface HuntSzymanskiOptions {
+  readonly getKey?: ( value: unknown ) => PropertyKey;
+}
