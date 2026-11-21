@@ -1,6 +1,7 @@
 import type { Algorithm, HistogramOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 import { appendOperations, createOperations } from '../utils/EditScript';
+import { longestIncreasingSubsequence } from '../utils/LIS';
 import { Myers } from './Myers';
 
 
