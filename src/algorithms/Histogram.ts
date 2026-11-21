@@ -53,13 +53,13 @@ export class Histogram implements Algorithm {
       let frequency = Infinity;
 
       for ( const group of groups ) {
-        if ( ! group.modified.length ) continue;
+        if ( ! group.modified.length || group.original.length !== group.modified.length ) continue;
 
         const current = group.original.length + group.modified.length;
         if ( current < frequency ) frequency = current, candidates.length = 0;
         if ( current !== frequency ) continue;
 
-        for ( let i = 0; i < Math.min( group.original.length, group.modified.length ); i++ )
+        for ( let i = 0; i < group.original.length; i++ )
           candidates.push( { original: group.original[ i ], modified: group.modified[ i ] } );
       }
 

@@ -132,4 +132,18 @@ test( 'Histogram', async t => {
     for ( const original of sequences ) for ( const modified of sequences )
       reconstruct( original, modified, algorithm.diff( original, modified, equals ) );
   } );
+
+  await t.test( 'handles repeated values with sparse replacements', () => {
+    for ( const size of [ 256, 512, 1024 ] ) {
+      const original = Array.from( { length: size }, ( _, i ) => i % 8 ), modified = original.slice();
+
+      let changes = 0;
+      for ( let i = 16; i < size; i += 64 ) modified[ i ] = -i, changes++;
+
+      const operations = d( original, modified );
+
+      reconstruct( original, modified, operations );
+      assert.equal( getEqualLength( operations ), size - changes );
+    }
+  } );
 } );
