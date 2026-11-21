@@ -20,13 +20,13 @@ export class Myers implements Algorithm {
     for ( let i = 0; i < suffix; i++ ) edits.push( 'equal' );
 
     const [ oLen, mLen ] = [ n - prefix - suffix, m - prefix - suffix ], maxDist = oLen + mLen;
-    const limit = this.mode === 'fast' ? Math.min( maxDist, 1024, Math.max( 64, Math.ceil( Math.sqrt( maxDist ) * 2 ) ) ) : maxDist;
+    const limit = this.mode === 'fast' ? Math.min( maxDist, 256 ) : maxDist;
 
     if ( maxDist ) {
-      const frontier = new Int32Array( limit * 2 + 3 ), trace: Int32Array[] = [], offset = maxDist + 1;
+      const frontier = new Int32Array( limit * 2 + 3 ), offset = limit + 1;
       frontier[ offset + 1 ] = 0;
 
-      let dist = 0, finished = false;
+      let trace = new Int32Array( 64 ), dist = 0, finished = false;
 
       for ( ; dist <= limit; dist++ ) {
         for ( let diag = -dist; diag <= dist; diag += 2 ) {
@@ -41,10 +41,15 @@ export class Myers implements Algorithm {
           if ( x >= oLen && y >= mLen ) { finished = true; break }
         }
 
-        const layer = new Int32Array( dist + 1 );
-        for ( let diag = -dist, i = 0; diag <= dist; diag += 2, i++ ) layer[ i ] = frontier[ offset + diag ];
-        trace.push( layer );
+        const traceOffset = dist * ( dist + 1 ) / 2, traceLength = traceOffset + dist + 1;
 
+        if ( traceLength > trace.length ) {
+          const next = new Int32Array( Math.max( traceLength, trace.length * 2 ) );
+          next.set( trace );
+          trace = next;
+        }
+
+        for ( let diag = -dist, i = 0; diag <= dist; diag += 2, i++ ) trace[ traceOffset + i ] = frontier[ offset + diag ];
         if ( finished ) break;
       }
 
@@ -52,11 +57,11 @@ export class Myers implements Algorithm {
         let [ x, y ] = [ oLen, mLen ];
 
         for ( let d = dist; d > 0; d-- ) {
-          const prev = trace[ d - 1 ], diag = x - y, prevDiag = diag === -d ||
-            ( diag !== d && prev[ ( diag + d - 2 ) / 2 ] < prev[ ( diag + d ) / 2 ] )
+          const prevOffset = ( d - 1 ) * d / 2, diag = x - y, prevDiag = diag === -d ||
+            ( diag !== d && trace[ prevOffset + ( diag + d - 2 ) / 2 ] < trace[ prevOffset + ( diag + d ) / 2 ] )
             ? diag + 1 : diag - 1;
 
-          const prevX = prev[ ( prevDiag + d - 1 ) / 2 ], prevY = prevX - prevDiag;
+          const prevX = trace[ prevOffset + ( prevDiag + d - 1 ) / 2 ], prevY = prevX - prevDiag;
           while ( x > prevX && y > prevY ) edits.push( 'equal' ), x--, y--;
 
           edits.push( x === prevX ? 'insert' : 'delete' );
