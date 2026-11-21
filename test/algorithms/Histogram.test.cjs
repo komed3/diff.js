@@ -85,4 +85,15 @@ test( 'Histogram', async t => {
 
     reconstruct( original, modified, operations, compare );
   } );
+
+  await t.test( 'uses the supplied key function', () => {
+    const algorithm = new Histogram( { getKey: value => value.toLowerCase() } );
+    const original = [ 'Alpha', 'Alpha', 'Beta' ];
+    const modified = [ 'alpha', 'beta', 'BETA' ];
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
+
+    reconstruct( original, modified, operations, compare );
+    assert.equal( getEqualLength( operations ), 2 );
+  } );
 } );
