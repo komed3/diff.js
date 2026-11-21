@@ -47,5 +47,29 @@ export class LCS implements Algorithm {
       for ( let i = 0; i < oLen; i++ ) edits.push( 2 );
       for ( let i = 0; i < mLen; i++ ) edits.push( 1 );
     }
+
+    for ( let i = 0; i < prefix; i++ ) edits.push( 0 );
+
+    edits.reverse();
+
+    const operations: Operation[] = [];
+    let [ origIdx, modIdx ] = [ 0, 0 ];
+
+    for ( let i = 0; i < edits.length; ) {
+      const code = edits[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
+      while ( i < edits.length && edits[ i ] === code ) i++;
+      const length = i - start;
+
+      operations.push( {
+        type,
+        original: { start: origIdx, length: type === 'insert' ? 0 : length },
+        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
+      } as Operation );
+
+      if ( type !== 'insert' ) origIdx += length;
+      if ( type !== 'delete' ) modIdx += length;
+    }
+
+    return operations;
   }
 }
