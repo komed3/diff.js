@@ -12,24 +12,21 @@ export class HuntSzymanski implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
     const positions = new Map < PropertyKey, number[] > ();
 
-    if ( this.getKey ) {
-      for ( let j = 0; j < modified.length; j++ ) {
-        const key = this.getKey( modified[ j ] ), matches = positions.get( key );
+    if ( this.getKey ) for ( let j = 0; j < modified.length; j++ ) {
+      const key = this.getKey( modified[ j ] ), matches = positions.get( key );
 
-        if ( matches ) matches.push( j );
-        else positions.set( key, [ j ] );
-      }
+      if ( matches ) matches.push( j );
+      else positions.set( key, [ j ] );
     }
 
     const matchOriginal: number[] = [], matchModified: number[] = [], matchPrevious: number[] = [];
     const tails: number[] = [], tailNodes: number[] = [];
 
     for ( let i = 0; i < original.length; i++ ) {
-      const candidates = this.getKey ? positions.get( this.getKey( original[ i ] ) ) ?? [] :
-        Array.from( { length: modified.length }, ( _, j ) => j );
+      const candidates = this.getKey ? positions.get( this.getKey( original[ i ] ) ) : undefined;
 
-      for ( let k = candidates.length - 1; k >= 0; k-- ) {
-        const j = candidates[ k ];
+      for ( let k = ( candidates?.length ?? modified.length ) - 1; k >= 0; k-- ) {
+        const j = candidates ? candidates[ k ] : k;
         if ( ! equals( original[ i ], modified[ j ] ) ) continue;
 
         let low = 0, high = tails.length;
