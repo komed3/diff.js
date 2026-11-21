@@ -8,8 +8,7 @@ export class LCS implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
     const { prefix, suffix } = commonEdges( original, modified, equals );
 
-    const n = original.length, m = modified.length;
-    const oLen = n - prefix - suffix, mLen = m - prefix - suffix;
+    const n = original.length, m = modified.length, oLen = n - prefix - suffix, mLen = m - prefix - suffix;
     const editCodes = new Int8Array( n + m + 1 ), editCount = n + m + 1;
 
     let editStart = editCount;
