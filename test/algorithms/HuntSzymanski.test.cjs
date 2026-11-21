@@ -117,4 +117,27 @@ test( 'HuntSzymanski', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'uses the supplied equality function', () => {
+    const original = [ 'Alpha', 'Beta' ], modified = [ 'alpha', 'BETA' ];
+    const operations = algorithm.diff( original, modified, ( a, b ) => a.toLowerCase() === b.toLowerCase() );
+
+    assert.deepEqual( operations, [
+      { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } }
+    ] );
+  } );
+
+  await t.test( 'uses the supplied key function', () => {
+    const algorithm = new HuntSzymanski( { getKey: value => value.toLowerCase() } );
+    const original = [ 'Alpha', 'Beta', 'Gamma' ], modified = [ 'alpha', 'BETA', 'delta', 'gamma' ];
+    const operations = algorithm.diff( original, modified, ( a, b ) => a.toLowerCase() === b.toLowerCase() );
+
+    assert.deepEqual( operations, [
+      { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } },
+      { type: 'insert', original: { start: 2, length: 0 }, modified: { start: 2, length: 1 } },
+      { type: 'equal', original: { start: 2, length: 1 }, modified: { start: 3, length: 1 } }
+    ] );
+
+    reconstruct( original, modified, operations );
+  } );
 } );
