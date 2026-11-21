@@ -19,8 +19,7 @@ export function createOperations ( edits: ArrayLike< number >, start = 0, end = 
     while ( i < end && edits[ i ] === code ) i++;
     const length = i - position;
 
-    operations.push( {
-      type,
+    operations.push( { type,
       original: { start: origIdx, length: type === 'insert' ? 0 : length },
       modified: { start: modIdx, length: type === 'delete' ? 0 : length }
     } as Operation );
