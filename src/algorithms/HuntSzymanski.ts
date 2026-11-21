@@ -1,6 +1,6 @@
-import { createOperations } from '../core/EditScript';
 import type { Algorithm, HuntSzymanskiOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
+import { createOperations } from '../utils/EditScript';
 
 
 export class HuntSzymanski implements Algorithm {

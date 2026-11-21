@@ -1,6 +1,6 @@
-import { appendOperations, createOperations } from '../core/EditScript';
 import type { Algorithm, PatienceOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
+import { appendOperations, createOperations } from '../utils/EditScript';
 import { Myers } from './Myers';
 
 
