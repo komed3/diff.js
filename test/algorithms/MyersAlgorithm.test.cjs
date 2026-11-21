@@ -163,4 +163,25 @@ test( 'MyersAlgorithm', async t => {
       { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } }
     ] );
   } );
+
+  await t.test( 'supports minimal mode', () => {
+    const algorithm = new MyersAlgorithm( { mode: 'minimal' } );
+    const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
+    const operations = algorithm.diff( original, modified, equals );
+
+    assert.equal( operations.filter( ( { type } ) => type === 'equal' ).reduce(
+      ( sum, { original } ) => sum + original.length, 0
+    ), 2 );
+
+    reconstruct( original, modified, operations );
+  } );
+
+  await t.test( 'keeps fast-mode fallback valid', () => {
+    const algorithm = new MyersAlgorithm( { mode: 'fast' } );
+    const original = Array.from( { length: 2000 }, ( _, i ) => `a${ i }` );
+    const modified = Array.from( { length: 2000 }, ( _, i ) => `b${ i }` );
+    const operations = algorithm.diff( original, modified, equals );
+
+    reconstruct( original, modified, operations );
+  } );
 } );
