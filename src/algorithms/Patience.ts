@@ -10,5 +10,7 @@ export class Patience implements Algorithm {
     this.getKey = getKey;
   }
 
-  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {}
+  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[] {
+    const edits: ( 0 | 1 | 2 )[] = [], fallback = new Myers();
+  }
 }
