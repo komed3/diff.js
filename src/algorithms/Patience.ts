@@ -59,29 +59,7 @@ export class Patience implements Algorithm {
         }
       }
 
-      const tails: number[] = [], previous = new Int32Array( candidates.length );
-      previous.fill( -1 );
-
-      for ( let i = 0; i < candidates.length; i++ ) {
-        let low = 0, high = tails.length;
-
-        while ( low < high ) {
-          const middle = ( low + high ) >>> 1;
-
-          if ( candidates[ tails[ middle ] ].modified < candidates[ i ].modified ) low = middle + 1;
-          else high = middle;
-        }
-
-        if ( low ) previous[ i ] = tails[ low - 1 ];
-        tails[ low ] = i;
-      }
-
-      const anchors: { original: number; modified: number }[] = [];
-      let node = tails[ tails.length - 1 ];
-
-      while ( node !== undefined && node >= 0 ) anchors.push( candidates[ node ] ), node = previous[ node ];
-
-      anchors.reverse();
+      const anchors = longestIncreasingSubsequence( candidates );
 
       if ( ! anchors.length ) return appendOperations(
         edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
