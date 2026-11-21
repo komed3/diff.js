@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 const { HuntSzymanski } = require( '../../.test-dist/algorithms/HuntSzymanski.js' );
-const { diff, reconstruct, editDistance, getEditDistance, equals } = require( '../utils.cjs' );
+const { diff, reconstruct, getEditDistance, getEqualLength, createSequences, assertMinimal, equals } = require( '../utils.cjs' );
 
 
 const algorithm = new HuntSzymanski();
@@ -111,26 +111,27 @@ test( 'HuntSzymanski', async t => {
     const original = [ 'a', 'b', 'c', 'd', 'e' ], modified = [ 'a', 'x', 'c', 'y', 'e' ];
     const operations = d( original, modified );
 
-    assert.equal( operations.filter( ( { type } ) => type === 'equal' ).reduce(
-      ( length, { original } ) => length + original.length, 0
-    ), 3 );
-
+    assert.equal( getEqualLength( operations ), 3 );
     reconstruct( original, modified, operations );
   } );
 
   await t.test( 'uses the supplied equality function', () => {
     const original = [ 'Alpha', 'Beta' ], modified = [ 'alpha', 'BETA' ];
-    const operations = algorithm.diff( original, modified, ( a, b ) => a.toLowerCase() === b.toLowerCase() );
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } }
     ] );
+
+    reconstruct( original, modified, operations, compare );
   } );
 
   await t.test( 'uses the supplied key function', () => {
     const algorithm = new HuntSzymanski( { getKey: value => value.toLowerCase() } );
     const original = [ 'Alpha', 'Beta', 'Gamma' ], modified = [ 'alpha', 'BETA', 'delta', 'gamma' ];
-    const operations = algorithm.diff( original, modified, ( a, b ) => a.toLowerCase() === b.toLowerCase() );
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } },
@@ -138,7 +139,7 @@ test( 'HuntSzymanski', async t => {
       { type: 'equal', original: { start: 2, length: 1 }, modified: { start: 3, length: 1 } }
     ] );
 
-    reconstruct( original, modified, operations );
+    reconstruct( original, modified, operations, compare );
   } );
 
   await t.test( 'uses deterministic deletion-first tie-breaking', () => {
@@ -164,31 +165,17 @@ test( 'HuntSzymanski', async t => {
   } );
 
   await t.test( 'produces minimal edit scripts for short sequences', () => {
-    const sequences = [ [] ];
+    const sequences = createSequences();
 
-    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
-      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
-
-    for ( const original of sequences ) for ( const modified of sequences ) {
-      const operations = d( original, modified );
-
-      reconstruct( original, modified, operations );
-      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
-    }
+    for ( const original of sequences ) for ( const modified of sequences )
+      assertMinimal( original, modified, d( original, modified ) );
   } );
 
   await t.test( 'produces minimal edit scripts with key indexing', () => {
     const algorithm = new HuntSzymanski( { getKey: value => value } );
-    const sequences = [ [] ];
+    const sequences = createSequences();
 
-    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
-      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
-
-    for ( const original of sequences ) for ( const modified of sequences ) {
-      const operations = algorithm.diff( original, modified, equals );
-
-      reconstruct( original, modified, operations );
-      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
-    }
+    for ( const original of sequences ) for ( const modified of sequences )
+      assertMinimal( original, modified, algorithm.diff( original, modified, equals ) );
   } );
 } );
