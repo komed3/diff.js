@@ -55,4 +55,13 @@ test( 'Histogram', async t => {
     reconstruct( original, modified, operations );
     assert.equal( getEqualLength( operations ), 4 );
   } );
+
+  await t.test( 'prefers rarer common elements', () => {
+    const original = [ 'a', 'a', 'a', 'b', 'c' ];
+    const modified = [ 'a', 'a', 'b', 'c', 'c' ];
+    const operations = d( original, modified );
+
+    reconstruct( original, modified, operations );
+    assert.equal( getEqualLength( operations ), 4 );
+  } );
 } );
