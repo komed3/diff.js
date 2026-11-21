@@ -103,5 +103,27 @@ export class Patience implements Algorithm {
 
       process( origIdx, oEnd, modIdx, mEnd );
     };
+
+    process( 0, original.length, 0, modified.length );
+
+    const operations: Operation[] = [];
+    let [ origIdx, modIdx ] = [ 0, 0 ];
+
+    for ( let i = 0; i < edits.length; ) {
+      const code = edits[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
+      while ( i < edits.length && edits[ i ] === code ) i++;
+      const length = i - start;
+
+      operations.push( {
+        type,
+        original: { start: origIdx, length: type === 'insert' ? 0 : length },
+        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
+      } as Operation );
+
+      if ( type !== 'insert' ) origIdx += length;
+      if ( type !== 'delete' ) modIdx += length;
+    }
+
+    return operations;
   }
 }
