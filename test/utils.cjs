@@ -1,3 +1,6 @@
+const assert = require( 'node:assert/strict' );
+
+
 module.exports = {
   equals: ( a, b ) => a === b,
 
