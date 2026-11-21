@@ -115,4 +115,28 @@ test( 'Patience', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'does not modify input sequences', () => {
+    const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
+    const originalCopy = [ ...original ], modifiedCopy = [ ...modified ];
+
+    d( original, modified );
+    assert.deepEqual( original, originalCopy );
+    assert.deepEqual( modified, modifiedCopy );
+  } );
+
+  await t.test( 'produces valid edit scripts for short sequences', () => {
+    const sequences = createSequences();
+
+    for ( const original of sequences ) for ( const modified of sequences )
+      reconstruct( original, modified, d( original, modified ) );
+  } );
+
+  await t.test( 'produces valid edit scripts with key indexing', () => {
+    const algorithm = new Patience( { getKey: value => value } );
+    const sequences = createSequences();
+
+    for ( const original of sequences ) for ( const modified of sequences )
+      reconstruct( original, modified, algorithm.diff( original, modified, equals ) );
+  } );
 } );
