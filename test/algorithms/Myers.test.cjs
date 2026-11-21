@@ -6,16 +6,17 @@ const { diff, reconstruct, editDistance, getEditDistance, equals } = require( '.
 
 
 const algorithm = new Myers();
+const d = ( o, m ) => diff( o, m, algorithm );
 
 
 test( 'MyersAlgorithm', async t => {
   await t.test( 'handles two empty sequences', () => {
-    assert.deepEqual( diff( [], [], algorithm ), [] );
+    assert.deepEqual( d( [], [] ), [] );
   } );
 
   await t.test( 'handles an empty original sequence', () => {
     const original = [], modified = [ 'a', 'b', 'c' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'insert', original: { start: 0, length: 0 }, modified: { start: 0, length: 3 } }
@@ -26,7 +27,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'handles an empty modified sequence', () => {
     const original = [ 'a', 'b', 'c' ], modified = [];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'delete', original: { start: 0, length: 3 }, modified: { start: 0, length: 0 } }
@@ -37,7 +38,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'handles identical sequences', () => {
     const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'b', 'c' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 3 }, modified: { start: 0, length: 3 } }
@@ -48,7 +49,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'detects an insertion at the beginning', () => {
     const original = [ 'b', 'c' ], modified = [ 'a', 'b', 'c' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'insert', original: { start: 0, length: 0 }, modified: { start: 0, length: 1 } },
@@ -60,7 +61,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'detects an insertion in the middle', () => {
     const original = [ 'a', 'c' ], modified = [ 'a', 'b', 'c' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 1 }, modified: { start: 0, length: 1 } },
@@ -73,7 +74,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'detects a deletion', () => {
     const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'c' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 1 }, modified: { start: 0, length: 1 } },
@@ -86,7 +87,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'represents a replacement as delete and insert', () => {
     const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 1 }, modified: { start: 0, length: 1 } },
@@ -100,7 +101,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'handles repeated elements without expanding the change', () => {
     const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ], modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 1 );
     assert.equal( operations.filter( ( { type } ) => type === 'delete' ).length, 1 );
@@ -109,7 +110,7 @@ test( 'MyersAlgorithm', async t => {
 
   await t.test( 'handles multiple separated changes', () => {
     const original = [ 'a', 'b', 'c', 'd', 'e' ], modified = [ 'a', 'x', 'c', 'y', 'e' ];
-    const operations = diff( original, modified, algorithm );
+    const operations = d( original, modified );
 
     assert.equal( operations.filter( ( { type } ) => type === 'equal' ).length, 3 );
     assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 2 );
