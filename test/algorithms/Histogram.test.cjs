@@ -46,4 +46,13 @@ test( 'Histogram', async t => {
 
     reconstruct( original, modified, operations );
   } );
+
+  await t.test( 'uses repeated elements as anchors', () => {
+    const original = [ 'a', 'a', 'b', 'b', 'c' ];
+    const modified = [ 'a', 'b', 'b', 'c', 'c' ];
+    const operations = d( original, modified );
+
+    reconstruct( original, modified, operations );
+    assert.equal( getEqualLength( operations ), 4 );
+  } );
 } );
