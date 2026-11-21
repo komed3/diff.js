@@ -1,3 +1,4 @@
+import { createOperations } from '../core/EditScript';
 import type { Algorithm, HuntSzymanskiOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 
@@ -69,24 +70,6 @@ export class HuntSzymanski implements Algorithm {
     while ( origIdx < original.length ) edits.push( 2 ), origIdx++;
     while ( modIdx < modified.length ) edits.push( 1 ), modIdx++;
 
-    const operations: Operation[] = [];
-    [ origIdx, modIdx ] = [ 0, 0 ];
-
-    for ( let i = 0; i < edits.length; ) {
-      const code = edits[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
-      while ( i < edits.length && edits[ i ] === code ) i++;
-      const length = i - start;
-
-      operations.push( {
-        type,
-        original: { start: origIdx, length: type === 'insert' ? 0 : length },
-        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
-      } as Operation );
-
-      if ( type !== 'insert' ) origIdx += length;
-      if ( type !== 'delete' ) modIdx += length;
-    }
-
-    return operations;
+    return createOperations( edits );
   }
 }
