@@ -16,7 +16,7 @@ const algorithms = [
 ];
 
 const equals = ( a, b ) => a === b;
-const sizes = [ 256, 512 ];
+const sizes = [ 256, 512, 1024 ];
 const warmups = 2, samples = 7;
 
 
@@ -24,6 +24,9 @@ const createCases = size => {
   const original = Array.from( { length: size }, ( _, i ) => `line-${ i }` );
   const sparse = original.slice();
   sparse[ size >> 1 ] = 'changed';
+
+  const block = original.slice();
+  for ( let i = ( size >> 1 ) - 4; i < ( size >> 1 ) + 4; i++ ) block[ i ] = `changed-${ i }`;
 
   const repeated = Array.from( { length: size }, ( _, i ) => i % 8 );
   const modifiedRepeated = repeated.slice();
@@ -34,6 +37,12 @@ const createCases = size => {
     [ 'identical', original, original.slice() ],
     [ 'sparse changes', original, sparse ],
     [ 'single insertion', original, [ ...original.slice( 0, size >> 1 ), 'inserted', ...original.slice( size >> 1 ) ] ],
+    [ 'single deletion', original, [ ...original.slice( 0, size >> 1 ), ...original.slice( ( size >> 1 ) + 1 ) ] ],
+    [ 'leading insertion', original, [ 'inserted', ...original ] ],
+    [ 'trailing insertion', original, [ ...original, 'inserted' ] ],
+    [ 'leading deletion', original, original.slice( 1 ) ],
+    [ 'trailing deletion', original, original.slice( 0, -1 ) ],
+    [ 'block replacement', original, block ],
     [ 'repeated values', repeated, modifiedRepeated ],
     [ 'unrelated', original, original.map( ( _, i ) => `other-${ i }` ) ]
   ];
