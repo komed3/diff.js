@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 const { LCS } = require( '../../.test-dist/algorithms/LCS.js' );
-const { diff, reconstruct, editDistance, getEditDistance } = require( '../utils.cjs' );
+const { diff, reconstruct, getOperationCount, createSequences, assertMinimal } = require( '../utils.cjs' );
 
 
 const algorithm = new LCS();
@@ -103,8 +103,8 @@ test( 'LCS', async t => {
     const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ], modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
     const operations = d( original, modified );
 
-    assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 1 );
-    assert.equal( operations.filter( ( { type } ) => type === 'delete' ).length, 1 );
+    assert.equal( getOperationCount( operations, 'insert' ), 1 );
+    assert.equal( getOperationCount( operations, 'delete' ), 1 );
     reconstruct( original, modified, operations );
   } );
 
@@ -112,19 +112,22 @@ test( 'LCS', async t => {
     const original = [ 'a', 'b', 'c', 'd', 'e' ], modified = [ 'a', 'x', 'c', 'y', 'e' ];
     const operations = d( original, modified );
 
-    assert.equal( operations.filter( ( { type } ) => type === 'equal' ).length, 3 );
-    assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 2 );
-    assert.equal( operations.filter( ( { type } ) => type === 'delete' ).length, 2 );
+    assert.equal( getOperationCount( operations, 'equal' ), 3 );
+    assert.equal( getOperationCount( operations, 'insert' ), 2 );
+    assert.equal( getOperationCount( operations, 'delete' ), 2 );
     reconstruct( original, modified, operations );
   } );
 
   await t.test( 'uses the supplied equality function', () => {
     const original = [ 'Alpha', 'Beta' ], modified = [ 'alpha', 'BETA' ];
-    const operations = algorithm.diff( original, modified, ( a, b ) => a.toLowerCase() === b.toLowerCase() );
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
 
     assert.deepEqual( operations, [
       { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } }
     ] );
+
+    reconstruct( original, modified, operations, compare );
   } );
 
   await t.test( 'uses deterministic deletion-first tie-breaking', () => {
@@ -150,17 +153,10 @@ test( 'LCS', async t => {
   } );
 
   await t.test( 'produces minimal edit scripts for short sequences', () => {
-    const sequences = [ [] ];
+    const sequences = createSequences();
 
-    for ( let length = 1; length <= 4; length++ ) for ( let mask = 0; mask < 2 ** length; mask++ )
-      sequences.push( Array.from( { length }, ( _, i ) => mask & ( 1 << i ) ? 'b' : 'a' ) );
-
-    for ( const original of sequences ) for ( const modified of sequences ) {
-      const operations = d( original, modified );
-
-      reconstruct( original, modified, operations );
-      assert.equal( getEditDistance( operations ), editDistance( original, modified ) );
-    }
+    for ( const original of sequences ) for ( const modified of sequences )
+      assertMinimal( original, modified, d( original, modified ) );
   } );
 
   await t.test( 'handles large common prefixes and suffixes', () => {
