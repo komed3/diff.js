@@ -1,11 +1,14 @@
 import type { Pair } from '../types/operation';
+import { longestIncreasingSubsequence } from './LIS';
 
 
 export function processAnchors (
-  anchors: readonly Pair[], edits: ( 0 | 1 | 2 )[], oStart: number, oEnd: number, mStart: number, mEnd: number,
+  candidates: readonly Pair[], edits: ( 0 | 1 | 2 )[], oStart: number, oEnd: number, mStart: number, mEnd: number,
   process: ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => void, fallback: () => void
-) : void {
+): void {
+  const anchors = longestIncreasingSubsequence( candidates );
   if ( ! anchors.length ) return fallback();
+
   let [ origIdx, modIdx ] = [ oStart, mStart ];
 
   for ( const { original, modified } of anchors ) {
