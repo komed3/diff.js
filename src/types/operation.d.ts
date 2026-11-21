@@ -1,4 +1,4 @@
-export type Pairs = { original: number; modified: number }[];
+export type Pair = { original: number, modified: number };
 
 export interface OperationRange {
   readonly start: number;
