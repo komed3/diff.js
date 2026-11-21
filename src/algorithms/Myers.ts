@@ -1,6 +1,7 @@
 import type { Algorithm, MyersOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 import { createOperations } from '../utils/EditScript';
+import { findCommonEdges } from '../utils/Sequence';
 
 
 export class Myers implements Algorithm {
@@ -12,11 +13,7 @@ export class Myers implements Algorithm {
 
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
     const [ n, m ] = [ original.length, modified.length ];
-    let prefix = 0, suffix = 0;
-
-    while ( prefix < n && prefix < m && equals( original[ prefix ], modified[ prefix ] ) ) prefix++;
-    while ( suffix < n - prefix && suffix < m - prefix && equals( original[ n - suffix - 1 ], modified[ m - suffix - 1 ] ) ) suffix++;
-
+    const { prefix, suffix } = findCommonEdges( original, modified, equals );
     const editCodes = new Int8Array( n + m + 1 ), editCount = n + m + 1;
     let editStart = editCount;
 
