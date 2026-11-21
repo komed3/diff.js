@@ -1,7 +1,7 @@
 import type { Algorithm, PatienceOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
+import { processAnchors } from '../utils/Anchors';
 import { appendOperations, createOperations } from '../utils/EditScript';
-import { longestIncreasingSubsequence } from '../utils/LIS';
 import { Myers } from './Myers';
 
 
@@ -44,13 +44,13 @@ export class Patience implements Algorithm {
         }
       } else {
         const oCounts = new Uint32Array( oEnd - oStart ), mCounts = new Uint32Array( mEnd - mStart );
-        const oMatches = new Int32Array( oEnd - oStart ), mMatches = new Int32Array( mEnd - mStart );
+        const oMatches = new Int32Array( oEnd - oStart );
 
         for ( let i = oStart; i < oEnd; i++ ) for ( let j = mStart; j < mEnd; j++ ) {
           if ( ! equals( original[ i ], modified[ j ] ) ) continue;
 
           oCounts[ i - oStart ]++, mCounts[ j - mStart ]++;
-          oMatches[ i - oStart ] = j, mMatches[ j - mStart ] = i;
+          oMatches[ i - oStart ] = j;
         }
 
         for ( let i = oStart; i < oEnd; i++ ) {
@@ -59,22 +59,9 @@ export class Patience implements Algorithm {
         }
       }
 
-      const anchors = longestIncreasingSubsequence( candidates );
-
-      if ( ! anchors.length ) return appendOperations(
+      processAnchors( candidates, edits, oStart, oEnd, mStart, mEnd, process, () => appendOperations(
         edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
-      );
-
-      let [ origIdx, modIdx ] = [ oStart, mStart ];
-
-      for ( const anchor of anchors ) {
-        process( origIdx, anchor.original, modIdx, anchor.modified );
-
-        edits.push( 0 );
-        origIdx = anchor.original + 1, modIdx = anchor.modified + 1;
-      }
-
-      process( origIdx, oEnd, modIdx, mEnd );
+      ) );
     };
 
     process( 0, original.length, 0, modified.length );

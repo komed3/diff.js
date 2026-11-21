@@ -1,7 +1,7 @@
 import type { Algorithm, HistogramOptions } from '../types/algorithm';
 import type { Operation, Pair } from '../types/operation';
+import { processAnchors } from '../utils/Anchors';
 import { appendOperations, createOperations } from '../utils/EditScript';
-import { longestIncreasingSubsequence } from '../utils/LIS';
 import { Myers } from './Myers';
 
 
@@ -62,22 +62,10 @@ export class Histogram implements Algorithm {
       }
 
       candidates.sort( ( a, b ) => a.original - b.original );
-      const anchors = longestIncreasingSubsequence( candidates );
 
-      if ( ! anchors.length ) return appendOperations(
+      processAnchors( candidates, edits, oStart, oEnd, mStart, mEnd, process, () => appendOperations(
         edits, fallback.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals )
-      );
-
-      let [ origIdx, modIdx ] = [ oStart, mStart ];
-
-      for ( const anchor of anchors ) {
-        process( origIdx, anchor.original, modIdx, anchor.modified );
-
-        edits.push( 0 );
-        origIdx = anchor.original + 1, modIdx = anchor.modified + 1;
-      }
-
-      process( origIdx, oEnd, modIdx, mEnd );
+      ) );
     };
 
     process( 0, original.length, 0, modified.length );
