@@ -124,4 +124,12 @@ test( 'Histogram', async t => {
     for ( const original of sequences ) for ( const modified of sequences )
       reconstruct( original, modified, d( original, modified ) );
   } );
+
+  await t.test( 'produces valid edit scripts with key indexing', () => {
+    const algorithm = new Histogram( { getKey: value => value } );
+    const sequences = createSequences();
+
+    for ( const original of sequences ) for ( const modified of sequences )
+      reconstruct( original, modified, algorithm.diff( original, modified, equals ) );
+  } );
 } );
