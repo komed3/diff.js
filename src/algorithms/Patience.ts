@@ -42,13 +42,14 @@ export class Patience implements Algorithm {
             candidates.push( { original: i, modified: pos.index } );
         }
       } else {
-        const oCounts = new Uint32Array( oEnd - oStart ), mCounts = new Uint32Array( mEnd - mStart );
+        const oCounts = new Uint8Array( oEnd - oStart ), mCounts = new Uint8Array( mEnd - mStart );
         const oMatches = new Int32Array( oEnd - oStart );
 
         for ( let i = oStart; i < oEnd; i++ ) for ( let j = mStart; j < mEnd; j++ ) {
           if ( ! equals( original[ i ], modified[ j ] ) ) continue;
 
-          oCounts[ i - oStart ]++, mCounts[ j - mStart ]++;
+          if ( oCounts[ i - oStart ] < 2 ) oCounts[ i - oStart ]++;
+          if ( mCounts[ j - mStart ] < 2 ) mCounts[ j - mStart ]++;
           oMatches[ i - oStart ] = j;
         }
 
