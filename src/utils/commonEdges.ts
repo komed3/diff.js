@@ -1,7 +1,4 @@
-export function commonEdges < T > (
-  original: readonly T[], modified: readonly T[],
-  equals: ( original: T, modified: T ) => boolean
-) {
+export function commonEdges < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) {
   const [ n, m ] = [ original.length, modified.length ];
   let prefix = 0, suffix = 0;
 
