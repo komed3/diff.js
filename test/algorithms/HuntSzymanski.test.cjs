@@ -128,7 +128,7 @@ test( 'HuntSzymanski', async t => {
   } );
 
   await t.test( 'uses the supplied key function', () => {
-    const algorithm = new HuntSzymanski( { getKey: value => value.toLowerCase() } );
+    const algorithm = new HuntSzymanski( { getKey: v => v.toLowerCase() } );
     const original = [ 'Alpha', 'Beta', 'Gamma' ], modified = [ 'alpha', 'BETA', 'delta', 'gamma' ];
     const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
     const operations = algorithm.diff( original, modified, compare );
@@ -172,7 +172,7 @@ test( 'HuntSzymanski', async t => {
   } );
 
   await t.test( 'produces minimal edit scripts with key indexing', () => {
-    const algorithm = new HuntSzymanski( { getKey: value => value } );
+    const algorithm = new HuntSzymanski( { getKey: v => v } );
     const sequences = createSequences();
 
     for ( const original of sequences ) for ( const modified of sequences )

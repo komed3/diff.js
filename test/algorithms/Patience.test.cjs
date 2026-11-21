@@ -94,7 +94,7 @@ test( 'Patience', async t => {
   } );
 
   await t.test( 'uses the supplied key function', () => {
-    const algorithm = new Patience( { getKey: value => value.toLowerCase() } );
+    const algorithm = new Patience( { getKey: v => v.toLowerCase() } );
     const original = [ 'Alpha', 'old', 'Beta' ], modified = [ 'alpha', 'new', 'BETA' ];
     const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
     const operations = algorithm.diff( original, modified, compare );
@@ -130,7 +130,7 @@ test( 'Patience', async t => {
   } );
 
   await t.test( 'produces valid edit scripts with key indexing', () => {
-    const algorithm = new Patience( { getKey: value => value } );
+    const algorithm = new Patience( { getKey: v => v } );
     const sequences = createSequences();
 
     for ( const original of sequences ) for ( const modified of sequences )

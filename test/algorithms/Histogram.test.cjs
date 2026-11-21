@@ -85,7 +85,7 @@ test( 'Histogram', async t => {
   } );
 
   await t.test( 'uses the supplied key function', () => {
-    const algorithm = new Histogram( { getKey: value => value.toLowerCase() } );
+    const algorithm = new Histogram( { getKey: v => v.toLowerCase() } );
     const original = [ 'Alpha', 'Alpha', 'Beta' ], modified = [ 'alpha', 'beta', 'BETA' ];
     const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
     const operations = algorithm.diff( original, modified, compare );
@@ -126,7 +126,7 @@ test( 'Histogram', async t => {
   } );
 
   await t.test( 'produces valid edit scripts with key indexing', () => {
-    const algorithm = new Histogram( { getKey: value => value } );
+    const algorithm = new Histogram( { getKey: v => v } );
     const sequences = createSequences();
 
     for ( const original of sequences ) for ( const modified of sequences )
