@@ -101,7 +101,7 @@ test( 'LCS', async t => {
 
   await t.test( 'handles repeated elements without expanding the change', () => {
     const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ], modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
-    const operations = diff( original, modified );
+    const operations = d( original, modified );
 
     assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 1 );
     assert.equal( operations.filter( ( { type } ) => type === 'delete' ).length, 1 );
@@ -110,7 +110,7 @@ test( 'LCS', async t => {
 
   await t.test( 'handles multiple separated changes', () => {
     const original = [ 'a', 'b', 'c', 'd', 'e' ], modified = [ 'a', 'x', 'c', 'y', 'e' ];
-    const operations = diff( original, modified );
+    const operations = d( original, modified );
 
     assert.equal( operations.filter( ( { type } ) => type === 'equal' ).length, 3 );
     assert.equal( operations.filter( ( { type } ) => type === 'insert' ).length, 2 );
