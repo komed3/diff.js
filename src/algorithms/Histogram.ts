@@ -1,7 +1,8 @@
 import type { Algorithm, HistogramOptions } from '../types/algorithm';
 import type { Operation, Pair } from '../types/operation';
-import { processAnchors } from '../utils/Anchors';
-import { appendOperations, createOperations } from '../utils/EditScript';
+import { appendOperations } from '../utils/appendOperations';
+import { createOperations } from '../utils/createOperations';
+import { processAnchors } from '../utils/processAnchors';
 import { Myers } from './Myers';
 
 

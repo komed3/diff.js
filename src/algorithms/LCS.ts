@@ -1,7 +1,7 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { createOperations } from '../utils/EditScript';
-import { findCommonEdges } from '../utils/Sequence';
+import { createOperations } from '../utils/createOperations';
+import { findCommonEdges } from '../utils/findCommonEdges';
 
 
 export class LCS implements Algorithm {
