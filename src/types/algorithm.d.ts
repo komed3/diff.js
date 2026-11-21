@@ -8,3 +8,7 @@ export interface Algorithm {
     equals: ( original: T, modified: T ) => boolean
   ) : Operation[];
 }
+
+export interface MyersOptions {
+  readonly mode?: 'fast' | 'minimal';
+}
