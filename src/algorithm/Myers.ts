@@ -6,8 +6,6 @@ import { populateOperations } from '../utils/populateOperations';
 
 export class Myers implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const pushEdit = ( type: 0 | 1 | 2 ) => editCodes[ --editStart ] = type;
-
     const { prefix, suffix } = commonEdges( original, modified, equals );
     const [ n, m ] = [ original.length, modified.length ];
     const [ oLen, mLen ] = [ n - prefix - suffix, m - prefix - suffix ], maxDist = oLen + mLen;
@@ -15,6 +13,7 @@ export class Myers implements Algorithm {
     const editCodes = new Int8Array( n + m + 1 ), editCount = n + m + 1;
     let editStart = editCount;
 
+    const pushEdit = ( type: 0 | 1 | 2 ) => editCodes[ --editStart ] = type;
     for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
 
     if ( maxDist ) {
