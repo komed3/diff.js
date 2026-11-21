@@ -1,5 +1,5 @@
 import type { Algorithm, MyersOptions } from '../types/algorithm';
-import type { EditStep, Operation } from '../types/operation';
+import type { Operation } from '../types/operation';
 
 
 export class Myers implements Algorithm {
@@ -16,8 +16,11 @@ export class Myers implements Algorithm {
     while ( prefix < n && prefix < m && equals( original[ prefix ], modified[ prefix ] ) ) prefix++;
     while ( suffix < n - prefix && suffix < m - prefix && equals( original[ n - suffix - 1 ], modified[ m - suffix - 1 ] ) ) suffix++;
 
-    const edits: EditStep[ 'type' ][] = [];
-    for ( let i = 0; i < suffix; i++ ) edits.push( 'equal' );
+    const editCodes = new Int8Array( n + m + 1 ), editCount = n + m + 1;
+    let editStart = editCount;
+
+    const pushEdit = ( type: 0 | 1 | 2 ) => editCodes[ --editStart ] = type;
+    for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
 
     const [ oLen, mLen ] = [ n - prefix - suffix, m - prefix - suffix ], maxDist = oLen + mLen;
     const limit = this.mode === 'fast' ? Math.min( maxDist, 256 ) : maxDist;
@@ -62,32 +65,30 @@ export class Myers implements Algorithm {
             ? diag + 1 : diag - 1;
 
           const prevX = trace[ prevOffset + ( prevDiag + d - 1 ) / 2 ], prevY = prevX - prevDiag;
-          while ( x > prevX && y > prevY ) edits.push( 'equal' ), x--, y--;
+          while ( x > prevX && y > prevY ) pushEdit( 0 ), x--, y--;
 
-          edits.push( x === prevX ? 'insert' : 'delete' );
+          pushEdit( x === prevX ? 1 : 2 );
           x === prevX ? y-- : x--;
           [ x, y ] = [ prevX, prevY ];
         }
 
-        while ( x > 0 && y > 0 ) edits.push( 'equal' ), x--, y--;
-        while ( x-- ) edits.push( 'delete' );
-        while ( y-- ) edits.push( 'insert' );
+        while ( x > 0 && y > 0 ) pushEdit( 0 ), x--, y--;
+        while ( x-- ) pushEdit( 2 );
+        while ( y-- ) pushEdit( 1 );
       } else {
-        for ( let i = 0; i < mLen; i++ ) edits.push( 'insert' );
-        for ( let i = 0; i < oLen; i++ ) edits.push( 'delete' );
+        for ( let i = 0; i < mLen; i++ ) pushEdit( 1 );
+        for ( let i = 0; i < oLen; i++ ) pushEdit( 2 );
       }
     }
 
-    for ( let i = 0; i < prefix; i++ ) edits.push( 'equal' );
-
-    edits.reverse();
+    for ( let i = 0; i < prefix; i++ ) pushEdit( 0 );
 
     const operations: Operation[] = [];
     let [ origIdx, modIdx ] = [ 0, 0 ];
 
-    for ( let i = 0; i < edits.length; ) {
-      const type = edits[ i ], start = i;
-      while ( i < edits.length && edits[ i ] === type ) i++;
+    for ( let i = editStart; i < editCount; ) {
+      const code = editCodes[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
+      while ( i < editCount && editCodes[ i ] === code ) i++;
       const length = i - start;
 
       operations.push( {
