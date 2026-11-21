@@ -111,4 +111,9 @@ test( 'Histogram', async t => {
     assert.deepEqual( original, originalCopy );
     assert.deepEqual( modified, modifiedCopy );
   } );
+
+  await t.test( 'produces deterministic results', () => {
+    const original = [ 'a', 'a', 'b', 'b', 'c' ], modified = [ 'a', 'b', 'b', 'c', 'c' ];
+    assert.deepEqual( d( original, modified ), d( original, modified ) );
+  } );
 } );
