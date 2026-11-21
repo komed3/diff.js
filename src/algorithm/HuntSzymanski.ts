@@ -16,43 +16,41 @@ export class HuntSzymanski implements Algorithm {
     const pushEdit = ( type: 0 | 1 | 2 ) => editCodes[ --editStart ] = type;
     for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
 
-    const matchOriginal: number[] = [], matchModified: number[] = [], matchPrevious: number[] = [];
+    const matchOrig: number[] = [], matchMod: number[] = [], matchPrev: number[] = [];
     const tails: number[] = [], tailNodes: number[] = [];
 
     for ( let i = prefix; i < oEnd; i++ ) {
-      const originalValue = original[ i ];
+      const value = original[ i ];
 
       for ( let j = mEnd - 1; j >= prefix; j-- ) {
-        if ( ! equals( originalValue, modified[ j ] ) ) continue;
+        if ( ! equals( value, modified[ j ] ) ) continue;
 
         let low = 0, high = tails.length;
 
         while ( low < high ) {
           const middle = ( low + high ) >>> 1;
-
           if ( tails[ middle ] < j ) low = middle + 1;
           else high = middle;
         }
 
-        const node = matchOriginal.length;
+        const node = matchOrig.length;
 
-        matchOriginal.push( i ), matchModified.push( j );
-        matchPrevious.push( low ? tailNodes[ low - 1 ] : -1 );
+        matchOrig.push( i ), matchMod.push( j );
+        matchPrev.push( low ? tailNodes[ low - 1 ] : -1 );
         tails[ low ] = j, tailNodes[ low ] = node;
       }
     }
 
-    let i = oEnd, j = mEnd;
-    let node = tailNodes[ tails.length - 1 ];
+    let i = oEnd, j = mEnd, node = tailNodes[ tails.length - 1 ];
 
     while ( node !== undefined && node >= 0 ) {
-      const origMatch = matchOriginal[ node ], modMatch = matchModified[ node ];
+      const o = matchOrig[ node ], m = matchMod[ node ];
 
-      while ( j > modMatch + 1 ) pushEdit( 1 ), j--;
-      while ( i > origMatch + 1 ) pushEdit( 2 ), i--;
+      while ( j > m + 1 ) pushEdit( 1 ), j--;
+      while ( i > o + 1 ) pushEdit( 2 ), i--;
       pushEdit( 0 );
-      i = origMatch, j = modMatch;
-      node = matchPrevious[ node ];
+
+      i = o, j = m, node = matchPrev[ node ];
     }
 
     while ( j > prefix ) pushEdit( 1 ), j--;
