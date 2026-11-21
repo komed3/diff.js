@@ -1,6 +1,7 @@
 import type { Algorithm, HuntSzymanskiOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 import { createOperations } from '../utils/createOperations';
+import { findCommonEdges } from '../utils/findCommonEdges';
 
 
 export class HuntSzymanski implements Algorithm {
@@ -11,10 +12,12 @@ export class HuntSzymanski implements Algorithm {
   }
 
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const positions = new Map< PropertyKey, number[] >();
+    const { prefix, suffix } = findCommonEdges( original, modified, equals );
+    const [ oEnd, mEnd ] = [ original.length - suffix, modified.length - suffix ];
+    const positions = this.getKey ? new Map< PropertyKey, number[] >() : undefined;
 
-    if ( this.getKey ) for ( let j = 0; j < modified.length; j++ ) {
-      const key = this.getKey( modified[ j ] ), matches = positions.get( key );
+    if ( positions ) for ( let j = prefix; j < mEnd; j++ ) {
+      const key = this.getKey!( modified[ j ] ), matches = positions.get( key );
 
       if ( matches ) matches.push( j );
       else positions.set( key, [ j ] );
@@ -23,11 +26,11 @@ export class HuntSzymanski implements Algorithm {
     const matchOriginal: number[] = [], matchModified: number[] = [], matchPrevious: number[] = [];
     const tails: number[] = [], tailNodes: number[] = [];
 
-    for ( let i = 0; i < original.length; i++ ) {
-      const candidates = this.getKey ? positions.get( this.getKey( original[ i ] ) ) : undefined;
+    for ( let i = prefix; i < oEnd; i++ ) {
+      const candidates = positions?.get( this.getKey!( original[ i ] ) );
 
-      for ( let k = ( candidates?.length ?? modified.length ) - 1; k >= 0; k-- ) {
-        const j = candidates ? candidates[ k ] : k;
+      for ( let k = ( candidates?.length ?? mEnd - prefix ) - 1; k >= 0; k-- ) {
+        const j = candidates ? candidates[ k ] : prefix + k;
         if ( ! equals( original[ i ], modified[ j ] ) ) continue;
 
         let low = 0, high = tails.length;
@@ -55,7 +58,9 @@ export class HuntSzymanski implements Algorithm {
     matches.reverse();
 
     const edits: ( 0 | 1 | 2 )[] = [];
-    let [ origIdx, modIdx ] = [ 0, 0 ];
+    for ( let i = 0; i < prefix; i++ ) edits.push( 0 );
+
+    let [ origIdx, modIdx ] = [ prefix, prefix ];
 
     for ( const match of matches ) {
       const i = matchOriginal[ match ], j = matchModified[ match ];
@@ -67,8 +72,9 @@ export class HuntSzymanski implements Algorithm {
       origIdx++, modIdx++;
     }
 
-    while ( origIdx < original.length ) edits.push( 2 ), origIdx++;
-    while ( modIdx < modified.length ) edits.push( 1 ), modIdx++;
+    while ( origIdx < oEnd ) edits.push( 2 ), origIdx++;
+    while ( modIdx < mEnd ) edits.push( 1 ), modIdx++;
+    for ( let i = 0; i < suffix; i++ ) edits.push( 0 );
 
     return createOperations( edits );
   }
