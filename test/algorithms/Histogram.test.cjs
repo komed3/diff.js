@@ -73,4 +73,16 @@ test( 'Histogram', async t => {
     assert.equal( getOperationCount( operations, 'delete' ), 1 );
     assert.equal( getOperationCount( operations, 'insert' ), 1 );
   } );
+
+  await t.test( 'uses the supplied equality function', () => {
+    const original = [ 'Alpha', 'Beta' ], modified = [ 'alpha', 'BETA' ];
+    const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+    const operations = algorithm.diff( original, modified, compare );
+
+    assert.deepEqual( operations, [
+      { type: 'equal', original: { start: 0, length: 2 }, modified: { start: 0, length: 2 } }
+    ] );
+
+    reconstruct( original, modified, operations, compare );
+  } );
 } );
