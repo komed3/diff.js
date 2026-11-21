@@ -114,6 +114,14 @@ test( 'Histogram', async t => {
 
   await t.test( 'produces deterministic results', () => {
     const original = [ 'a', 'a', 'b', 'b', 'c' ], modified = [ 'a', 'b', 'b', 'c', 'c' ];
+
     assert.deepEqual( d( original, modified ), d( original, modified ) );
+  } );
+
+  await t.test( 'produces valid edit scripts for short sequences', () => {
+    const sequences = createSequences();
+
+    for ( const original of sequences ) for ( const modified of sequences )
+      reconstruct( original, modified, d( original, modified ) );
   } );
 } );
