@@ -16,3 +16,7 @@ export interface MyersOptions {
 export interface HuntSzymanskiOptions {
   readonly getKey?: ( value: unknown ) => PropertyKey;
 }
+
+export interface PatienceOptions {
+  readonly getKey?: ( value: unknown ) => PropertyKey;
+}
