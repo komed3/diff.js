@@ -72,3 +72,5 @@ for ( const size of sizes ) for ( const [ name, original, modified ] of createCa
     } );
   }
 }
+
+console.table( results );
