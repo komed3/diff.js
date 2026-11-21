@@ -1,5 +1,6 @@
 // --- algorithms ---
 
+require( './algorithms/LCS.test.cjs' );
 require( './algorithms/Myers.test.cjs' );
 
 // --- core ---
