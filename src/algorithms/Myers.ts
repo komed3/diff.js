@@ -1,3 +1,4 @@
+import { createOperations } from '../core/EditScript';
 import type { Algorithm, MyersOptions } from '../types/algorithm';
 import type { Operation } from '../types/operation';
 
@@ -82,25 +83,6 @@ export class Myers implements Algorithm {
     }
 
     for ( let i = 0; i < prefix; i++ ) pushEdit( 0 );
-
-    const operations: Operation[] = [];
-    let [ origIdx, modIdx ] = [ 0, 0 ];
-
-    for ( let i = editStart; i < editCount; ) {
-      const code = editCodes[ i ], type = code === 0 ? 'equal' : code === 1 ? 'insert' : 'delete', start = i;
-      while ( i < editCount && editCodes[ i ] === code ) i++;
-      const length = i - start;
-
-      operations.push( {
-        type,
-        original: { start: origIdx, length: type === 'insert' ? 0 : length },
-        modified: { start: modIdx, length: type === 'delete' ? 0 : length }
-      } as Operation );
-
-      if ( type !== 'insert' ) origIdx += length;
-      if ( type !== 'delete' ) modIdx += length;
-    }
-
-    return operations;
+    return createOperations( editCodes, editStart, editCount );
   }
 }
