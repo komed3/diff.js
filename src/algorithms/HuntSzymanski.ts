@@ -20,5 +20,33 @@ export class HuntSzymanski implements Algorithm {
         else positions.set( key, [ j ] );
       }
     }
+
+    const matchOriginal: number[] = [], matchModified: number[] = [], matchPrevious: number[] = [];
+    const tails: number[] = [], tailNodes: number[] = [];
+
+    for ( let i = 0; i < original.length; i++ ) {
+      const candidates = this.getKey ? positions.get( this.getKey( original[ i ] ) ) ?? [] :
+        Array.from( { length: modified.length }, ( _, j ) => j );
+
+      for ( let k = candidates.length - 1; k >= 0; k-- ) {
+        const j = candidates[ k ];
+        if ( ! equals( original[ i ], modified[ j ] ) ) continue;
+
+        let low = 0, high = tails.length;
+
+        while ( low < high ) {
+          const middle = ( low + high ) >>> 1;
+
+          if ( tails[ middle ] < j ) low = middle + 1;
+          else high = middle;
+        }
+
+        const node = matchOriginal.length;
+
+        matchOriginal.push( i ), matchModified.push( j );
+        matchPrevious.push( low ? tailNodes[ low - 1 ] : -1 );
+        tails[ low ] = j, tailNodes[ low ] = node;
+      }
+    }
   }
 }
