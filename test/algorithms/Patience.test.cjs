@@ -48,8 +48,7 @@ test( 'Patience', async t => {
   } );
 
   await t.test( 'detects changes between unique anchors', () => {
-    const original = [ 'start', 'old', 'middle', 'old2', 'end' ];
-    const modified = [ 'start', 'new', 'middle', 'new2', 'end' ];
+    const original = [ 'start', 'old', 'middle', 'old2', 'end' ], modified = [ 'start', 'new', 'middle', 'new2', 'end' ];
     const operations = d( original, modified );
 
     assert.deepEqual( operations, [
@@ -66,8 +65,7 @@ test( 'Patience', async t => {
   } );
 
   await t.test( 'uses Myers for regions without unique anchors', () => {
-    const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ];
-    const modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
+    const original = [ 'a', 'a', 'a', 'a', 'a', 'a' ], modified = [ 'a', 'a', 'b', 'a', 'a', 'a' ];
     const operations = d( original, modified );
 
     assert.equal( getOperationCount( operations, 'insert' ), 1 );
@@ -97,8 +95,7 @@ test( 'Patience', async t => {
 
   await t.test( 'uses the supplied key function', () => {
     const algorithm = new Patience( { getKey: value => value.toLowerCase() } );
-    const original = [ 'Alpha', 'old', 'Beta' ];
-    const modified = [ 'alpha', 'new', 'BETA' ];
+    const original = [ 'Alpha', 'old', 'Beta' ], modified = [ 'alpha', 'new', 'BETA' ];
     const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
     const operations = algorithm.diff( original, modified, compare );
 
