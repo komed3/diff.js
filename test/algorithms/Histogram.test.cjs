@@ -48,8 +48,7 @@ test( 'Histogram', async t => {
   } );
 
   await t.test( 'uses repeated elements as anchors', () => {
-    const original = [ 'a', 'a', 'b', 'b', 'c' ];
-    const modified = [ 'a', 'b', 'b', 'c', 'c' ];
+    const original = [ 'a', 'a', 'b', 'b', 'c' ], modified = [ 'a', 'b', 'b', 'c', 'c' ];
     const operations = d( original, modified );
 
     reconstruct( original, modified, operations );
@@ -57,8 +56,7 @@ test( 'Histogram', async t => {
   } );
 
   await t.test( 'prefers rarer common elements', () => {
-    const original = [ 'a', 'a', 'a', 'b', 'c' ];
-    const modified = [ 'a', 'a', 'b', 'c', 'c' ];
+    const original = [ 'a', 'a', 'a', 'b', 'c' ], modified = [ 'a', 'a', 'b', 'c', 'c' ];
     const operations = d( original, modified );
 
     reconstruct( original, modified, operations );
@@ -88,12 +86,20 @@ test( 'Histogram', async t => {
 
   await t.test( 'uses the supplied key function', () => {
     const algorithm = new Histogram( { getKey: value => value.toLowerCase() } );
-    const original = [ 'Alpha', 'Alpha', 'Beta' ];
-    const modified = [ 'alpha', 'beta', 'BETA' ];
+    const original = [ 'Alpha', 'Alpha', 'Beta' ], modified = [ 'alpha', 'beta', 'BETA' ];
     const compare = ( a, b ) => a.toLowerCase() === b.toLowerCase();
     const operations = algorithm.diff( original, modified, compare );
 
     reconstruct( original, modified, operations, compare );
+    assert.equal( getEqualLength( operations ), 2 );
+  } );
+
+  await t.test( 'handles key collisions without treating unequal elements as equal', () => {
+    const algorithm = new Histogram( { getKey: () => 'same' } );
+    const original = [ 'a', 'b', 'c' ], modified = [ 'a', 'x', 'c' ];
+    const operations = algorithm.diff( original, modified, equals );
+
+    reconstruct( original, modified, operations );
     assert.equal( getEqualLength( operations ), 2 );
   } );
 } );
