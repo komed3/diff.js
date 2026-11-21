@@ -4,7 +4,7 @@ const assert = require( 'node:assert/strict' );
 module.exports = {
   equals: ( a, b ) => a === b,
 
-  diff: ( o, m ) => algorithm.diff( o, m, equals ),
+  diff: ( o, m, algo ) => algo.diff( o, m, ( a, b ) => a === b ),
 
   reconstruct: ( o, m, operations ) => {
     const result = operations.map( ( { type, original, modified } ) => {
