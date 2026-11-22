@@ -1,30 +1,26 @@
-import type { Operation } from '../../types/operation';
+import type { Bounds, Input } from '../../types/context';
+import type { Operation, Pair } from '../../types/operation';
 import { commonEdges } from './commonEdges';
 import { createContext } from './createContext';
-import { findAnchors } from './findAnchors';
 import { processAnchors } from './processAnchors';
 
 
-export function anchoredDiff < T > (
-  original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean,
-  uniqueOnly = false
-) : Operation[] {
-  const { oStart, oEnd, mStart, mEnd, pushEdit, finish } = createContext( original, modified, equals );
+export function anchoredDiff < T > ( input: Input< T >, strategy: ( input: Input< T >, bounds: Bounds ) => readonly Pair[] ) : Operation[] {
+  const context = createContext( input );
 
-  const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
-    const { prefix, suffix } = commonEdges( original, modified, equals, oStart, oEnd, mStart, mEnd );
+  const process = ( bounds: Bounds ) => {
+    const { prefix, suffix } = commonEdges( context.input, bounds );
+    for ( let i = 0; i < suffix; i++ ) context.pushEdit( 0 );
 
-    for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
-    oStart += prefix, oEnd -= suffix, mStart += prefix, mEnd -= suffix;
+    const range: Bounds = {
+      oStart: bounds.oStart + prefix, oEnd: bounds.oEnd - suffix,
+      mStart: bounds.mStart + prefix, mEnd: bounds.mEnd - suffix
+    };
 
-    processAnchors(
-      findAnchors( original, modified, equals, oStart, oEnd, mStart, mEnd, uniqueOnly ),
-      pushEdit, original, modified, equals, oStart, oEnd, mStart, mEnd, process
-    );
-
-    for ( let i = 0; i < prefix; i++ ) pushEdit( 0 );
+    processAnchors( strategy( context.input, range ), context, range, process );
+    for ( let i = 0; i < prefix; i++ ) context.pushEdit( 0 );
   };
 
-  process( oStart, oEnd, mStart, mEnd );
-  return finish();
+  process( context.bounds );
+  return context.finish();
 }
