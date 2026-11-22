@@ -8,21 +8,17 @@ import { processAnchors } from './processAnchors';
 export function anchoredDiff < T > (
   input: Input< T >, strategy: ( input: Input< T >, bounds: Bounds ) => readonly Pair[]
 ) : Operation[] {
-  const context = createContext( input );
+  const { bounds, pushEdit, finish } = createContext( input );
 
-  const process = ( bounds: Bounds ) => {
-    const { prefix, suffix } = commonEdges( context.input, bounds );
-    for ( let i = 0; i < suffix; i++ ) context.pushEdit( 0 );
+  const process = ( { oStart, oEnd, mStart, mEnd }: Bounds ) => {
+    const { prefix, suffix } = commonEdges( input, { oStart, oEnd, mStart, mEnd } );
+    for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
 
-    const range: Bounds = {
-      oStart: bounds.oStart + prefix, oEnd: bounds.oEnd - suffix,
-      mStart: bounds.mStart + prefix, mEnd: bounds.mEnd - suffix
-    };
-
-    processAnchors( strategy( context.input, range ), context, range, process );
-    for ( let i = 0; i < prefix; i++ ) context.pushEdit( 0 );
+    const range = { oStart: oStart + prefix, oEnd: oEnd - suffix, mStart: mStart + prefix, mEnd: mEnd - suffix };
+    processAnchors( strategy( input, range ), input, range, pushEdit, process );
+    for ( let i = 0; i < prefix; i++ ) pushEdit( 0 );
   };
 
-  process( context.bounds );
-  return context.finish();
+  process( bounds );
+  return finish();
 }
