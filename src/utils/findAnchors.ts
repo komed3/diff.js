@@ -8,36 +8,28 @@ export function findAnchors < T > (
   const groups: { value: T; original: number[]; modified: number[] }[] = [];
 
   for ( let i = oStart; i < oEnd; i++ ) {
-    let group = groups.find( group => equals( group.value, original[ i ] ) );
-
+    let group = groups.find( ( { value } ) => equals( value, original[ i ] ) );
     if ( ! group ) groups.push( group = { value: original[ i ], original: [], modified: [] } );
     group.original.push( i );
   }
 
   for ( let j = mStart; j < mEnd; j++ ) {
-    const group = groups.find( group => equals( group.value, modified[ j ] ) );
+    const group = groups.find( ( { value } ) => equals( value, modified[ j ] ) );
     if ( group ) group.modified.push( j );
   }
 
-  let frequency = Infinity;
+  let freq = Infinity;
 
-  if ( ! uniqueOnly ) {
-    for ( const group of groups ) {
-      const { original: o, modified: m } = group;
-      if ( o.length && o.length === m.length ) frequency = Math.min( frequency, o.length + m.length );
-    }
-  }
+  if ( ! uniqueOnly ) for ( const { original: o, modified: m } of groups )
+    if ( o.length && o.length === m.length ) freq = Math.min( freq, o.length + m.length );
 
   const candidates: Pair[] = [];
 
-  for ( const group of groups ) {
-    const { original: o, modified: m } = group;
-
+  for ( const { original: o, modified: m } of groups ) {
     if ( ! o.length || o.length !== m.length ) continue;
-    if ( uniqueOnly ? o.length !== 1 : o.length + m.length !== frequency ) continue;
+    if ( uniqueOnly ? o.length !== 1 : o.length + m.length !== freq ) continue;
 
-    for ( let i = 0; i < o.length; i++ )
-      candidates.push( { original: o[ i ], modified: m[ i ] } );
+    for ( let i = 0; i < o.length; i++ ) candidates.push( { original: o[ i ], modified: m[ i ] } );
   }
 
   candidates.sort( ( a, b ) => a.original - b.original );
