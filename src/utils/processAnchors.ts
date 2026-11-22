@@ -11,4 +11,6 @@ export function processAnchors < T > (
   original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean,
   oStart: number, oEnd: number, mStart: number, mEnd: number,
   process: ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => void
-) : void {}
+) : void {
+  const anchors = longestIncreasingSubsequence( candidates );
+}
