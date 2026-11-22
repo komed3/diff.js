@@ -46,12 +46,12 @@ export class Histogram implements Algorithm {
 
           covered.set( diag, endM );
 
+          const length = endO - startO;
+          if ( length < bestLength ) continue;
+
           let freq = Infinity;
           for ( let i = startO; i < endO; i++ ) freq = Math.min( freq, frequencies[ i - oStart ] );
-
-          const length = endO - startO;
-          if ( length > bestLength || ( length === bestLength && freq < bestFreq ) )
-            bestO = startO, bestM = startM, bestLength = length, bestFreq = freq;
+          if ( length > bestLength || freq < bestFreq ) bestO = startO, bestM = startM, bestLength = length, bestFreq = freq;
         }
       }
 
