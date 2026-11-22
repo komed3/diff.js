@@ -7,7 +7,7 @@ import { createContext } from './internal/createContext';
 export class HuntSzymanski implements Algorithm {
   public diff < T > ( input: Input< T > ) : Operation[] {
     const { input: { original, modified, equals }, bounds: { oStart, oEnd, mStart, mEnd }, pushEdit, finish } = createContext( input );
-    const matchOrig: number[] = [], matchMod: number[] = [], matchPrev: number[] = [], tails: number[] = [], tailNodes: number[] = [];
+    const matchO: number[] = [], matchM: number[] = [], matchPrev: number[] = [], tails: number[] = [], tailNodes: number[] = [];
 
     for ( let i = oStart; i < oEnd; i++ ) {
       const value = original[ i ];
@@ -23,9 +23,9 @@ export class HuntSzymanski implements Algorithm {
           else high = middle;
         }
 
-        const node = matchOrig.length;
+        const node = matchO.length;
 
-        matchOrig.push( i ), matchMod.push( j );
+        matchO.push( i ), matchM.push( j );
         matchPrev.push( low ? tailNodes[ low - 1 ] : -1 );
         tails[ low ] = j, tailNodes[ low ] = node;
       }
@@ -34,7 +34,7 @@ export class HuntSzymanski implements Algorithm {
     let i = oEnd, j = mEnd, node = tailNodes[ tails.length - 1 ];
 
     while ( node !== undefined && node >= 0 ) {
-      const o = matchOrig[ node ], m = matchMod[ node ];
+      const o = matchO[ node ], m = matchM[ node ];
 
       while ( j > m + 1 ) pushEdit( 1 ), j--;
       while ( i > o + 1 ) pushEdit( 2 ), i--;
