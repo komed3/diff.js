@@ -1,10 +1,13 @@
 import type { Algorithm } from '../types/algorithm';
+import type { Input } from '../types/context';
 import type { Operation } from '../types/operation';
 import { anchoredDiff } from './internal/anchoredDiff';
+import { findAnchors } from './internal/findAnchors';
+import { longestIncreasingSubsequence } from './internal/longestIncreasingSubsequence';
 
 
 export class Patience implements Algorithm {
-  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    return anchoredDiff( original, modified, equals, true );
+  public diff < T > ( input: Input< T > ) : Operation[] {
+    return anchoredDiff( input, ( i, b ) => longestIncreasingSubsequence( findAnchors( i, b ) ) );
   }
 }
