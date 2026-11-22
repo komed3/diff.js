@@ -1,5 +1,5 @@
-import type { Pair } from '../types/operation';
 import { Myers } from '../algorithm/Myers';
+import type { Pair } from '../types/operation';
 import { longestIncreasingSubsequence } from './longestIncreasingSubsequence';
 
 
