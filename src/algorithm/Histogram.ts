@@ -8,7 +8,8 @@ import { processAnchors } from '../utils/processAnchors';
 
 export class Histogram implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const { oStart, oEnd, mStart, mEnd, pushEdit, finish } = createContext( original, modified, equals );
+    const context = createContext( original, modified, equals );
+    const { oStart, oEnd, mStart, mEnd, pushEdit } = context;
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
       const { prefix, suffix } = commonEdges( original, modified, equals, oStart, oEnd, mStart, mEnd );
@@ -23,6 +24,6 @@ export class Histogram implements Algorithm {
     };
 
     process( oStart, oEnd, mStart, mEnd );
-    return finish();
+    return context.finish();
   }
 }
