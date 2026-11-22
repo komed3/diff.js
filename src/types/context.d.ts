@@ -5,6 +5,7 @@ export interface Input< T > {
   original: readonly T[];
   modified: readonly T[];
   equals: ( o: T, m: T ) => boolean;
+  key?: ( value: T ) => unknown;
 }
 
 export interface Bounds {
