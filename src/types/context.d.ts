@@ -1,7 +1,7 @@
 import type { Operation } from './operation';
 
 
-export interface DiffContext {
+export interface Context {
     prefix: number;
     suffix: number;
     oStart: number;
