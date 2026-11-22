@@ -1,7 +1,6 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
-
-const { createSequences, diff, reconstruct } = require( './utils.cjs' );
+const { createSequences, diff, getEqualLength, reconstruct } = require( './utils.cjs' );
 
 
 module.exports = ( name, algorithm, additionalTests = async () => {} ) => {
@@ -49,6 +48,7 @@ module.exports = ( name, algorithm, additionalTests = async () => {} ) => {
       reconstruct( o, m, ops );
       assert.equal( ops.some( ( { type } ) => type === 'delete' ), true );
       assert.equal( ops.some( ( { type } ) => type === 'insert' ), true );
+      assert.equal( getEqualLength( ops ), 2 );
     } );
 
     await t.test( 'handles repeated elements', () => {
@@ -78,7 +78,7 @@ module.exports = ( name, algorithm, additionalTests = async () => {} ) => {
       assert.deepEqual( m, mc );
     } );
 
-    await t.test( 'produces valid edit scripts for short sequences', () => {
+    await t.test( 'validates edit scripts for short sequences', () => {
       const seqs = createSequences();
       for ( const o of seqs ) for ( const m of seqs ) reconstruct( o, m, d( o, m ) );
     } );
