@@ -20,7 +20,5 @@ export function findAnchors < T > ( { original, modified, equals, key }: Input< 
 
   const anchors: Pair[] = [];
   for ( const { o, m } of groups ) if ( o >= 0 && m >= 0 ) anchors.push( { original: o, modified: m } );
-
-  anchors.sort( ( a, b ) => a.original - b.original );
   return anchors;
 }
