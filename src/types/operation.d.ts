@@ -1,4 +1,7 @@
-export type Pair = { original: number, modified: number };
+export interface Pair {
+  original: number;
+  modified: number;
+}
 
 export interface Range {
   readonly start: number;
