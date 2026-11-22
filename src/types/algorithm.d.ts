@@ -1,6 +1,7 @@
+import type { Input } from './context';
 import type { Operation } from './operation';
 
 
 export interface Algorithm {
-  diff < T > ( original: readonly T[], modified: readonly T[], equals: ( original: T, modified: T ) => boolean ) : Operation[];
+  diff < T > ( input: Input< T > ) : Operation[];
 }
