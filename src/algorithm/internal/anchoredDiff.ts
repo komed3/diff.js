@@ -5,7 +5,9 @@ import { createContext } from './createContext';
 import { processAnchors } from './processAnchors';
 
 
-export function anchoredDiff < T > ( input: Input< T >, strategy: ( input: Input< T >, bounds: Bounds ) => readonly Pair[] ) : Operation[] {
+export function anchoredDiff < T > (
+  input: Input< T >, strategy: ( input: Input< T >, bounds: Bounds ) => readonly Pair[]
+) : Operation[] {
   const context = createContext( input );
 
   const process = ( bounds: Bounds ) => {

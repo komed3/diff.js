@@ -4,7 +4,8 @@ import { myersDiffRange } from './myersDiffRange';
 
 
 export function processAnchors < T > (
-  anchors: readonly Pair[], context: Context< T >, bounds: Bounds, process: ( bounds: Bounds ) => void
+  anchors: readonly Pair[], context: Context< T >, bounds: Bounds,
+  process: ( bounds: Bounds ) => void
 ) : void {
   if ( ! anchors.length ) return myersDiffRange( context, bounds );
   let oEnd = bounds.oEnd, mEnd = bounds.mEnd;
