@@ -1,9 +1,9 @@
-import type { Bounds, Context } from '../../types/context';
+import type { Bounds, Input } from '../../types/context';
 import type { Pair } from '../../types/operation';
 
 
-export function findAnchors < T > ( context: Context< T >, bounds: Bounds ) : Pair[] {
-  const { original, modified, equals } = context.input, { oStart, oEnd, mStart, mEnd } = bounds;
+export function findAnchors < T > ( input: Input< T >, bounds: Bounds ) : Pair[] {
+  const { original, modified, equals } = input, { oStart, oEnd, mStart, mEnd } = bounds;
   const groups: { value: T; o: number; m: number }[] = [];
 
   for ( let i = oStart; i < oEnd; i++ ) {
