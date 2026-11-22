@@ -1,8 +1,7 @@
 import type { Bounds, Input } from '../../types/context';
 
 
-export function commonEdges < T > ( input: Input< T >, bounds: Bounds ) : { prefix: number, suffix: number } {
-  const { original, modified, equals } = input, { oStart, oEnd, mStart, mEnd } = bounds;
+export function commonEdges < T > ( { original, modified, equals }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds ) {
   let prefix = 0, suffix = 0;
 
   while ( oStart + prefix < oEnd && mStart + prefix < mEnd &&
