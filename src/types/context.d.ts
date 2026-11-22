@@ -1,6 +1,12 @@
 import type { Operation } from './operation';
 
 
+export interface Input< T > {
+  original: readonly T[];
+  modified: readonly T[];
+  equals: ( o: T, m: T ) => boolean;
+}
+
 export interface Bounds {
   oStart: number;
   oEnd: number;
@@ -9,10 +15,8 @@ export interface Bounds {
 }
 
 export interface Context< T > {
+  input: Input< T >;
   bounds: Bounds;
-  original: readonly T[];
-  modified: readonly T[];
-  equals: ( o: T, m: T ) => boolean;
   pushEdit: ( type: 0 | 1 | 2 ) => void;
   finish: () => Operation[];
 }
