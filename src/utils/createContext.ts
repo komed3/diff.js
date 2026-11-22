@@ -7,7 +7,7 @@ import { populateOperations } from './populateOperations';
 export function createContext < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Context {
   const n = original.length, m = modified.length;
   const { prefix, suffix } = commonEdges( original, modified, equals );
-  const editCount = n + m + 1, editCodes = new Int8Array( editCount );
+  const editCount = n + m - prefix - suffix + 1, editCodes = new Int8Array( editCount );
 
   let editStart = editCount;
 
