@@ -1,37 +1,28 @@
+import type { Bounds, Context } from '../../types/context';
 import type { Pair } from '../../types/operation';
 
 
-export function findAnchors < T > (
-  original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean,
-  oStart: number, oEnd: number, mStart: number, mEnd: number, uniqueOnly = false
-) : Pair[] {
-  const groups: { value: T; original: number[]; modified: number[] }[] = [];
+export function findAnchors < T > ( context: Context< T >, bounds: Bounds ) : Pair[] {
+  const { original, modified, equals } = context.input, { oStart, oEnd, mStart, mEnd } = bounds;
+  const groups: { value: T; o: number; m: number }[] = [];
 
   for ( let i = oStart; i < oEnd; i++ ) {
     let group = groups.find( ( { value } ) => equals( value, original[ i ] ) );
-    if ( ! group ) groups.push( group = { value: original[ i ], original: [], modified: [] } );
-    group.original.push( i );
+
+    if ( ! group ) groups.push( group = { value: original[ i ], o: i, m: -1 } );
+    else group.o = -1;
   }
 
   for ( let j = mStart; j < mEnd; j++ ) {
     const group = groups.find( ( { value } ) => equals( value, modified[ j ] ) );
-    if ( group ) group.modified.push( j );
+    if ( ! group ) continue;
+
+    group.m = group.m === -1 ? j : -2;
   }
 
-  let freq = Infinity;
+  const anchors: Pair[] = [];
+  for ( const { o, m } of groups ) if ( o >= 0 && m >= 0 ) anchors.push( { original: o, modified: m } );
 
-  if ( ! uniqueOnly ) for ( const { original: o, modified: m } of groups )
-    if ( o.length && o.length === m.length ) freq = Math.min( freq, o.length + m.length );
-
-  const candidates: Pair[] = [];
-
-  for ( const { original: o, modified: m } of groups ) {
-    if ( ! o.length || o.length !== m.length ) continue;
-    if ( uniqueOnly ? o.length !== 1 : o.length + m.length !== freq ) continue;
-
-    for ( let i = 0; i < o.length; i++ ) candidates.push( { original: o[ i ], modified: m[ i ] } );
-  }
-
-  candidates.sort( ( a, b ) => a.original - b.original );
-  return candidates;
+  anchors.sort( ( a, b ) => a.original - b.original );
+  return anchors;
 }
