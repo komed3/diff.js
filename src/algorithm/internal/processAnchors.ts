@@ -1,23 +1,19 @@
+import type { Bounds, Context } from '../../types/context';
 import type { Pair } from '../../types/operation';
-import { longestIncreasingSubsequence } from './longestIncreasingSubsequence';
 import { myersDiffRange } from './myersDiffRange';
 
 
 export function processAnchors < T > (
-  candidates: readonly Pair[], pushEdit: ( type: 0 | 1 | 2 ) => void, original: readonly T[],
-  modified: readonly T[], equals: ( o: T, m: T ) => boolean, oStart: number, oEnd: number, mStart: number,
-  mEnd: number, process: ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => void
+  anchors: readonly Pair[], context: Context< T >, bounds: Bounds, process: ( bounds: Bounds ) => void
 ) : void {
-  const anchors = longestIncreasingSubsequence( candidates );
-  if ( ! anchors.length ) return myersDiffRange( original, modified, equals, oStart, oEnd, mStart, mEnd, pushEdit );
-
-  let origIdx = oEnd, modIdx = mEnd;
+  if ( ! anchors.length ) return myersDiffRange( context, bounds );
+  let oEnd = bounds.oEnd, mEnd = bounds.mEnd;
 
   for ( let i = anchors.length - 1; i >= 0; i-- ) {
-    const { original: oi, modified: mi } = anchors[ i ];
-    process( oi + 1, origIdx, mi + 1, modIdx ), pushEdit( 0 );
-    origIdx = oi, modIdx = mi;
+    const { original: o, modified: m } = anchors[ i ];
+    if ( o + 1 < oEnd || m + 1 < mEnd ) process( { oStart: o + 1, oEnd, mStart: m + 1, mEnd } );
+    context.pushEdit( 0 ), oEnd = o, mEnd = m;
   }
 
-  process( oStart, origIdx, mStart, modIdx );
+  if ( bounds.oStart < oEnd || bounds.mStart < mEnd ) process( { ...bounds, oEnd, mEnd } );
 }
