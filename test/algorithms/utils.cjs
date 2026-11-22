@@ -80,6 +80,6 @@ const createSequences = ( max = 4, values = [ 'a', 'b' ] ) => {
 
 
 module.exports = {
-  equals, diff, reconstruct, editDistance, getOperationCount,
-  getEqualLength, getEditDistance, assertMinimal, createSequences
+  equals, diff, getOperationCount, getEqualLength, getEditDistance,
+  editDistance, reconstruct, assertMinimal, createSequences
 };
