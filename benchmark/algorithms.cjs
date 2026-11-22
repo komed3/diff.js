@@ -15,9 +15,8 @@ const algorithms = [
   [ 'Histogram', new Histogram() ]
 ];
 
-const equals = ( a, b ) => a === b;
-const sizes = [ 256, 512, 1024 ];
-const warmups = 2, samples = 7;
+const equals = ( a, b ) => a === b, key = ( v ) => v;
+const sizes = [ 256, 512, 1024 ], warmups = 2, samples = 7;
 
 
 const createCases = ( size ) => {
@@ -49,8 +48,9 @@ const createCases = ( size ) => {
 const results = [];
 
 for ( const size of sizes ) for ( const [ name, original, modified ] of createCases( size ) ) {
+  const input = { original, modified, equals, key };
+
   for ( const [ algorithm, instance ] of algorithms ) {
-    const input = { original, modified, equals };
     for ( let i = 0; i < warmups; i++ ) instance.diff( input );
 
     const times = [];
