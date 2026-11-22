@@ -1,11 +1,14 @@
 import type { Bounds, Input } from '../../types/context';
+import type { AnchorGroup } from '../../types/group';
 import type { Pair } from '../../types/operation';
 import { addGroup, findGroup } from './group';
 
 
-export function findAnchors < T > ( { original, modified, equals, key }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds ) : Pair[] {
-  const groups: { value: T; o: number; m: number }[] = [], lookup = new Map< unknown, typeof groups[ number ][] >();
-  let group: typeof groups[ number ] | undefined;
+export function findAnchors < T > (
+  { original, modified, equals, key }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds
+) : Pair[] {
+  const groups: AnchorGroup< T >[] = [], lookup = new Map< unknown, AnchorGroup< T >[] >();
+  let group: AnchorGroup< T > | undefined;
 
   for ( let i = oStart; i < oEnd; i++ ) {
     group = findGroup( groups, lookup, original[ i ], equals, key );
