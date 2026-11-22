@@ -1,7 +1,7 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
-const { diff, reconstruct, createSequences } = require( '../utils.cjs' );
+const { diff, reconstruct, createSequences } = require( './utils.cjs' );
 
 
 module.exports = ( name, algorithm ) => {
@@ -47,7 +47,7 @@ module.exports = ( name, algorithm ) => {
 
     await t.test( 'detects insertions at the beginning and middle', () => {
       const cases = [ [ [ 'b', 'c' ], [ 'a', 'b', 'c' ] ], [ [ 'a', 'c' ], [ 'a', 'b', 'c' ] ] ];
-      for ( const [ original, modified ] of cases ) reconstruct( original, modified, d( original, modified ) );
+      for ( const [ o, m ] of cases ) reconstruct( o, m, d( o, m ) );
     } );
 
     await t.test( 'detects a deletion', () => {
@@ -97,7 +97,9 @@ module.exports = ( name, algorithm ) => {
 
     await t.test( 'produces valid edit scripts for short sequences', () => {
       const sequences = createSequences();
-      for ( const o of sequences ) for ( const m of sequences ) reconstruct( o, m, d( o, m ) );
+
+      for ( const original of sequences ) for ( const modified of sequences )
+        reconstruct( original, modified, d( original, modified ) );
     } );
   } );
 };
