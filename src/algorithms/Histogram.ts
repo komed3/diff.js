@@ -2,24 +2,25 @@ import type { Algorithm } from '../types/algorithm';
 import type { Input } from '../types/context';
 import type { Operation, Pair } from '../types/operation';
 import { anchoredDiff } from './internal/anchoredDiff';
+import { addGroup, findGroup } from './internal/group';
 
 
 export class Histogram implements Algorithm {
   public diff < T > ( input: Input< T > ) : Operation[] {
-    return anchoredDiff( input, ( { original, modified, equals }, { oStart, oEnd, mStart, mEnd } ) => {
+    return anchoredDiff( input, ( { original, modified, equals, key }, { oStart, oEnd, mStart, mEnd } ) => {
       const groups: { value: T; o: number[]; m: number[] }[] = [];
+      const lookup = new Map< unknown, typeof groups[ number ][] >();
       let group: typeof groups[ number ] | undefined, diag: number;
 
       for ( let i = oStart; i < oEnd; i++ ) {
-        group = groups.find( ( { value } ) => equals( value, original[ i ] ) );
-        if ( ! group ) groups.push( group = { value: original[ i ], o: [], m: [] } );
+        group = findGroup( groups, lookup, original[ i ], equals, key );
+        if ( ! group ) addGroup( groups, lookup, group = { value: original[ i ], o: [], m: [] }, key );
         group.o.push( i );
       }
 
-      for ( let j = mStart; j < mEnd; j++ ) {
-        group = groups.find( ( { value } ) => equals( value, modified[ j ] ) );
-        if ( group ) group.m.push( j );
-      }
+      for ( let j = mStart; j < mEnd; j++ )
+        if ( group = findGroup( groups, lookup, modified[ j ], equals, key ) )
+          group.m.push( j );
 
       const frequencies = new Uint32Array( oEnd - oStart );
       for ( const { o } of groups ) for ( const i of o ) frequencies[ i - oStart ] = o.length;
