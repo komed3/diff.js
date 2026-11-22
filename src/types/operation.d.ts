@@ -1,3 +1,5 @@
+export type Pair = { original: number, modified: number };
+
 export interface Range {
   readonly start: number;
   readonly length: number;
