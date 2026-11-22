@@ -1,10 +1,8 @@
 export function myersDiffRange < T > (
-  original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean,
-  oStart: number, oEnd: number, mStart: number, mEnd: number,
-  pushEdit: ( type: 0 | 1 | 2 ) => void
+  original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean, oStart: number,
+  oEnd: number, mStart: number, mEnd: number, pushEdit: ( type: 0 | 1 | 2 ) => void
 ) : void {
   const oLen = oEnd - oStart, mLen = mEnd - mStart, maxDist = oLen + mLen;
-
   if ( ! maxDist ) return;
 
   const frontier = new Int32Array( maxDist * 2 + 3 ), offset = maxDist + 1;
@@ -44,9 +42,9 @@ export function myersDiffRange < T > (
       ? diag + 1 : diag - 1;
 
     const prevX = trace[ prevOffset + ( prevDiag + d - 1 ) / 2 ], prevY = prevX - prevDiag;
-
     while ( x > prevX && y > prevY ) pushEdit( 0 ), x--, y--;
     pushEdit( x === prevX ? 1 : 2 );
+
     x = prevX, y = prevY;
   }
 
