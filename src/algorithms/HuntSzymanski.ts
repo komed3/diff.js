@@ -1,5 +1,6 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Input } from '../types/context';
+import type { MatchGroup } from '../types/group';
 import type { Operation } from '../types/operation';
 import { createContext } from './internal/createContext';
 import { addGroup, findGroup } from './internal/group';
@@ -27,22 +28,22 @@ export class HuntSzymanski implements Algorithm {
     };
 
     if ( key ) {
-      const groups: { value: T; modified: number[] }[] = [], oGroups: typeof groups[ number ][] = [];
-      const lookup = new Map< unknown, typeof groups[ number ][] >();
-      let group: typeof groups[ number ] | undefined;
+      const groups: MatchGroup< T >[] = [], oGroups: MatchGroup< T >[] = [];
+      const lookup = new Map< unknown, MatchGroup< T >[] >();
+      let group: MatchGroup< T > | undefined;
 
       for ( let i = oStart; i < oEnd; i++ ) {
         group = findGroup( groups, lookup, original[ i ], equals, key );
-        if ( ! group ) addGroup( groups, lookup, group = { value: original[ i ], modified: [] }, key );
+        if ( ! group ) addGroup( groups, lookup, group = { value: original[ i ], m: [] }, key );
         oGroups.push( group );
       }
 
       for ( let j = mStart; j < mEnd; j++ )
         if ( group = findGroup( groups, lookup, modified[ j ], equals, key ) )
-          group.modified.push( j );
+          group.m.push( j );
 
       for ( let i = oStart; i < oEnd; i++ ) {
-        const matches = oGroups[ i - oStart ].modified;
+        const matches = oGroups[ i - oStart ].m;
         for ( let k = matches.length - 1; k >= 0; k-- ) addMatch( i, matches[ k ] );
       }
     }
