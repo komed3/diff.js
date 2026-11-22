@@ -6,10 +6,8 @@ import { myersDiffRange } from '../utils/myersDiffRange';
 
 export class Myers implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const ctx = createContext( original, modified, equals );
-    const { oStart, oEnd, mStart, mEnd, pushEdit } = ctx;
-
+    const { oStart, oEnd, mStart, mEnd, pushEdit, finish } = createContext( original, modified, equals );
     myersDiffRange( original, modified, equals, oStart, oEnd, mStart, mEnd, pushEdit );
-    return ctx.finish();
+    return finish();
   }
 }

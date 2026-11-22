@@ -5,8 +5,7 @@ import { createContext } from '../utils/createContext';
 
 export class HuntSzymanski implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const ctx = createContext( original, modified, equals );
-    const { oStart, oEnd, mStart, mEnd, pushEdit } = ctx;
+    const { oStart, oEnd, mStart, mEnd, pushEdit, finish } = createContext( original, modified, equals );
     const matchOrig: number[] = [], matchMod: number[] = [], matchPrev: number[] = [];
     const tails: number[] = [], tailNodes: number[] = [];
 
@@ -47,6 +46,6 @@ export class HuntSzymanski implements Algorithm {
     while ( j > mStart ) pushEdit( 1 ), j--;
     while ( i > oStart ) pushEdit( 2 ), i--;
 
-    return ctx.finish();
+    return finish();
   }
 }

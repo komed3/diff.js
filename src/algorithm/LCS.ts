@@ -5,8 +5,7 @@ import { createContext } from '../utils/createContext';
 
 export class LCS implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const ctx = createContext( original, modified, equals );
-    const { prefix, oLen, mLen, pushEdit } = ctx;
+    const { prefix, oLen, mLen, pushEdit, finish } = createContext( original, modified, equals );
 
     if ( oLen && mLen ) {
       const dirs = new Uint8Array( oLen * mLen );
@@ -43,6 +42,6 @@ export class LCS implements Algorithm {
       for ( let i = 0; i < mLen; i++ ) pushEdit( 1 );
     }
 
-    return ctx.finish();
+    return finish();
   }
 }
