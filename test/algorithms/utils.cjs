@@ -1,101 +1,85 @@
 const assert = require( 'node:assert/strict' );
 
 
-const equals = ( a, b ) => a === b;
+const equals = ( n, m ) => n === m;
+const diff = ( o, m, algo, c = equals ) => algo.diff( { original: o, modified: m, equals: c } );
+const getOperationCount = ( ops, type ) => ops.filter( o => o.type === type ).length;
 
-const diff = ( original, modified, algo, compare = equals ) => algo.diff( { original, modified, equals: compare } );
+const getEqualLength = ( ops ) => ops.reduce( ( len, { type, original } ) =>
+  len + ( type === 'equal' ? original.length : 0 ), 0 );
 
-const editDistance = ( original, modified, compare = equals ) => {
-  const rows = Array.from( { length: original.length + 1 }, () => new Uint32Array( modified.length + 1 ) );
+const getEditDistance = ops => ops.reduce( ( n, { type, original, modified } ) =>
+  n + ( type === 'equal' ? 0 : original.length + modified.length ), 0 );
 
-  for ( let i = 0; i <= original.length; i++ ) rows[ i ][ 0 ] = i;
-  for ( let i = 0; i <= modified.length; i++ ) rows[ 0 ][ i ] = i;
+const editDistance = ( o, m, c = equals ) => {
+  const rows = Array.from( { length: o.length + 1 }, () => new Uint32Array( m.length + 1 ) );
 
-  for ( let i = 1; i <= original.length; i++ ) for ( let j = 1; j <= modified.length; j++ )
-    rows[ i ][ j ] = compare( original[ i - 1 ], modified[ j - 1 ] ) ? rows[ i - 1 ][ j - 1 ] :
+  for ( let i = 0; i <= o.length; i++ ) rows[ i ][ 0 ] = i;
+  for ( let i = 0; i <= m.length; i++ ) rows[ 0 ][ i ] = i;
+
+  for ( let i = 1; i <= o.length; i++ ) for ( let j = 1; j <= m.length; j++ )
+    rows[ i ][ j ] = c( o[ i - 1 ], m[ j - 1 ] ) ? rows[ i - 1 ][ j - 1 ] :
       Math.min( rows[ i - 1 ][ j ] + 1, rows[ i ][ j - 1 ] + 1 );
 
-  return rows[ original.length ][ modified.length ];
+  return rows[ o.length ][ m.length ];
 };
 
-const getEditDistance = ( operations ) => operations.reduce( ( dist, { type, original, modified } ) =>
-  dist + ( type === 'equal' ? 0 : original.length + modified.length ), 0
-);
-
-const getOperationCount = ( operations, type ) => operations.filter( o => o.type === type ).length;
-
-const getEqualLength = ( operations ) => operations.reduce( ( length, { type, original } ) =>
-  length + ( type === 'equal' ? original.length : 0 ), 0
-);
-
-const reconstruct = ( original, modified, operations, compare = equals ) => {
+const reconstruct = ( o, m, ops, c = equals ) => {
   const result = [];
   let oPos = 0, mPos = 0;
 
-  for ( const { type, original: o, modified: m } of operations ) {
-    assert.equal( o.start, oPos );
-    assert.equal( m.start, mPos );
-
-    assert.ok( o.length >= 0 && o.start + o.length <= original.length );
-    assert.ok( m.length >= 0 && m.start + m.length <= modified.length );
+  for ( const { type, original: oi, modified: mi } of ops ) {
+    assert.equal( oi.start, oPos );
+    assert.equal( mi.start, mPos );
+    assert.ok( oi.length >= 0 && oi.start + oi.length <= o.length );
+    assert.ok( mi.length >= 0 && mi.start + mi.length <= m.length );
 
     switch ( type ) {
       case 'equal':
-        assert.equal( o.length, m.length );
-        for ( let i = 0; i < o.length; i++ ) assert.equal( compare( original[ o.start + i ], modified[ m.start + i ] ), true );
-        result.push( ...modified.slice( m.start, m.start + m.length ) );
+        assert.equal( oi.length, mi.length );
+        for ( let i = 0; i < oi.length; i++ ) assert.equal( c( o[ oi.start + i ], m[ mi.start + i ] ), true );
+        result.push( ...m.slice( mi.start, mi.start + mi.length ) );
         break;
 
       case 'delete':
-        assert.equal( m.length, 0 );
+        assert.equal( mi.length, 0 );
         break;
 
       case 'insert':
-        assert.equal( o.length, 0 );
-        result.push( ...modified.slice( m.start, m.start + m.length ) );
+        assert.equal( oi.length, 0 );
+        result.push( ...m.slice( mi.start, mi.start + mi.length ) );
         break;
 
       default:
         assert.fail( `Unknown operation type: ${ type }` );
     }
 
-    if ( type !== 'insert' ) oPos += o.length;
-    if ( type !== 'delete' ) mPos += m.length;
+    oPos += oi.length, mPos += mi.length;
   }
 
-  assert.equal( oPos, original.length );
-  assert.equal( mPos, modified.length );
-  assert.deepEqual( result, modified );
+  assert.equal( oPos, o.length );
+  assert.equal( mPos, m.length );
+  assert.deepEqual( result, m );
 };
 
-const assertMinimal = ( o, m, operations, compare = equals ) => {
-  reconstruct( o, m, operations, compare );
-  assert.equal( getEditDistance( operations ), editDistance( o, m, compare ) );
+const assertMinimal = ( o, m, ops, c = equals ) => {
+  reconstruct( o, m, ops, c );
+  assert.equal( getEditDistance( ops ), editDistance( o, m, c ) );
 };
 
-const createSequences = ( maxLength = 4, values = [ 'a', 'b' ] ) => {
-  const sequences = [ [] ];
+const createSequences = ( max = 4, values = [ 'a', 'b' ] ) => {
+  const seqs = [ [] ];
 
-  for ( let length = 1; length <= maxLength; length++ ) {
-    const count = values.length ** length;
-
-    for ( let mask = 0; mask < count; mask++ ) {
-      let value = mask;
-
-      sequences.push( Array.from( { length }, () => {
-        const element = values[ value % values.length ];
-        value = Math.floor( value / values.length );
-
-        return element;
-      } ) );
-    }
+  for ( let n = 0; n < max; n++ ) {
+    const prefixes = seqs.filter( s => s.length === n );
+    seqs.push( ...values.flatMap( v => prefixes.map( p => [ ...p, v ] ) ) );
   }
 
-  return sequences;
+  return seqs;
 };
 
 
 module.exports = {
-  equals, diff, reconstruct, editDistance, getEditDistance,
-  getOperationCount, getEqualLength, assertMinimal, createSequences
+  equals, diff, reconstruct, editDistance, getOperationCount,
+  getEqualLength, getEditDistance, assertMinimal, createSequences
 };
