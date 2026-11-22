@@ -1,20 +1,11 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { commonEdges } from '../utils/commonEdges';
-import { populateOperations } from '../utils/populateOperations';
+import { createContext } from '../utils/createContext';
 
 
 export class LCS implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const { prefix, suffix } = commonEdges( original, modified, equals );
-
-    const n = original.length, m = modified.length, oLen = n - prefix - suffix, mLen = m - prefix - suffix;
-    const editCodes = new Int8Array( n + m + 1 ), editCount = n + m + 1;
-
-    let editStart = editCount;
-
-    const pushEdit = ( type: 0 | 1 | 2 ) => editCodes[ --editStart ] = type;
-    for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
+    const { prefix, oLen, mLen, pushEdit, finish } = createContext( original, modified, equals );
 
     if ( oLen && mLen ) {
       const dirs = new Uint8Array( oLen * mLen );
@@ -51,7 +42,6 @@ export class LCS implements Algorithm {
       for ( let i = 0; i < mLen; i++ ) pushEdit( 1 );
     }
 
-    for ( let i = 0; i < prefix; i++ ) pushEdit( 0 );
-    return populateOperations( editCodes, editStart, editCount );
+    return finish();
   }
 }

@@ -1,28 +1,19 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { commonEdges } from '../utils/commonEdges';
-import { populateOperations } from '../utils/populateOperations';
+import { createContext } from '../utils/createContext';
 
 
 export class HuntSzymanski implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const { prefix, suffix } = commonEdges( original, modified, equals );
-
-    const n = original.length, m = modified.length, oEnd = n - suffix, mEnd = m - suffix;
-    const editCodes = new Int8Array( n + m + 1 ), editCount = n + m + 1;
-
-    let editStart = editCount;
-
-    const pushEdit = ( type: 0 | 1 | 2 ) => editCodes[ --editStart ] = type;
-    for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
+    const { oStart, oEnd, mStart, mEnd, pushEdit, finish } = createContext( original, modified, equals );
 
     const matchOrig: number[] = [], matchMod: number[] = [], matchPrev: number[] = [];
     const tails: number[] = [], tailNodes: number[] = [];
 
-    for ( let i = prefix; i < oEnd; i++ ) {
+    for ( let i = oStart; i < oEnd; i++ ) {
       const value = original[ i ];
 
-      for ( let j = mEnd - 1; j >= prefix; j-- ) {
+      for ( let j = mEnd - 1; j >= mStart; j-- ) {
         if ( ! equals( value, modified[ j ] ) ) continue;
 
         let low = 0, high = tails.length;
@@ -53,10 +44,9 @@ export class HuntSzymanski implements Algorithm {
       i = o, j = m, node = matchPrev[ node ];
     }
 
-    while ( j > prefix ) pushEdit( 1 ), j--;
-    while ( i > prefix ) pushEdit( 2 ), i--;
-    for ( let k = 0; k < prefix; k++ ) pushEdit( 0 );
+    while ( j > mStart ) pushEdit( 1 ), j--;
+    while ( i > oStart ) pushEdit( 2 ), i--;
 
-    return populateOperations( editCodes, editStart, editCount );
+    return finish();
   }
 }
