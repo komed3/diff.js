@@ -1,7 +1,7 @@
 const shared = require( './shared.cjs' );
 const { diff, assertMinimal, createSequences } = require( './utils.cjs' );
 
-const { Myers } = require( '../../.test-dist/algorithm/Myers.js' );
+const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
 const algorithm = new Myers();
 
 
