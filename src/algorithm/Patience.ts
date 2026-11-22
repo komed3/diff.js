@@ -8,8 +8,8 @@ import { processAnchors } from '../utils/processAnchors';
 
 export class Patience implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const context = createContext( original, modified, equals );
-    const { oStart, oEnd, mStart, mEnd, pushEdit } = context;
+    const ctx = createContext( original, modified, equals );
+    const { oStart, oEnd, mStart, mEnd, pushEdit } = ctx;
 
     const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
       const { prefix, suffix } = commonEdges( original, modified, equals, oStart, oEnd, mStart, mEnd );
@@ -24,6 +24,6 @@ export class Patience implements Algorithm {
     };
 
     process( oStart, oEnd, mStart, mEnd );
-    return context.finish();
+    return ctx.finish();
   }
 }
