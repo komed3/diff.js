@@ -1,20 +1,20 @@
 import type { Bounds, Input } from '../../types/context';
 import type { Pair } from '../../types/operation';
+import { addGroup, findGroup } from './group';
 
 
-export function findAnchors < T > ( { original, modified, equals }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds ) : Pair[] {
-  const groups: { value: T; o: number; m: number }[] = [];
+export function findAnchors < T > ( { original, modified, equals, key }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds ) : Pair[] {
+  const groups: { value: T; o: number; m: number }[] = [], lookup = new Map< unknown, typeof groups[ number ][] >();
+  let group: typeof groups[ number ] | undefined;
 
   for ( let i = oStart; i < oEnd; i++ ) {
-    let group = groups.find( ( { value } ) => equals( value, original[ i ] ) );
-    if ( ! group ) groups.push( group = { value: original[ i ], o: i, m: -1 } );
+    group = findGroup( groups, lookup, original[ i ], equals, key );
+    if ( ! group ) addGroup( groups, lookup, group = { value: original[ i ], o: i, m: -1 }, key );
     else group.o = -1;
   }
 
   for ( let j = mStart; j < mEnd; j++ ) {
-    const group = groups.find( ( { value } ) => equals( value, modified[ j ] ) );
-    if ( ! group ) continue;
-
+    if ( ! ( group = findGroup( groups, lookup, modified[ j ], equals, key ) ) ) continue;
     group.m = group.m === -1 ? j : -2;
   }
 
