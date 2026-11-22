@@ -8,11 +8,11 @@ export interface Bounds {
   mEnd: number;
 }
 
-export interface Context < T > {
+export interface Context< T > {
+  bounds: Bounds;
   original: readonly T[];
   modified: readonly T[];
   equals: ( o: T, m: T ) => boolean;
-  bounds: Bounds;
   pushEdit: ( type: 0 | 1 | 2 ) => void;
   finish: () => Operation[];
 }
