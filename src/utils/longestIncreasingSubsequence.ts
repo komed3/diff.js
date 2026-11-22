@@ -20,7 +20,6 @@ export function longestIncreasingSubsequence ( candidates: readonly Pair[] ) : P
 
   const seq: Pair[] = [];
   let node = length ? tails[ length - 1 ] : -1;
-
   while ( node >= 0 ) seq.push( candidates[ node ] ), node = prev[ node ];
 
   seq.reverse();
