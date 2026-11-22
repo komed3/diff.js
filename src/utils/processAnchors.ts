@@ -9,20 +9,13 @@ export function processAnchors < T > (
   mEnd: number, process: ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => void
 ) : void {
   const anchors = longestIncreasingSubsequence( candidates );
-
-  if ( ! anchors.length ) {
-    myersDiffRange( original, modified, equals, oStart, oEnd, mStart, mEnd, pushEdit );
-    return;
-  }
+  if ( ! anchors.length ) return myersDiffRange( original, modified, equals, oStart, oEnd, mStart, mEnd, pushEdit );
 
   let origIdx = oEnd, modIdx = mEnd;
 
   for ( let i = anchors.length - 1; i >= 0; i-- ) {
     const { original: oi, modified: mi } = anchors[ i ];
-
-    process( oi + 1, origIdx, mi + 1, modIdx );
-    pushEdit( 0 );
-
+    process( oi + 1, origIdx, mi + 1, modIdx ), pushEdit( 0 );
     origIdx = oi, modIdx = mi;
   }
 
