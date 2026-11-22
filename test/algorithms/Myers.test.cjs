@@ -13,4 +13,9 @@ shared( 'Myers', algorithm, async t => {
 
     assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
+
+  await t.test( 'produces minimal scripts with repeated tokens', () => {
+    const o = [ 'a', 'b', 'c', 'a', 'b', 'c' ], m = [ 'b', 'c', 'a', 'c', 'a', 'b' ];
+    assertMinimal( o, m, diff( o, m, algorithm ) );
+  } );
 } );
