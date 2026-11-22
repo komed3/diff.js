@@ -29,7 +29,6 @@ export class Histogram implements Algorithm {
 
       for ( let i = oStart; i < oEnd; i++ ) {
         let group = groups.find( ( { value } ) => equals( value, original[ i ] ) );
-
         if ( ! group ) groups.push( group = { value: original[ i ], original: [], modified: [] } );
         group.original.push( i );
       }
