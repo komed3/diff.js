@@ -28,7 +28,7 @@ export class Patience implements Algorithm {
       const groups: { value: T; original: number; modified: number; oCount: number; mCount: number }[] = [];
 
       for ( let i = oStart; i < oEnd; i++ ) {
-        let group = groups.find( group => equals( group.value, original[ i ] ) );
+        let group = groups.find( ( { value } ) => equals( value, original[ i ] ) );
         if ( ! group ) groups.push( group = { value: original[ i ], original: i, modified: -1, oCount: 0, mCount: 0 } );
         group.oCount++;
       }
