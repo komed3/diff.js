@@ -1,4 +1,4 @@
-import type { Operation } from '../types/operation';
+import type { Operation } from '../../types/operation';
 import { commonEdges } from './commonEdges';
 import { createContext } from './createContext';
 import { findAnchors } from './findAnchors';

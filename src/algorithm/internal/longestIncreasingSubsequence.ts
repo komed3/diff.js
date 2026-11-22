@@ -1,4 +1,4 @@
-import type { Pair } from '../types/operation';
+import type { Pair } from '../../types/operation';
 
 
 export function longestIncreasingSubsequence ( candidates: readonly Pair[] ) : Pair[] {

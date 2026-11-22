@@ -1,5 +1,5 @@
-import type { Context } from '../types/context';
-import type { Operation } from '../types/operation';
+import type { Context } from '../../types/context';
+import type { Operation } from '../../types/operation';
 import { commonEdges } from './commonEdges';
 import { populateOperations } from './populateOperations';
 
