@@ -1,13 +1,13 @@
 import type { Algorithm } from '../types/algorithm';
+import type { Input } from '../types/context';
 import type { Operation } from '../types/operation';
 import { createContext } from './internal/createContext';
 
 
 export class HuntSzymanski implements Algorithm {
-  public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const { oStart, oEnd, mStart, mEnd, pushEdit, finish } = createContext( original, modified, equals );
-    const matchOrig: number[] = [], matchMod: number[] = [], matchPrev: number[] = [];
-    const tails: number[] = [], tailNodes: number[] = [];
+  public diff < T > ( input: Input< T > ) : Operation[] {
+    const { input: { original, modified, equals }, bounds: { oStart, oEnd, mStart, mEnd }, pushEdit, finish } = createContext( input );
+    const matchOrig: number[] = [], matchMod: number[] = [], matchPrev: number[] = [], tails: number[] = [], tailNodes: number[] = [];
 
     for ( let i = oStart; i < oEnd; i++ ) {
       const value = original[ i ];
