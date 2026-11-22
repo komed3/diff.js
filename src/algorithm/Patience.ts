@@ -1,29 +1,10 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { commonEdges } from '../utils/commonEdges';
-import { createContext } from '../utils/createContext';
-import { findAnchors } from '../utils/findAnchors';
-import { processAnchors } from '../utils/processAnchors';
+import { anchoredDiff } from '../utils/anchoredDiff';
 
 
 export class Patience implements Algorithm {
   public diff < T > ( original: readonly T[], modified: readonly T[], equals: ( o: T, m: T ) => boolean ) : Operation[] {
-    const ctx = createContext( original, modified, equals );
-    const { oStart, oEnd, mStart, mEnd, pushEdit } = ctx;
-
-    const process = ( oStart: number, oEnd: number, mStart: number, mEnd: number ) => {
-      const { prefix, suffix } = commonEdges( original, modified, equals, oStart, oEnd, mStart, mEnd );
-
-      for ( let i = 0; i < suffix; i++ ) pushEdit( 0 );
-      oStart += prefix, oEnd -= suffix, mStart += prefix, mEnd -= suffix;
-
-      const candidates = findAnchors( original, modified, equals, oStart, oEnd, mStart, mEnd, true );
-      processAnchors( candidates, pushEdit, original, modified, equals, oStart, oEnd, mStart, mEnd, process );
-
-      for ( let i = 0; i < prefix; i++ ) pushEdit( 0 );
-    };
-
-    process( oStart, oEnd, mStart, mEnd );
-    return ctx.finish();
+    return anchoredDiff( original, modified, equals, true );
   }
 }
