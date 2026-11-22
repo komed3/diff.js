@@ -1,5 +1,6 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Input } from '../types/context';
+import type { HistogramGroup } from '../types/group';
 import type { Operation, Pair } from '../types/operation';
 import { anchoredDiff } from './internal/anchoredDiff';
 import { addGroup, findGroup } from './internal/group';
@@ -8,9 +9,8 @@ import { addGroup, findGroup } from './internal/group';
 export class Histogram implements Algorithm {
   public diff < T > ( input: Input< T > ) : Operation[] {
     return anchoredDiff( input, ( { original, modified, equals, key }, { oStart, oEnd, mStart, mEnd } ) => {
-      const groups: { value: T; o: number[]; m: number[] }[] = [];
-      const lookup = new Map< unknown, typeof groups[ number ][] >();
-      let group: typeof groups[ number ] | undefined, diag: number;
+      const groups: HistogramGroup< T >[] = [], lookup = new Map< unknown, HistogramGroup< T >[] >();
+      let group: HistogramGroup< T > | undefined, diag: number;
 
       for ( let i = oStart; i < oEnd; i++ ) {
         group = findGroup( groups, lookup, original[ i ], equals, key );
