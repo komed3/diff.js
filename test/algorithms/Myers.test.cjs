@@ -1,24 +1,21 @@
 const shared = require( './shared.cjs' );
 const { diff, assertMinimal, createSequences } = require( './utils.cjs' );
 
+
 const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
 const algorithm = new Myers();
 
 
-shared( 'Myers', algorithm );
-
-require( 'node:test' )( 'Myers minimality', async t => {
+shared( 'Myers', algorithm, async t => {
   await t.test( 'produces minimal edit scripts for short sequences', () => {
-    const sequences = createSequences();
-
-    for ( const original of sequences ) for ( const modified of sequences )
-      assertMinimal( original, modified, diff( original, modified, algorithm ) );
+    const seqs = createSequences();
+    for ( const o of seqs ) for ( const m of seqs ) assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
 
   await t.test( 'handles large common prefixes and suffixes', () => {
-    const original = [ ...Array( 1000 ).fill( 'same' ), 'old', ...Array( 1000 ).fill( 'same' ) ];
-    const modified = [ ...Array( 1000 ).fill( 'same' ), 'new', ...Array( 1000 ).fill( 'same' ) ];
+    const o = [ ...Array( 1000 ).fill( 'same' ), 'old', ...Array( 1000 ).fill( 'same' ) ];
+    const m = [ ...Array( 1000 ).fill( 'same' ), 'new', ...Array( 1000 ).fill( 'same' ) ];
 
-    assertMinimal( original, modified, diff( original, modified, algorithm ) );
+    assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
 } );
