@@ -1,9 +1,9 @@
 import type { Bounds, Context } from '../../types/context';
 
 
-export function myersDiffRange < T > ( context: Context< T >, bounds: Bounds ) : void {
+export function myersDiffRange < T > ( context: Context< T >, bounds?: Bounds ) : void {
   const { input: { original, modified, equals }, pushEdit } = context;
-  const { oStart, oEnd, mStart, mEnd } = bounds;
+  const { oStart, oEnd, mStart, mEnd } = bounds ?? context.bounds;
   const oLen = oEnd - oStart, mLen = mEnd - mStart, maxDist = oLen + mLen;
   if ( ! maxDist ) return;
 
