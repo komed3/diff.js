@@ -1,7 +1,7 @@
 const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
-const { diff, reconstruct, createSequences } = require( './utils.cjs' );
+const { createSequences, diff, reconstruct } = require( './utils.cjs' );
 
 
 module.exports = ( name, algorithm, additionalTests = async () => {} ) => {
