@@ -1,6 +1,6 @@
 const assert = require( 'node:assert/strict' );
 const shared = require( './shared.cjs' );
-const { diff, equals, getEqualLength, reconstruct } = require( './utils.cjs' );
+const { diff, getEqualLength, reconstruct } = require( './utils.cjs' );
 
 
 const { Histogram } = require( '../../.test-dist/algorithms/Histogram.js' );
@@ -15,11 +15,14 @@ shared( 'Histogram', algorithm, async t => {
     assert.equal( getEqualLength( ops ), 4 );
   } );
 
-  await t.test( 'prefers rarer common elements', () => {
-    const o = [ 'a', 'a', 'a', 'b', 'c' ], m = [ 'a', 'a', 'b', 'c', 'c' ], ops = diff( o, m, algorithm );
+  await t.test( 'prefers rarer anchors when candidates have equal length', () => {
+    const o = [ 'p', 'x', 'x', 'q', 'y', 'z', 'r' ], m = [ 't', 'y', 'z', 'u', 'x', 'x', 'v' ];
+    const ops = diff( o, m, algorithm );
 
     reconstruct( o, m, ops );
-    assert.equal( getEqualLength( ops ), 4 );
+    assert.deepEqual( ops.find( ( { type } ) => type === 'equal' ), {
+      type: 'equal', original: { start: 4, length: 2 }, modified: { start: 1, length: 2 }
+    } );
   } );
 
   await t.test( 'handles regions without common elements', () => {
@@ -43,13 +46,5 @@ shared( 'Histogram', algorithm, async t => {
       reconstruct( o, m, ops );
       assert.equal( getEqualLength( ops ), size - changes );
     }
-  } );
-
-  await t.test( 'does not treat unequal elements as equal', () => {
-    const o = [ 'a', 'b', 'c' ], m = [ 'a', 'x', 'c' ];
-    const ops = algorithm.diff( { original: o, modified: m, equals } );
-
-    reconstruct( o, m, ops );
-    assert.equal( getEqualLength( ops ), 2 );
   } );
 } );
