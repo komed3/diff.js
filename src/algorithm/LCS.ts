@@ -1,6 +1,6 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { createContext } from '../utils/createContext';
+import { createContext } from './internal/createContext';
 
 
 export class LCS implements Algorithm {

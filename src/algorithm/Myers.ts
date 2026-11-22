@@ -1,7 +1,7 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { createContext } from '../utils/createContext';
-import { myersDiffRange } from '../utils/myersDiffRange';
+import { createContext } from './internal/createContext';
+import { myersDiffRange } from './internal/myersDiffRange';
 
 
 export class Myers implements Algorithm {

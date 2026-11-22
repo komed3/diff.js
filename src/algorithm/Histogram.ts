@@ -1,6 +1,6 @@
 import type { Algorithm } from '../types/algorithm';
 import type { Operation } from '../types/operation';
-import { anchoredDiff } from '../utils/anchoredDiff';
+import { anchoredDiff } from './internal/anchoredDiff';
 
 
 export class Histogram implements Algorithm {
