@@ -18,13 +18,23 @@ export function processAnchors < T > (
     const operations = myers.diff( original.slice( oStart, oEnd ), modified.slice( mStart, mEnd ), equals );
 
     for ( let i = operations.length - 1; i >= 0; i-- ) {
-      const { type, original, modified } = operations[ i ];
+      const { type, original: o, modified: m } = operations[ i ];
       const code = type === 'equal' ? 0 : type === 'insert' ? 1 : 2;
-      const length = type === 'insert' ? modified.length : original.length;
+      const length = type === 'insert' ? m.length : o.length;
 
       for ( let j = 0; j < length; j++ ) pushEdit( code );
     }
 
     return;
   }
+
+  let origIdx = oEnd, modIdx = mEnd;
+
+  for ( let i = anchors.length - 1; i >= 0; i-- ) {
+    const { original: oi, modified: mi } = anchors[ i ];
+    process( oi + 1, origIdx, mi + 1, modIdx ), pushEdit( 0 );
+    origIdx = oi, modIdx = mi;
+  }
+
+  process( oStart, origIdx, mStart, modIdx );
 }
