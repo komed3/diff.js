@@ -7,9 +7,9 @@ import { myersDiffRange } from './internal/myersDiffRange';
 
 export class Myers implements Algorithm {
   public diff < T > ( input: Input< T > ) : Operation[] {
-    const context = createContext( input );
+    const { bounds, pushEdit, finish } = createContext( input );
 
-    myersDiffRange( context );
-    return context.finish();
+    myersDiffRange( input, bounds, pushEdit );
+    return finish();
   }
 }
