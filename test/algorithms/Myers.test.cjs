@@ -18,4 +18,13 @@ shared( 'Myers', algorithm, async t => {
     const o = [ 'a', 'b', 'c', 'a', 'b', 'c' ], m = [ 'b', 'c', 'a', 'c', 'a', 'b' ];
     assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
+
+  await t.test( 'produces minimal scripts with a custom equality function', () => {
+    const o = [ { id: 'a' }, { id: 'b' }, { id: 'a' } ];
+    const m = [ { id: 'b' }, { id: 'a' }, { id: 'c' } ];
+    const equals = ( a, b ) => a.id === b.id;
+
+    assertMinimal( o, m, diff( o, m, algorithm, equals ), equals );
+  } );
 } );
+
