@@ -23,4 +23,11 @@ shared( 'LCS', algorithm, async t => {
     const o = [ 'a', 'b', 'a', 'b', 'a' ], m = [ 'b', 'a', 'b', 'a', 'b' ];
     assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
+
+  await t.test( 'produces minimal scripts with a custom equality function', () => {
+    const o = [ 'A', 'b', 'A', 'c' ], m = [ 'b', 'a', 'c', 'B' ];
+    const equals = ( a, b ) => a.toLowerCase() === b.toLowerCase();
+
+    assertMinimal( o, m, diff( o, m, algorithm, equals ), equals );
+  } );
 } );
