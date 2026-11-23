@@ -24,4 +24,12 @@ test( 'Word', async t => {
     assert.ok( tokens.some( ( { type } ) => type === 'word' ) );
     assertTokenComplete( text, tokens );
   } );
+
+  await t.test( 'preserves whitespace and punctuation', () => {
+    const text = '\tHello\n\nworld... ', tokens = tokenizer.tokenize( text );
+
+    assert.ok( tokens.some( ( { type } ) => type === 'whitespace' ) );
+    assert.ok( tokens.some( ( { type } ) => type === 'punctuation' ) );
+    assertTokenComplete( text, tokens );
+  } );
 } );
