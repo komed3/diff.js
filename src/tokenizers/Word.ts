@@ -9,4 +9,17 @@ export class Word implements Tokenizer {
   public constructor ( { locale }: TokenizerOptions ) {
     this.segmenter = new Intl.Segmenter( locale, { granularity: 'word' } );
   }
+
+  public tokenize ( text: string ) : Token[] {
+    const tokens: Token[] = [];
+
+    for ( const { index, segment, isWordLike } of this.segmenter.segment( text ) ) {
+      const value = segment, type = isWordLike ? 'word' : this.whitespace.test( value )
+        ? 'whitespace' : 'punctuation';
+
+      tokens.push( { type, value, start: index, end: index + value.length } );
+    }
+
+    return tokens;
+  }
 }
