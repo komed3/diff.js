@@ -1,7 +1,7 @@
 import type { Algorithm } from './algorithm';
 import type { Comparator } from './context';
 import type { Line } from './line';
-import type { Operation } from './operation';
+import type { LineOperation, Operation } from './operation';
 import type { Token } from './token';
 import type { Tokenizer } from './tokenizer';
 
@@ -24,7 +24,7 @@ export interface EditScript {
 export interface LineScript {
   original: Line | null;
   modified: Line | null;
-  operation: Operation;
+  operation: LineOperation;
   edit?: EditScript;
 }
 
