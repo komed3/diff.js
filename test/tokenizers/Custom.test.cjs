@@ -24,4 +24,12 @@ test( 'Custom', async t => {
     assert.equal( tokens[ 0 ].scope, 'variable' );
     assert.equal( tokens[ 0 ].declaration, true );
   } );
+
+  await t.test( 'passes the original text to the callback', () => {
+    let received = null;
+    const tokenizer = new Custom( { callback: t => { received = t; return [] } } );
+
+    tokenizer.tokenize( 'Unicode 😀' );
+    assert.equal( received, 'Unicode 😀' );
+  } );
 } );
