@@ -1,16 +1,18 @@
 import type { Algorithm } from './algorithm';
+import type { Comparator } from './context';
 import type { Line } from './line';
 import type { Operation } from './operation';
 import type { Token } from './token';
 import type { Tokenizer } from './tokenizer';
 
 
-export interface EngineOptions< T > {
+export interface EngineOptions {
   algorithm: Algorithm;
-  equals: ( o: T, m: T ) => boolean;
-  key?: ( value: T ) => unknown;
+  comparator?: Comparator< Line >;
+
   tokenizer?: Tokenizer;
   tokenAlgorithm?: Algorithm;
+  tokenComparator?: Comparator< Token >;
 }
 
 export interface EditScript {
