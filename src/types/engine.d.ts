@@ -25,3 +25,9 @@ export interface LineScript {
   operation: Operation;
   edit?: EditScript;
 }
+
+export interface Result {
+  original: string;
+  modified: string;
+  script: LineScript[];
+}
