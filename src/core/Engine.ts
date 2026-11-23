@@ -10,7 +10,12 @@ import { LineParser } from './LineParser';
 export class Engine {
   private readonly parser = new LineParser();
 
-  private seq < T extends Comparable > ( original: readonly T[], modified: readonly T[], comparator?: Comparator< T > ) : Sequence< T > {}
+  private seq < T extends Comparable > ( original: readonly T[], modified: readonly T[], comparator?: Comparator< T > ) : Sequence< T > {
+    return {
+      original, modified, equals: comparator?.equals ?? ( ( o, m ) => o.value === m.value ),
+      ...( comparator?.key ? { key: comparator.key } : {} )
+    };
+  }
 
   public constructor ( private readonly options: EngineOptions ) {}
 
