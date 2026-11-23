@@ -4,7 +4,7 @@ const { assertTokenComplete } = require( './utils.cjs' );
 
 
 const { Character } = require( '../../.test-dist/tokenizers/Character.js' );
-const tokenizer = new Character( {} );
+const tokenizer = new Character();
 
 
 test( 'Character', async t => {
