@@ -9,4 +9,6 @@ import { LineParser } from './LineParser';
 
 export class Engine {
   private readonly parser = new LineParser();
+
+  public constructor ( private readonly options: EngineOptions ) {}
 }
