@@ -32,4 +32,11 @@ test( 'Custom', async t => {
     tokenizer.tokenize( 'Unicode 😀' );
     assert.equal( received, 'Unicode 😀' );
   } );
+
+  await t.test( 'returns the callback result unchanged', () => {
+    const tokens = [ { type: 'identifier', value: 'value', start: 0, end: 5, scope: 'local' } ];
+    const tokenizer = new Custom( { callback: () => tokens } );
+
+    assert.equal( tokenizer.tokenize( 'value' ), tokens );
+  } );
 } );
