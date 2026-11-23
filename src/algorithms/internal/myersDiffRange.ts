@@ -1,8 +1,8 @@
-import type { Bounds, Input } from '../../types/context';
+import type { Bounds, Sequence } from '../../types/context';
 
 
 export function myersDiffRange < T > (
-  { original, modified, equals }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds,
+  { original, modified, equals }: Sequence< T >, { oStart, oEnd, mStart, mEnd }: Bounds,
   pushEdit: ( type: 0 | 1 | 2 ) => void
 ) : void {
   const oLen = oEnd - oStart, mLen = mEnd - mStart, maxDist = oLen + mLen;

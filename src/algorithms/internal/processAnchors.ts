@@ -1,13 +1,13 @@
-import type { Bounds, Input } from '../../types/context';
+import type { Bounds, Sequence } from '../../types/context';
 import type { Pair } from '../../types/operation';
 import { myersDiffRange } from './myersDiffRange';
 
 
 export function processAnchors < T > (
-  anchors: readonly Pair[], input: Input< T >, bounds: Bounds,
+  anchors: readonly Pair[], seq: Sequence< T >, bounds: Bounds,
   pushEdit: ( type: 0 | 1 | 2 ) => void, process: ( bounds: Bounds ) => void
 ) : void {
-  if ( ! anchors.length ) return myersDiffRange( input, bounds, pushEdit );
+  if ( ! anchors.length ) return myersDiffRange( seq, bounds, pushEdit );
   let oEnd = bounds.oEnd, mEnd = bounds.mEnd;
 
   for ( let i = anchors.length - 1; i >= 0; i-- ) {

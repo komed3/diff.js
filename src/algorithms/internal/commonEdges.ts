@@ -1,7 +1,10 @@
-import type { Bounds, Input } from '../../types/context';
+import type { Bounds, Sequence } from '../../types/context';
 
 
-export function commonEdges < T > ( { original, modified, equals }: Input< T >, { oStart, oEnd, mStart, mEnd }: Bounds ) {
+export function commonEdges < T > (
+  { original, modified, equals }: Sequence< T >,
+  { oStart, oEnd, mStart, mEnd }: Bounds
+) {
   let prefix = 0, suffix = 0;
 
   while ( oStart + prefix < oEnd && mStart + prefix < mEnd &&

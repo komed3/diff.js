@@ -1,12 +1,12 @@
 import type { Algorithm } from '../types/algorithm';
-import type { Input } from '../types/context';
+import type { Sequence } from '../types/context';
 import type { Operation } from '../types/operation';
 import { createContext } from './internal/createContext';
 
 
 export class LCS implements Algorithm {
-  public diff < T > ( input: Input< T > ) : Operation[] {
-    const { input: { original, modified, equals }, bounds, pushEdit, finish } = createContext( input );
+  public diff < T > ( seq: Sequence< T > ) : Operation[] {
+    const { seq: { original, modified, equals }, bounds, pushEdit, finish } = createContext( seq );
     const oLen = bounds.oEnd - bounds.oStart, mLen = bounds.mEnd - bounds.mStart;
 
     if ( oLen && mLen ) {

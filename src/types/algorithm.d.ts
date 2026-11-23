@@ -1,7 +1,7 @@
-import type { Input } from './context';
+import type { Sequence } from './context';
 import type { Operation } from './operation';
 
 
 export interface Algorithm {
-  diff < T > ( input: Input< T > ) : Operation[];
+  diff < T > ( seq: Sequence< T > ) : Operation[];
 }

@@ -1,7 +1,7 @@
 import type { Operation } from './operation';
 
 
-export interface Input< T > {
+export interface Sequence< T > {
   original: readonly T[];
   modified: readonly T[];
   equals: ( o: T, m: T ) => boolean;
@@ -16,7 +16,7 @@ export interface Bounds {
 }
 
 export interface Context< T > {
-  input: Input< T >;
+  seq: Sequence< T >;
   bounds: Bounds;
   pushEdit: ( type: 0 | 1 | 2 ) => void;
   finish: () => Operation[];

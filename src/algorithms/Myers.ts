@@ -1,15 +1,15 @@
 import type { Algorithm } from '../types/algorithm';
-import type { Input } from '../types/context';
+import type { Sequence } from '../types/context';
 import type { Operation } from '../types/operation';
 import { createContext } from './internal/createContext';
 import { myersDiffRange } from './internal/myersDiffRange';
 
 
 export class Myers implements Algorithm {
-  public diff < T > ( input: Input< T > ) : Operation[] {
-    const { bounds, pushEdit, finish } = createContext( input );
+  public diff < T > ( seq: Sequence< T > ) : Operation[] {
+    const { bounds, pushEdit, finish } = createContext( seq );
 
-    myersDiffRange( input, bounds, pushEdit );
+    myersDiffRange( seq, bounds, pushEdit );
     return finish();
   }
 }
