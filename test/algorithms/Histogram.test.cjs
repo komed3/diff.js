@@ -1,6 +1,6 @@
 const assert = require( 'node:assert/strict' );
 const shared = require( './shared.cjs' );
-const { diff, getEqualLength, reconstruct } = require( './utils.cjs' );
+const { assertMinimal, diff, getEqualLength, reconstruct } = require( './utils.cjs' );
 
 
 const { Histogram } = require( '../../.test-dist/algorithms/Histogram.js' );
@@ -46,5 +46,12 @@ shared( 'Histogram', algorithm, async t => {
       reconstruct( o, m, ops );
       assert.equal( getEqualLength( ops ), size - changes );
     }
+  } );
+
+  await t.test( 'falls back when all repeated groups exceed the frequency limit', () => {
+    const o = [ ...Array( 65 ).fill( 'a' ), ...Array( 65 ).fill( 'b' ) ];
+    const m = [ ...Array( 65 ).fill( 'b' ), ...Array( 65 ).fill( 'a' ) ];
+
+    assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
 } );
