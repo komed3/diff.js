@@ -1,104 +1,122 @@
-import type { Comparable, Comparator, Sequence } from '../types/context';
+import type { Algorithm } from '../types/algorithm';
+import type { Comparator } from '../types/context';
 import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
+import type { Token } from '../types/token';
 import { LineParser } from './LineParser';
 
 
 export class Engine {
   private readonly parser = new LineParser();
+  private readonly algorithm: Algorithm;
+  private readonly tokenAlgorithm: Algorithm;
+  private readonly comparator: Comparator< Line >;
+  private readonly tokenComparator: Comparator< Token >;
+  private readonly tokenizer: EngineOptions[ 'tokenizer' ];
 
-  private seq < T extends Comparable > ( original: readonly T[], modified: readonly T[], comparator?: Comparator< T > ) : Sequence< T > {
-    return {
-      original, modified, equals: comparator?.equals ?? ( ( o, m ) => o.value === m.value ),
-      ...( comparator?.key ? { key: comparator.key } : {} )
-    };
+  public constructor ( { algorithm, comparator, tokenizer, tokenAlgorithm, tokenComparator }: EngineOptions ) {
+    this.algorithm = algorithm, this.tokenAlgorithm = tokenAlgorithm ?? algorithm;
+    this.comparator = comparator ?? { equals: ( o, m ) => o.value === m.value, key: v => v.value };
+    this.tokenComparator = tokenComparator ?? { equals: ( o, m ) => o.value === m.value, key: v => v.value };
+    this.tokenizer = tokenizer;
   }
-
-  public constructor ( private readonly options: EngineOptions ) {}
 
   public process ( input: Input ) : Result {
     const original = this.parser.parse( input.original );
     const modified = this.parser.parse( input.modified );
-    const sequence = this.seq( original, modified, this.options.comparator );
-    const operations = this.options.algorithm.diff( sequence );
+    const operations = this.algorithm.diff( { original, modified, ...this.comparator } );
     const script: LineScript[] = [];
-
-    const del: { line: Line; index: number; modified: number }[] = [];
-    const ins: { line: Line; index: number; original: number }[] = [];
+    const deleted: number[] = [], deletedAt: number[] = [];
+    const inserted: number[] = [], insertedAt: number[] = [];
 
     const flush = () => {
-      const count = Math.min( del.length, ins.length );
+      const count = Math.min( deleted.length, inserted.length );
 
       for ( let i = 0; i < count; i++ ) {
-        const o = del[ i ], m = ins[ i ], entry: LineScript = {
-          original: o.line, modified: m.line, operation: {
+        const o = deleted[ i ], m = inserted[ i ];
+        const entry: LineScript = {
+          original: original[ o ], modified: modified[ m ],
+          operation: {
             type: 'change',
-            original: { start: o.index, length: 1 },
-            modified: { start: m.index, length: 1 }
+            original: { start: o, length: 1 },
+            modified: { start: m, length: 1 }
           }
         };
 
-        if ( this.options.tokenizer ) {
-          const tokensOriginal = this.options.tokenizer.tokenize( o.line.value );
-          const tokensModified = this.options.tokenizer.tokenize( m.line.value );
-          const tokenSequence = this.seq( tokensOriginal, tokensModified, this.options.tokenComparator );
-
+        if ( this.tokenizer ) {
+          const a = this.tokenizer.tokenize( original[ o ].value );
+          const b = this.tokenizer.tokenize( modified[ m ].value );
           entry.edit = {
-            original: tokensOriginal, modified: tokensModified,
-            operations: ( this.options.tokenAlgorithm ?? this.options.algorithm ).diff( tokenSequence )
+            original: a, modified: b,
+            operations: this.tokenAlgorithm.diff( { original: a, modified: b, ...this.tokenComparator } )
           };
         }
 
         script.push( entry );
       }
 
-      for ( let i = count; i < del.length; i++ ) {
-        const item = del[ i ];
-
-        script.push( { original: item.line, modified: null, operation: {
-          type: 'delete',
-          original: { start: item.index, length: 1 },
-          modified: { start: item.modified, length: 0 }
-        } } );
-      }
-
-      for ( let i = count; i < ins.length; i++ ) {
-        const item = ins[ i ];
-
-        script.push( { original: null, modified: item.line, operation: {
-          type: 'insert',
-          original: { start: item.original, length: 0 },
-          modified: { start: item.index, length: 1 }
-        } } );
-      }
-
-      del.length = 0, ins.length = 0;
-    };
-
-    for ( const { type, original: o, modified: m } of operations ) {
-      if ( type === 'equal' ) {
-        flush();
-
-        for ( let i = 0; i < o.length; i++ ) script.push( {
-          original: original[ o.start + i ], modified: modified[ m.start + i ],
+      for ( let i = count; i < deleted.length; i++ ) {
+        const index = deleted[ i ];
+        script.push( {
+          original: original[ index ], modified: null,
           operation: {
-            type: 'equal',
-            original: { start: o.start + i, length: 1 },
-            modified: { start: m.start + i, length: 1 }
+            type: 'delete',
+            original: { start: index, length: 1 },
+            modified: { start: deletedAt[ i ], length: 0 }
           }
         } );
-      } else if ( type === 'delete' ) {
-        for ( let i = 0; i < o.length; i++ ) del.push( {
-          line: original[ o.start + i ], index: o.start + i, modified: m.start
+      }
+
+      for ( let i = count; i < inserted.length; i++ ) {
+        const index = inserted[ i ];
+        script.push( {
+          original: null, modified: modified[ index ],
+          operation: {
+            type: 'insert',
+            original: { start: insertedAt[ i ], length: 0 },
+            modified: { start: index, length: 1 }
+          }
         } );
-      } else {
-        for ( let i = 0; i < m.length; i++ ) ins.push( {
-          line: modified[ m.start + i ], index: m.start + i, original: o.start
-        } );
+      }
+
+      deleted.length = deletedAt.length = inserted.length = insertedAt.length = 0;
+    };
+
+    for ( const operation of operations ) {
+      switch ( operation.type ) {
+        case 'equal':
+          flush();
+
+          for ( let i = 0; i < operation.original.length; i++ ) {
+            const o = operation.original.start + i, m = operation.modified.start + i;
+            script.push( {
+              original: original[ o ], modified: modified[ m ],
+              operation: {
+                type: 'equal',
+                original: { start: o, length: 1 },
+                modified: { start: m, length: 1 }
+              }
+            } );
+          }
+          break;
+
+        case 'delete':
+          for ( let i = 0; i < operation.original.length; i++ ) {
+            deleted.push( operation.original.start + i );
+            deletedAt.push( operation.modified.start );
+          }
+          break;
+
+        case 'insert':
+          for ( let i = 0; i < operation.modified.length; i++ ) {
+            inserted.push( operation.modified.start + i );
+            insertedAt.push( operation.original.start );
+          }
+          break;
       }
     }
 
     flush();
-    return { original: input.original, modified: input.modified, script };
+    return { ...input, script };
   }
 }
