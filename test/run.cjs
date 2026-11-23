@@ -11,3 +11,7 @@ require( './algorithms/Patience.test.cjs' );
 require( './tokenizers/Character.test.cjs' );
 require( './tokenizers/Custom.test.cjs' );
 require( './tokenizers/Word.test.cjs' );
+
+// --- core ---
+
+require( './core/LineParser.test.cjs' );
