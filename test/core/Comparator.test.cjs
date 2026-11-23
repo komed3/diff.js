@@ -16,16 +16,16 @@ const cases = {
 
 test( 'COMPARATORS', async t => {
   for ( const [ name, { equals, key } ] of Object.entries( COMPARATORS ) ) {
-    await t.test( `supports ${ name } consistently`, () => {
-      assert.ok( Object.hasOwn( cases, name ), `Missing test cases for ${ name }` );
+    await t.test( `supports ${ name }`, () => {
+      assert.ok( Object.hasOwn( cases, name ) );
       assert.ok( equals );
       assert.ok( key );
 
       for ( const [ a, b, equal ] of cases[ name ] ) {
         const o = { value: a }, m = { value: b };
-        assert.equal( equals( o, m ), equal, `${ name }: equals ${ JSON.stringify( a ) } / ${ JSON.stringify( b ) }` );
-        assert.equal( equals( m, o ), equal, `${ name }: reversed equals` );
-        assert.equal( key( o ) === key( m ), equal, `${ name }: key consistency` );
+        assert.equal( equals( o, m ), equal );
+        assert.equal( equals( m, o ), equal );
+        assert.equal( key( o ) === key( m ), equal );
       }
     } );
   }
