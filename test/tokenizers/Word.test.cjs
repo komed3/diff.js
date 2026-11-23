@@ -15,4 +15,13 @@ test( 'Word', async t => {
     assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'Hello', ',', ' ', 'world', '!' ] );
     assertTokenComplete( text, tokens );
   } );
+
+  await t.test( 'recognizes Unicode words', () => {
+    const text = 'Grüße 世界 مرحبًا', tokens = tokenizer.tokenize( text );
+
+    assert.ok( tokens.some( ( { value, type } ) => value === 'Grüße' && type === 'word' ) );
+    assert.ok( tokens.some( ( { value, type } ) => value === '世界' && type === 'word' ) );
+    assert.ok( tokens.some( ( { type } ) => type === 'word' ) );
+    assertTokenComplete( text, tokens );
+  } );
 } );
