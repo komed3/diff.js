@@ -26,4 +26,11 @@ export interface Delete {
   readonly modified: Range & { readonly length: 0 };
 }
 
+export interface Change {
+  readonly type: 'change';
+  readonly original: Range;
+  readonly modified: Range;
+}
+
 export type Operation = Equal | Insert | Delete;
+export type LineOperation = Operation | Change;
