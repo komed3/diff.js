@@ -9,3 +9,4 @@ require( './algorithms/Patience.test.cjs' );
 // --- tokenizers ---
 
 require( './tokenizers/Character.test.cjs' );
+require( './tokenizers/Word.test.cjs' );
