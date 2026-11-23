@@ -22,7 +22,7 @@ export class LineParser {
       if ( ending === '\r\n' ) i++;
     }
 
-    if ( start < text.length ) addLine( text.length, '' );
+    if ( start < text.length || ! lines.length ) addLine( text.length, '' );
     return lines;
   }
 }
