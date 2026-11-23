@@ -77,4 +77,12 @@ test( 'LineParser', async t => {
       { value: '', ending: '\r\n', start: 0, contentEnd: 0, end: 2 }
     ] );
   } );
+
+  await t.test( 'handles consecutive line endings', () => {
+    assert.deepEqual( parser.parse( '\n\r\n\r' ), [
+      { value: '', ending: '\n', start: 0, contentEnd: 0, end: 1 },
+      { value: '', ending: '\r\n', start: 1, contentEnd: 1, end: 3 },
+      { value: '', ending: '\r', start: 3, contentEnd: 3, end: 4 }
+    ] );
+  } );
 } );
