@@ -1,9 +1,6 @@
-import type { Algorithm } from '../types/algorithm';
 import type { Comparable, Comparator, Sequence } from '../types/context';
-import type { EngineOptions, EditScript, Input, LineScript, Result } from '../types/engine';
+import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
-import type { Operation } from '../types/operation';
-import type { Token } from '../types/token';
 import { LineParser } from './LineParser';
 
 
@@ -77,5 +74,31 @@ export class Engine {
 
       del.length = 0, ins.length = 0;
     };
+
+    for ( const { type, original: o, modified: m } of operations ) {
+      if ( type === 'equal' ) {
+        flush();
+
+        for ( let i = 0; i < o.length; i++ ) script.push( {
+          original: original[ o.start + i ], modified: modified[ m.start + i ],
+          operation: {
+            type: 'equal',
+            original: { start: o.start + i, length: 1 },
+            modified: { start: m.start + i, length: 1 }
+          }
+        } );
+      } else if ( type === 'delete' ) {
+        for ( let i = 0; i < o.length; i++ ) del.push( {
+          line: original[ o.start + i ], index: o.start + i, modified: m.start
+        } );
+      } else {
+        for ( let i = 0; i < m.length; i++ ) ins.push( {
+          line: modified[ m.start + i ], index: m.start + i, original: o.start
+        } );
+      }
+    }
+
+    flush();
+    return { original: input.original, modified: input.modified, script };
   }
 }
