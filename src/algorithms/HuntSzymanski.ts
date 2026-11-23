@@ -1,5 +1,5 @@
 import type { Algorithm } from '../types/algorithm';
-import type { Sequence } from '../types/context';
+import type { Comparable, Sequence } from '../types/context';
 import type { MatchGroup } from '../types/group';
 import type { Operation } from '../types/operation';
 import { createContext } from './internal/createContext';
@@ -7,7 +7,7 @@ import { addGroup, findGroup } from './internal/group';
 
 
 export class HuntSzymanski implements Algorithm {
-  public diff < T > ( seq: Sequence< T > ) : Operation[] {
+  public diff < T extends Comparable > ( seq: Sequence< T > ) : Operation[] {
     const { bounds: { oStart, oEnd, mStart, mEnd }, pushEdit, finish } = createContext( seq );
     const { original, modified, equals, key } = seq;
     const matchO: number[] = [], matchM: number[] = [], matchPrev: number[] = [];
