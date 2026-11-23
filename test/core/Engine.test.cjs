@@ -19,4 +19,14 @@ describe( 'Engine', () => {
     assert.equal( result.script.length, 2 );
     assert.ok( result.script.every( ( { operation: { type } } ) => type === 'equal' ) );
   } );
+
+  it( 'detects inserted lines', () => {
+    const result = engine().process( { original: 'one', modified: 'one\ntwo' } );
+    assert.deepEqual( result.script.map( ( { operation: { type } } ) => type ), [ 'equal', 'insert' ] );
+  } );
+
+  it( 'detects deleted lines', () => {
+    const result = engine().process( { original: 'one\ntwo', modified: 'one' } );
+    assert.deepEqual( result.script.map( ( { operation: { type } } ) => type ), [ 'equal', 'delete' ] );
+  } );
 } );
