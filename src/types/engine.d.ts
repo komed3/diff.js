@@ -1,5 +1,4 @@
 import type { Algorithm } from './algorithm';
-import type { Input } from './context';
 import type { Line } from './line';
 import type { Operation } from './operation';
 import type { Token } from './token';
@@ -7,8 +6,9 @@ import type { Tokenizer } from './tokenizer';
 
 
 export interface EngineOptions< T > {
-  input: Input< T >;
   algorithm: Algorithm;
+  equals: ( o: T, m: T ) => boolean;
+  key?: ( value: T ) => unknown;
   tokenizer?: Tokenizer;
   tokenAlgorithm?: Algorithm;
 }
@@ -26,8 +26,13 @@ export interface LineScript {
   edit?: EditScript;
 }
 
-export interface Result {
-  original: string;
-  modified: string;
+export interface Input< T > {
+  original: T;
+  modified: T;
+}
+
+export interface Result< T > {
+  original: T;
+  modified: T;
   script: LineScript[];
 }
