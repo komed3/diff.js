@@ -22,98 +22,64 @@ export class Engine {
   }
 
   public process ( input: Input ) : Result {
-    const original = this.parser.parse( input.original );
-    const modified = this.parser.parse( input.modified );
+    const original = this.parser.parse( input.original ), modified = this.parser.parse( input.modified );
     const operations = this.algorithm.diff( { original, modified, ...this.comparator } );
-    const script: LineScript[] = [];
-    const deleted: number[] = [], deletedAt: number[] = [];
-    const inserted: number[] = [], insertedAt: number[] = [];
+    const script: LineScript[] = [], ins: [ number, number ][] = [], del: [ number, number ][] = [];
 
     const flush = () => {
-      const count = Math.min( deleted.length, inserted.length );
+      const count = Math.min( del.length, ins.length );
 
       for ( let i = 0; i < count; i++ ) {
-        const o = deleted[ i ], m = inserted[ i ];
-        const entry: LineScript = {
-          original: original[ o ], modified: modified[ m ],
-          operation: {
-            type: 'change',
-            original: { start: o, length: 1 },
-            modified: { start: m, length: 1 }
-          }
-        };
+        const [ o ] = del[ i ], [ m ] = ins[ i ];
+        const entry: LineScript = { original: original[ o ], modified: modified[ m ], operation: {
+          type: 'change', original: { start: o, length: 1 }, modified: { start: m, length: 1 }
+        } };
 
         if ( this.tokenizer ) {
-          const a = this.tokenizer.tokenize( original[ o ].value );
-          const b = this.tokenizer.tokenize( modified[ m ].value );
-          entry.edit = {
-            original: a, modified: b,
-            operations: this.tokenAlgorithm.diff( { original: a, modified: b, ...this.tokenComparator } )
-          };
+          const a = this.tokenizer.tokenize( original[ o ].value ), b = this.tokenizer.tokenize( modified[ m ].value );
+          entry.edit = { original: a, modified: b, operations: this.tokenAlgorithm.diff( { original: a, modified: b, ...this.tokenComparator } ) };
         }
 
         script.push( entry );
       }
 
-      for ( let i = count; i < deleted.length; i++ ) {
-        const index = deleted[ i ];
-        script.push( {
-          original: original[ index ], modified: null,
-          operation: {
-            type: 'delete',
-            original: { start: index, length: 1 },
-            modified: { start: deletedAt[ i ], length: 0 }
-          }
-        } );
+      for ( let i = count; i < del.length; i++ ) {
+        const [ index, at ] = del[ i ];
+        script.push( { original: original[ index ], modified: null, operation: {
+          type: 'delete', original: { start: index, length: 1 }, modified: { start: at, length: 0 }
+        } } );
       }
 
-      for ( let i = count; i < inserted.length; i++ ) {
-        const index = inserted[ i ];
-        script.push( {
-          original: null, modified: modified[ index ],
-          operation: {
-            type: 'insert',
-            original: { start: insertedAt[ i ], length: 0 },
-            modified: { start: index, length: 1 }
-          }
-        } );
+      for ( let i = count; i < ins.length; i++ ) {
+        const [ index, at ] = ins[ i ];
+        script.push( { original: null, modified: modified[ index ], operation: {
+          type: 'insert', original: { start: at, length: 0 }, modified: { start: index, length: 1 }
+        } } );
       }
 
-      deleted.length = deletedAt.length = inserted.length = insertedAt.length = 0;
+      del.length = ins.length = 0;
     };
 
-    for ( const operation of operations ) {
-      switch ( operation.type ) {
-        case 'equal':
-          flush();
+    for ( const { type, original: o, modified: m } of operations ) switch ( type ) {
+      case 'equal':
+        flush();
 
-          for ( let i = 0; i < operation.original.length; i++ ) {
-            const o = operation.original.start + i, m = operation.modified.start + i;
-            script.push( {
-              original: original[ o ], modified: modified[ m ],
-              operation: {
-                type: 'equal',
-                original: { start: o, length: 1 },
-                modified: { start: m, length: 1 }
-              }
-            } );
-          }
-          break;
+        for ( let i = 0; i < o.length; i++ ) {
+          const oi = o.start + i, mi = m.start + i;
+          script.push( { original: original[ oi ], modified: modified[ mi ], operation: {
+            type: 'equal', original: { start: oi, length: 1 }, modified: { start: mi, length: 1 }
+          } } );
+        }
 
-        case 'delete':
-          for ( let i = 0; i < operation.original.length; i++ ) {
-            deleted.push( operation.original.start + i );
-            deletedAt.push( operation.modified.start );
-          }
-          break;
+        break;
 
-        case 'insert':
-          for ( let i = 0; i < operation.modified.length; i++ ) {
-            inserted.push( operation.modified.start + i );
-            insertedAt.push( operation.original.start );
-          }
-          break;
-      }
+      case 'delete':
+        for ( let i = 0; i < o.length; i++ ) del.push( [ o.start + i, m.start ] );
+        break;
+
+      case 'insert':
+        for ( let i = 0; i < m.length; i++ ) ins.push( [ m.start + i, o.start ] );
+        break;
     }
 
     flush();
