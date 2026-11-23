@@ -12,3 +12,16 @@ export interface EngineOptions< T > {
   tokenizer?: Tokenizer;
   tokenAlgorithm?: Algorithm;
 }
+
+export interface EditScript {
+  original: Token[];
+  modified: Token[];
+  operations: Operation[];
+}
+
+export interface LineScript {
+  original: Line | null;
+  modified: Line | null;
+  operation: Operation;
+  edit?: EditScript;
+}
