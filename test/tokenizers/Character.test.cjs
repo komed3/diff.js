@@ -22,4 +22,12 @@ test( 'Character', async t => {
     assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'A', '😀', 'e\u0301', '👨‍👩‍👧‍👦' ] );
     assertTokenComplete( text, tokens );
   } );
+
+  await t.test( 'uses UTF-16 offsets', () => {
+    const tokens = tokenizer.tokenize( 'A😀B' );
+
+    assert.deepEqual( tokens.map( ( { start, end } ) => ( { start, end } ) ), [
+      { start: 0, end: 1 }, { start: 1, end: 3 }, { start: 3, end: 4 }
+    ] );
+  } );
 } );
