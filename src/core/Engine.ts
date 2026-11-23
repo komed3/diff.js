@@ -4,6 +4,7 @@ import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
 import type { Token } from '../types/token';
 import type { Tokenizer } from '../types/tokenizer';
+import { COMPARATORS } from './Comparator';
 import { LineParser } from './LineParser';
 
 
@@ -20,8 +21,8 @@ export class Engine {
     this.diff = algorithm.diff.bind( algorithm );
     this.tokenize = tokenizer?.tokenize.bind( tokenizer );
     this.tokenDiff = tokens.diff.bind( tokens );
-    this.comparator = comparator ?? { equals: ( o, m ) => o.value === m.value, key: v => v.value };
-    this.tokenComparator = tokenComparator ?? { equals: ( o, m ) => o.value === m.value, key: v => v.value };
+    this.comparator = comparator ?? COMPARATORS.exact;
+    this.tokenComparator = tokenComparator ?? COMPARATORS.exact;
   }
 
   public process ( input: Input ) : Result {
