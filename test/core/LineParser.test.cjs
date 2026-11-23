@@ -85,4 +85,11 @@ test( 'LineParser', async t => {
       { value: '', ending: '\r', start: 3, contentEnd: 3, end: 4 }
     ] );
   } );
+
+  await t.test( 'uses UTF-16 offsets', () => {
+    assert.deepEqual( parser.parse( '😀\nA' ), [
+      { value: '😀', ending: '\n', start: 0, contentEnd: 2, end: 3 },
+      { value: 'A', ending: '', start: 3, contentEnd: 4, end: 4 }
+    ] );
+  } );
 } );
