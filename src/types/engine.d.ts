@@ -28,13 +28,13 @@ export interface LineScript {
   edit?: EditScript;
 }
 
-export interface Input< T > {
-  original: T;
-  modified: T;
+export interface Input {
+  original: string;
+  modified: string;
 }
 
-export interface Result< T > {
-  original: T;
-  modified: T;
+export interface Result {
+  original: string;
+  modified: string;
   script: LineScript[];
 }
