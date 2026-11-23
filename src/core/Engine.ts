@@ -3,27 +3,30 @@ import type { Comparator } from '../types/context';
 import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
 import type { Token } from '../types/token';
+import type { Tokenizer } from '../types/tokenizer';
 import { LineParser } from './LineParser';
 
 
 export class Engine {
   private readonly parser = new LineParser();
-  private readonly algorithm: Algorithm;
-  private readonly tokenAlgorithm: Algorithm;
+  private readonly diff: Algorithm[ 'diff' ];
+  private readonly tokenize?: Tokenizer[ 'tokenize' ];
+  private readonly tokenDiff: Algorithm[ 'diff' ];
   private readonly comparator: Comparator< Line >;
   private readonly tokenComparator: Comparator< Token >;
-  private readonly tokenizer: EngineOptions[ 'tokenizer' ];
 
   public constructor ( { algorithm, comparator, tokenizer, tokenAlgorithm, tokenComparator }: EngineOptions ) {
-    this.algorithm = algorithm, this.tokenAlgorithm = tokenAlgorithm ?? algorithm;
+    const tokens = tokenAlgorithm ?? algorithm;
+    this.diff = algorithm.diff.bind( algorithm );
+    this.tokenize = tokenizer?.tokenize.bind( tokenizer );
+    this.tokenDiff = tokens.diff.bind( tokens );
     this.comparator = comparator ?? { equals: ( o, m ) => o.value === m.value, key: v => v.value };
     this.tokenComparator = tokenComparator ?? { equals: ( o, m ) => o.value === m.value, key: v => v.value };
-    this.tokenizer = tokenizer;
   }
 
   public process ( input: Input ) : Result {
     const original = this.parser.parse( input.original ), modified = this.parser.parse( input.modified );
-    const operations = this.algorithm.diff( { original, modified, ...this.comparator } );
+    const operations = this.diff( { original, modified, ...this.comparator } );
     const script: LineScript[] = [], ins: [ number, number ][] = [], del: [ number, number ][] = [];
 
     const flush = () => {
@@ -35,9 +38,11 @@ export class Engine {
           type: 'change', original: { start: o, length: 1 }, modified: { start: m, length: 1 }
         } };
 
-        if ( this.tokenizer ) {
-          const a = this.tokenizer.tokenize( original[ o ].value ), b = this.tokenizer.tokenize( modified[ m ].value );
-          entry.edit = { original: a, modified: b, operations: this.tokenAlgorithm.diff( { original: a, modified: b, ...this.tokenComparator } ) };
+        if ( this.tokenize ) {
+          const a = this.tokenize( original[ o ].value ), b = this.tokenize( modified[ m ].value );
+          entry.edit = { original: a, modified: b, operations: this.tokenDiff( {
+            original: a, modified: b, ...this.tokenComparator
+          } ) };
         }
 
         script.push( entry );
@@ -60,8 +65,8 @@ export class Engine {
       del.length = ins.length = 0;
     };
 
-    for ( const { type, original: o, modified: m } of operations ) switch ( type ) {
-      case 'equal':
+    for ( const { type, original: o, modified: m } of operations ) {
+      if ( type === 'equal' ) {
         flush();
 
         for ( let i = 0; i < o.length; i++ ) {
@@ -70,16 +75,10 @@ export class Engine {
             type: 'equal', original: { start: oi, length: 1 }, modified: { start: mi, length: 1 }
           } } );
         }
+      }
 
-        break;
-
-      case 'delete':
-        for ( let i = 0; i < o.length; i++ ) del.push( [ o.start + i, m.start ] );
-        break;
-
-      case 'insert':
-        for ( let i = 0; i < m.length; i++ ) ins.push( [ m.start + i, o.start ] );
-        break;
+      else if ( type === 'delete' ) for ( let i = 0; i < o.length; i++ ) del.push( [ o.start + i, m.start ] );
+      else if ( type === 'insert' ) for ( let i = 0; i < m.length; i++ ) ins.push( [ m.start + i, o.start ] );
     }
 
     flush();
