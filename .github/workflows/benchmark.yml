@@ -24,5 +24,4 @@ jobs:
         run: npm ci
 
       - name: Run Benchmarks
-        run:
-          npm run benchmark -- algorithms
+        run: npm run benchmark
