@@ -1,6 +1,6 @@
 const assert = require( 'node:assert/strict' );
 const shared = require( './shared.cjs' );
-const { diff, getOperationCount, reconstruct } = require( './utils.cjs' );
+const { assertMinimal, diff, getOperationCount, reconstruct } = require( './utils.cjs' );
 
 
 const { Patience } = require( '../../.test-dist/algorithms/Patience.js' );
@@ -24,5 +24,10 @@ shared( 'Patience', algorithm, async t => {
 
     reconstruct( o, m, ops );
     assert.equal( getOperationCount( ops, 'delete' ), 1 );
+  } );
+
+  await t.test( 'falls back to a minimal diff when no unique anchors exist', () => {
+    const o = [ 'a', 'b', 'a', 'b' ], m = [ 'b', 'a', 'b', 'a' ];
+    assertMinimal( o, m, diff( o, m, algorithm ) );
   } );
 } );
