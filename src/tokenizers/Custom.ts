@@ -1,7 +1,11 @@
 import type { Token, TokenMeta } from '../types/token';
-import type { Tokenizer } from '../types/tokenizer';
+import type { CustomTokenizerOptions, Tokenizer } from '../types/tokenizer';
 
 
 export class Custom< T extends TokenMeta = {} > implements Tokenizer< T > {
   private readonly callback: ( text: string ) => Token< T >[];
+
+  public constructor ( { callback }: CustomTokenizerOptions< T > ) {
+    this.callback = callback;
+  }
 }
