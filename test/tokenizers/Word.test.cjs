@@ -32,4 +32,8 @@ test( 'Word', async t => {
     assert.ok( tokens.some( ( { type } ) => type === 'punctuation' ) );
     assertTokenComplete( text, tokens );
   } );
+
+  await t.test( 'handles empty input', () => {
+    assert.deepEqual( tokenizer.tokenize( '' ), [] );
+  } );
 } );
