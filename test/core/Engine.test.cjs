@@ -29,4 +29,13 @@ describe( 'Engine', () => {
     const result = engine().process( { original: 'one\ntwo', modified: 'one' } );
     assert.deepEqual( result.script.map( ( { operation: { type } } ) => type ), [ 'equal', 'delete' ] );
   } );
+
+  it( 'pairs changed lines', () => {
+    const result = engine().process( { original: 'old', modified: 'new' } );
+
+    assert.equal( result.script.length, 1 );
+    assert.equal( result.script[ 0 ].operation.type, 'change' );
+    assert.equal( result.script[ 0 ].original.value, 'old' );
+    assert.equal( result.script[ 0 ].modified.value, 'new' );
+  } );
 } );
