@@ -15,4 +15,11 @@ test( 'Character', async t => {
     assert.ok( tokens.every( ( { type } ) => type === 'character' ) );
     assertTokenComplete( 'Hello', tokens );
   } );
+
+  await t.test( 'keeps Unicode grapheme clusters intact', () => {
+    const text = 'A😀e\u0301👨‍👩‍👧‍👦', tokens = tokenizer.tokenize( text );
+
+    assert.deepEqual( tokens.map( ( { value } ) => value ), [ 'A', '😀', 'e\u0301', '👨‍👩‍👧‍👦' ] );
+    assertTokenComplete( text, tokens );
+  } );
 } );
