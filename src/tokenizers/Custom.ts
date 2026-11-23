@@ -8,4 +8,8 @@ export class Custom< T extends TokenMeta = {} > implements Tokenizer< T > {
   public constructor ( { callback }: CustomTokenizerOptions< T > ) {
     this.callback = callback;
   }
+
+  public tokenize ( text: string ) : Token< T >[] {
+    return this.callback( text );
+  }
 }
