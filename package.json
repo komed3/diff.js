@@ -31,7 +31,8 @@
   },
   "scripts": {
     "test": "tsc --outDir .test-dist && node --test test/run.cjs",
-    "benchmark": "tsc --outDir .test-dist && node benchmark/run.cjs"
+    "benchmark": "tsc --outDir .test-dist && node benchmark/run.cjs",
+    "lint": "tsc --noEmit"
   },
   "devDependencies": {
     "tsc-alias": "^1.9.10",
