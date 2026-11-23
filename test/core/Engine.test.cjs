@@ -51,6 +51,17 @@ describe( 'Engine', () => {
     );
   } );
 
+  it( 'uses the configured token algorithm', () => {
+    let calls = 0;
+    const tokenAlgorithm = { diff ( sequence ) { calls++; return algorithm.diff( sequence ) } };
+
+    engine( { tokenizer: new Word(), tokenAlgorithm } ).process( {
+      original: 'hello world', modified: 'hello there'
+    } );
+
+    assert.equal( calls, 1 );
+  } );
+
   it( 'uses custom comparators', () => {
     const result = engine( { comparator: COMPARATORS.caseInsensitive } ).process( {
       original: 'Hello', modified: 'hello'
