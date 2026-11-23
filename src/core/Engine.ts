@@ -5,3 +5,8 @@ import type { Line } from '../types/line';
 import type { Operation } from '../types/operation';
 import type { Token } from '../types/token';
 import { LineParser } from './LineParser';
+
+
+export class Engine {
+  private readonly parser = new LineParser();
+}
