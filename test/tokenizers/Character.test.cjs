@@ -30,4 +30,8 @@ test( 'Character', async t => {
       { start: 0, end: 1 }, { start: 1, end: 3 }, { start: 3, end: 4 }
     ] );
   } );
+
+  await t.test( 'handles empty input', () => {
+    assert.deepEqual( tokenizer.tokenize( '' ), [] );
+  } );
 } );
