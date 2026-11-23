@@ -39,6 +39,18 @@ describe( 'Engine', () => {
     assert.equal( result.script[ 0 ].modified.value, 'new' );
   } );
 
+  it( 'creates token diffs for changed lines', () => {
+    const result = engine( { tokenizer: new Word() } ).process( {
+      original: 'hello world', modified: 'hello there'
+    } );
+
+    assert.ok( result.script[ 0 ].edit );
+    assert.deepEqual(
+      result.script[ 0 ].edit.operations.map( ( { type } ) => type ),
+      [ 'equal', 'delete', 'insert' ]
+    );
+  } );
+
   it( 'uses custom comparators', () => {
     const result = engine( { comparator: COMPARATORS.caseInsensitive } ).process( {
       original: 'Hello', modified: 'hello'
