@@ -74,4 +74,31 @@ describe( 'Engine', () => {
     const result = engine().process( { original: 'old', modified: 'new' } );
     assert.equal( result.script[ 0 ].edit, undefined );
   } );
+
+  it( 'handles a complex combination of changes', () => {
+    const original = [ 'header', 'keep', 'old title', 'old detail', 'obsolete', 'middle', 'gap', 'tail old', 'footer' ].join( '\n' );
+    const modified = [ 'header', 'keep', 'new title', 'new detail', 'middle', 'added', 'gap', 'tail new', 'footer' ].join( '\n' );
+    const result = engine().process( { original, modified } );
+
+    assert.deepEqual(
+      result.script.map( ( { original, modified, operation } ) => [
+        operation.type, original?.value ?? null, modified?.value ?? null,
+        operation.original.start, operation.modified.start
+      ] ),
+      [
+        [ 'equal', 'header', 'header', 0, 0 ],
+        [ 'equal', 'keep', 'keep', 1, 1 ],
+        [ 'change', 'old title', 'new title', 2, 2 ],
+        [ 'change', 'old detail', 'new detail', 3, 3 ],
+        [ 'delete', 'obsolete', null, 4, 2 ],
+        [ 'equal', 'middle', 'middle', 5, 4 ],
+        [ 'insert', null, 'added', 6, 5 ],
+        [ 'equal', 'gap', 'gap', 6, 6 ],
+        [ 'change', 'tail old', 'tail new', 7, 7 ],
+        [ 'equal', 'footer', 'footer', 8, 8 ]
+      ]
+    );
+
+    assert.equal( result.script.filter( ( { operation: { type } } ) => type === 'change' ).length, 3 );
+  } );
 } );
