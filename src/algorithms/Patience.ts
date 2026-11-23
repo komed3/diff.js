@@ -8,6 +8,6 @@ import { longestIncreasingSubsequence } from './internal/longestIncreasingSubseq
 
 export class Patience implements Algorithm {
   public diff < T extends Comparable > ( seq: Sequence< T > ) : Operation[] {
-    return anchoredDiff( seq, ( part, bounds ) => longestIncreasingSubsequence( findAnchors( part, bounds ) ) );
+    return anchoredDiff( seq, ( s, bounds ) => longestIncreasingSubsequence( findAnchors( s, bounds ) ) );
   }
 }
