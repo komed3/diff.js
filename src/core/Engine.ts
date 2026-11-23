@@ -10,5 +10,9 @@ import { LineParser } from './LineParser';
 export class Engine {
   private readonly parser = new LineParser();
 
+  private seq < T extends Comparable > ( original: readonly T[], modified: readonly T[], comparator?: Comparator< T > ) : Sequence< T > {}
+
   public constructor ( private readonly options: EngineOptions ) {}
+
+  public process ( input: Input ) : Result {}
 }
