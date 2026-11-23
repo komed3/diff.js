@@ -19,5 +19,14 @@ export class Engine {
 
   public constructor ( private readonly options: EngineOptions ) {}
 
-  public process ( input: Input ) : Result {}
+  public process ( input: Input ) : Result {
+    const original = this.parser.parse( input.original );
+    const modified = this.parser.parse( input.modified );
+    const sequence = this.seq( original, modified, this.options.comparator );
+    const operations = this.options.algorithm.diff( sequence );
+    const script: LineScript[] = [];
+
+    const del: { line: Line; index: number; modified: number }[] = [];
+    const ins: { line: Line; index: number; original: number }[] = [];
+  }
 }
