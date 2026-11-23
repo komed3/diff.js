@@ -6,4 +6,9 @@ export const createComparator = ( normalize: ( value: string ) => string ) : Com
 } );
 
 
-export const COMPARATORS = {} as const satisfies Record< string, Comparator< Comparable > >;
+export const COMPARATORS = {
+  exact: { equals: ( o, m ) => o.value === m.value, key: v => v.value },
+  whitespace: createComparator( v => v.replace( /\s/gu, '' ) ),
+  unicode: createComparator( v => v.normalize( 'NFC' ) ),
+  caseInsensitive: createComparator( v => v.toLowerCase() )
+} as const satisfies Record< string, Comparator< Comparable > >;
