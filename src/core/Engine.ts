@@ -28,5 +28,54 @@ export class Engine {
 
     const del: { line: Line; index: number; modified: number }[] = [];
     const ins: { line: Line; index: number; original: number }[] = [];
+
+    const flush = () => {
+      const count = Math.min( del.length, ins.length );
+
+      for ( let i = 0; i < count; i++ ) {
+        const o = del[ i ], m = ins[ i ], entry: LineScript = {
+          original: o.line, modified: m.line, operation: {
+            type: 'change',
+            original: { start: o.index, length: 1 },
+            modified: { start: m.index, length: 1 }
+          }
+        };
+
+        if ( this.options.tokenizer ) {
+          const tokensOriginal = this.options.tokenizer.tokenize( o.line.value );
+          const tokensModified = this.options.tokenizer.tokenize( m.line.value );
+          const tokenSequence = this.seq( tokensOriginal, tokensModified, this.options.tokenComparator );
+
+          entry.edit = {
+            original: tokensOriginal, modified: tokensModified,
+            operations: ( this.options.tokenAlgorithm ?? this.options.algorithm ).diff( tokenSequence )
+          };
+        }
+
+        script.push( entry );
+      }
+
+      for ( let i = count; i < del.length; i++ ) {
+        const item = del[ i ];
+
+        script.push( { original: item.line, modified: null, operation: {
+          type: 'delete',
+          original: { start: item.index, length: 1 },
+          modified: { start: item.modified, length: 0 }
+        } } );
+      }
+
+      for ( let i = count; i < ins.length; i++ ) {
+        const item = ins[ i ];
+
+        script.push( { original: null, modified: item.line, operation: {
+          type: 'insert',
+          original: { start: item.original, length: 0 },
+          modified: { start: item.index, length: 1 }
+        } } );
+      }
+
+      del.length = 0, ins.length = 0;
+    };
   }
 }
