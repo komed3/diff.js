@@ -64,4 +64,11 @@ test( 'LineParser', async t => {
       { value: 'First', ending: '\n', start: 0, contentEnd: 5, end: 6 }
     ] );
   } );
+
+  await t.test( 'preserves multiple trailing line endings', () => {
+    assert.deepEqual( parser.parse( 'First\n\n' ), [
+      { value: 'First', ending: '\n', start: 0, contentEnd: 5, end: 6 },
+      { value: '', ending: '\n', start: 6, contentEnd: 6, end: 7 }
+    ] );
+  } );
 } );
