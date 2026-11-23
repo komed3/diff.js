@@ -12,4 +12,11 @@ const algorithm = new Myers();
 const engine = ( options ) => new Engine( { algorithm, ...options } );
 
 
-describe( 'Engine', () => {} );
+describe( 'Engine', () => {
+  it( 'preserves unchanged input', () => {
+    const result = engine().process( { original: 'one\ntwo', modified: 'one\ntwo' } );
+
+    assert.equal( result.script.length, 2 );
+    assert.ok( result.script.every( ( { operation: { type } } ) => type === 'equal' ) );
+  } );
+} );
