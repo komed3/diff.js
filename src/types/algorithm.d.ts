@@ -1,7 +1,7 @@
-import type { Sequence } from './context';
+import type { Comparable, Sequence } from './context';
 import type { Operation } from './operation';
 
 
 export interface Algorithm {
-  diff < T > ( seq: Sequence< T > ) : Operation[];
+  diff < T extends Comparable > ( seq: Sequence< T > ) : Operation[];
 }
