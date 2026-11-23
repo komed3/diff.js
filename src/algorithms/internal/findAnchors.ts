@@ -1,10 +1,10 @@
-import type { Bounds, Sequence } from '../../types/context';
+import type { Bounds, Comparable, Sequence } from '../../types/context';
 import type { AnchorGroup } from '../../types/group';
 import type { Pair } from '../../types/operation';
 import { addGroup, findGroup } from './group';
 
 
-export function findAnchors < T > (
+export function findAnchors < T extends Comparable > (
   { original, modified, equals, key }: Sequence< T >, { oStart, oEnd, mStart, mEnd }: Bounds
 ) : Pair[] {
   const groups: AnchorGroup< T >[] = [], lookup = new Map< unknown, AnchorGroup< T >[] >();

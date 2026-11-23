@@ -1,11 +1,11 @@
-import type { Bounds, Sequence } from '../../types/context';
+import type { Bounds, Comparable, Sequence } from '../../types/context';
 import type { Operation, Pair } from '../../types/operation';
 import { commonEdges } from './commonEdges';
 import { createContext } from './createContext';
 import { processAnchors } from './processAnchors';
 
 
-export function anchoredDiff < T > (
+export function anchoredDiff < T extends Comparable > (
   seq: Sequence< T >, strategy: ( seq: Sequence< T >, bounds: Bounds ) => readonly Pair[]
 ) : Operation[] {
   const { bounds, pushEdit, finish } = createContext( seq );

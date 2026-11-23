@@ -1,7 +1,7 @@
-import type { Bounds, Sequence } from '../../types/context';
+import type { Bounds, Comparable, Sequence } from '../../types/context';
 
 
-export function myersDiffRange < T > (
+export function myersDiffRange < T extends Comparable > (
   { original, modified, equals }: Sequence< T >, { oStart, oEnd, mStart, mEnd }: Bounds,
   pushEdit: ( type: 0 | 1 | 2 ) => void
 ) : void {

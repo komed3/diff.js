@@ -1,7 +1,7 @@
-import type { Bounds, Sequence } from '../../types/context';
+import type { Bounds, Comparable, Sequence } from '../../types/context';
 
 
-export function commonEdges < T > (
+export function commonEdges < T extends Comparable > (
   { original, modified, equals }: Sequence< T >,
   { oStart, oEnd, mStart, mEnd }: Bounds
 ) {

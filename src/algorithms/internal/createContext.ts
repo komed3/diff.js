@@ -1,9 +1,9 @@
-import type { Context, Sequence } from '../../types/context';
+import type { Comparable, Context, Sequence } from '../../types/context';
 import { commonEdges } from './commonEdges';
 import { populateOperations } from './populateOperations';
 
 
-export function createContext < T > ( seq: Sequence< T > ) : Context < T > {
+export function createContext < T extends Comparable > ( seq: Sequence< T > ) : Context < T > {
   const n = seq.original.length, m = seq.modified.length;
   const { prefix, suffix } = commonEdges( seq, { oStart: 0, oEnd: n, mStart: 0, mEnd: m } );
   const editCount = n + m - prefix - suffix + 1, editCodes = new Int8Array( editCount );

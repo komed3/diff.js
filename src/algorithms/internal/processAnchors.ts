@@ -1,9 +1,9 @@
-import type { Bounds, Sequence } from '../../types/context';
+import type { Bounds, Comparable, Sequence } from '../../types/context';
 import type { Pair } from '../../types/operation';
 import { myersDiffRange } from './myersDiffRange';
 
 
-export function processAnchors < T > (
+export function processAnchors < T extends Comparable > (
   anchors: readonly Pair[], seq: Sequence< T >, bounds: Bounds,
   pushEdit: ( type: 0 | 1 | 2 ) => void, process: ( bounds: Bounds ) => void
 ) : void {
