@@ -38,4 +38,17 @@ describe( 'Engine', () => {
     assert.equal( result.script[ 0 ].original.value, 'old' );
     assert.equal( result.script[ 0 ].modified.value, 'new' );
   } );
+
+  it( 'uses custom comparators', () => {
+    const result = engine( { comparator: COMPARATORS.caseInsensitive } ).process( {
+      original: 'Hello', modified: 'hello'
+    } );
+
+    assert.equal( result.script[ 0 ].operation.type, 'equal' );
+  } );
+
+  it( 'does not tokenize without a tokenizer', () => {
+    const result = engine().process( { original: 'old', modified: 'new' } );
+    assert.equal( result.script[ 0 ].edit, undefined );
+  } );
 } );
