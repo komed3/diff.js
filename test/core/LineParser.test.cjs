@@ -71,4 +71,10 @@ test( 'LineParser', async t => {
       { value: '', ending: '\n', start: 6, contentEnd: 6, end: 7 }
     ] );
   } );
+
+  await t.test( 'treats CRLF as one line ending', () => {
+    assert.deepEqual( parser.parse( '\r\n' ), [
+      { value: '', ending: '\r\n', start: 0, contentEnd: 0, end: 2 }
+    ] );
+  } );
 } );
