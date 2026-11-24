@@ -1,4 +1,7 @@
-import type { CharacterBaseMetric, CharacterCounts, CharacterMetric, MetricBaseStats, MetricStats } from '../types/analyze';
+import type {
+  CharacterBaseMetric, CharacterCounts, CharacterMetric, CharacterStats,
+  MetricBaseStats, MetricStats
+} from '../types/analyze';
 import type { Result } from '../types/engine';
 
 
@@ -63,5 +66,37 @@ export class Analyzer {
     }
 
     return this.metric( stats );
+  }
+
+  public characters () : CharacterStats {
+    const stats = Object.fromEntries(
+      [ 'utf16CodeUnits', 'unicodeCodePoints', 'utf8Bytes' ].map( key => [ key, {
+        original: 0, modified: 0, equal: { original: 0, modified: 0 },
+        inserted: 0, deleted: 0, changed: { original: 0, modified: 0 }
+      } ] )
+    );
+
+    for ( const { original, modified, operation: { type } } of this.result.script ) {
+      const old = this.counts( original ? original.value + original.ending : '' );
+      const neu = this.counts( modified ? modified.value + modified.ending : '' );
+
+      for ( const key of [ 'utf16CodeUnits', 'unicodeCodePoints', 'utf8Bytes' ] as const ) {
+        const target = stats[ key ], o = old[ key ], m = neu[ key ];
+
+        if ( original ) target.original += o;
+        if ( modified ) target.modified += m;
+
+        if ( type === 'equal' ) target.equal.original += o, target.equal.modified += m;
+        else if ( type === 'insert' ) target.inserted += m;
+        else if ( type === 'delete' ) target.deleted += o;
+        else target.changed.original += o, target.changed.modified += m;
+      }
+    }
+
+    return {
+      utf16CodeUnits: this.charMetric( stats.utf16CodeUnits ),
+      unicodeCodePoints: this.charMetric( stats.unicodeCodePoints ),
+      utf8Bytes: this.charMetric( stats.utf8Bytes )
+    };
   }
 }
