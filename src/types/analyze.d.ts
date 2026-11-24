@@ -2,15 +2,15 @@ import type { Range } from './operation';
 
 
 export interface MetricBaseStats {
-  readonly original: number;
-  readonly modified: number;
-  readonly equal: number;
-  readonly inserted: number;
-  readonly deleted: number;
-  readonly changed: number;
+  original: number;
+  modified: number;
+  equal: number;
+  inserted: number;
+  deleted: number;
+  changed: number;
 }
 
-export interface MetricStats extends MetricBaseStats {
+export interface MetricStats extends Readonly< MetricBaseStats > {
   readonly delta: number;
   readonly changeRate: number;
   readonly insertionRate: number;
@@ -27,21 +27,21 @@ export interface CharacterCounts {
 }
 
 export interface CharacterBaseMetric {
-  readonly original: number;
-  readonly modified: number;
-  readonly equal: {
-    readonly original: number;
-    readonly modified: number;
+  original: number;
+  modified: number;
+  equal: {
+    original: number;
+    modified: number;
   };
-  readonly inserted: number;
-  readonly deleted: number;
-  readonly changed: {
-    readonly original: number;
-    readonly modified: number;
+  inserted: number;
+  deleted: number;
+  changed: {
+    original: number;
+    modified: number;
   };
 }
 
-export interface CharacterMetric extends CharacterBaseMetric {
+export interface CharacterMetric extends Readonly< CharacterBaseMetric > {
   readonly delta: number;
   readonly changeRate: number;
 }
@@ -87,13 +87,16 @@ export interface OperationStats {
 
 export type BlockType = 'insert' | 'delete' | 'replace' | 'change' | 'mixed';
 
-export interface Block {
+export interface BlockBase {
+  original: Range;
+  modified: Range;
+  insert: number;
+  delete: number;
+  change: number;
+}
+
+export interface Block extends Readonly< BlockBase > {
   readonly type: BlockType;
-  readonly original: Range;
-  readonly modified: Range;
-  readonly insert: number;
-  readonly delete: number;
-  readonly change: number;
   readonly size: number;
   readonly churn: number;
 }
