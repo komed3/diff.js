@@ -127,19 +127,21 @@ export class Analyzer {
       stats.lines++;
       stats.original += edit.original.length;
       stats.modified += edit.modified.length;
-      let inserted = 0, deleted = 0, block = 0;
+      let inserted = 0, deleted = 0, blockO = 0, blockM = 0;
 
       const finish = () => {
-        if ( ! block ) return;
-        stats.blocks++, stats.blockSize += block;
-        stats.largestBlock = Math.max( stats.largestBlock, block );
-        block = 0;
+        if ( ! blockO && ! blockM ) return;
+
+        const size = Math.max( blockO, blockM );
+        stats.blocks++, stats.blockSize += size;
+        stats.largestBlock = Math.max( stats.largestBlock, size );
+        blockO = blockM = 0;
       };
 
       for ( const { type, original, modified } of edit.operations ) {
         if ( type === 'equal' ) stats.equal += original.length, finish();
         else {
-          block += Math.max( original.length, modified.length );
+          blockO += original.length, blockM += modified.length;
           if ( type === 'insert' ) inserted += modified.length;
           else deleted += original.length;
         }
