@@ -1,7 +1,6 @@
 import type {
-  CharacterBaseMetric, CharacterCounts, CharacterMetric, CharacterStats,
-  MetricBaseStats, MetricStats,
-  TokenStats
+  Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric,
+  CharacterStats, MetricBaseStats, MetricStats, TokenStats
 } from '../types/analyze';
 import type { Result } from '../types/engine';
 
@@ -135,5 +134,46 @@ export class Analyzer {
       coverage: changedLines === 0 ? 0 : lines / changedLines,
       changeRate: original + modified === 0 ? 0 : changedTotal / ( original + modified )
     };
+  }
+
+  public blocks () : Block[] {
+    const blocks: Block[] = [];
+    let curr: BlockBase | null = null;
+
+    const finish = () => {
+      if ( ! curr ) return;
+
+      const { original, modified, insert, delete: del, change } = curr;
+      const type: BlockType = insert && del ? ( change ? 'mixed' : 'replace' ) : insert ?
+        ( change ? 'mixed' : 'insert' ) : del ? ( change ? 'mixed' : 'delete' ) : 'change';
+
+      blocks.push( {
+        type, original, modified, insert, delete: del, change,
+        size: Math.max( original.length, modified.length ),
+        churn: original.length + modified.length
+      } );
+
+      curr = null;
+    };
+
+    for ( const { operation: { type, original, modified } } of this.result.script ) {
+      if ( type === 'equal' ) { finish(); continue }
+
+      if ( ! curr ) curr = {
+        original: { start: original.start, length: 0 },
+        modified: { start: modified.start, length: 0 },
+        insert: 0, delete: 0, change: 0
+      };
+
+      curr.original = { ...curr.original, length: original.start + original.length - curr.original.start };
+      curr.modified = { ...curr.modified, length: modified.start + modified.length - curr.modified.start };
+
+      if ( type === 'insert' ) curr.insert++;
+      else if ( type === 'delete' ) curr.delete++;
+      else curr.change++;
+    }
+
+    finish();
+    return blocks;
   }
 }
