@@ -77,4 +77,26 @@ test( 'Analyzer', async t => {
       changeOnlyBlocks: 0, mixedBlocks: 1
     } );
   } );
+
+  await t.test( 'analyzes operation patterns and recurring sequences', () => {
+    const stats = analyze( 'a\nold\nb\nold\nc\nold', 'a\nnew\nb\nnew\nc\nnew' ).patterns();
+
+    assert.deepEqual( stats.runs, [
+      { type: 'equal', start: 0, length: 1 }, { type: 'change', start: 1, length: 1 },
+      { type: 'equal', start: 2, length: 1 }, { type: 'change', start: 3, length: 1 },
+      { type: 'equal', start: 4, length: 1 }, { type: 'change', start: 5, length: 1 }
+    ] );
+
+    assert.deepEqual( stats.sequences, [
+      { pattern: 'equal>change', length: 2, count: 3 },
+      { pattern: 'change>equal', length: 2, count: 2 },
+      { pattern: 'change>equal>change', length: 3, count: 2 },
+      { pattern: 'equal>change>equal', length: 3, count: 2 }
+    ] );
+
+    assert.deepEqual( stats.transitions, { 'equal>change': 3, 'change>equal': 2 } );
+    assert.deepEqual( stats.longest, { equal: 1, insert: 0, delete: 0, change: 1 } );
+    assert.deepEqual( stats.magnitude.equal, { runs: 3, lines: 3, longest: 1, average: 1 } );
+    assert.deepEqual( stats.magnitude.change, { runs: 3, lines: 3, longest: 1, average: 1 } );
+  } );
 } );
