@@ -47,4 +47,14 @@ test( 'Analyzer', async t => {
       delta: 0, changeRate: 2 / 3
     } );
   } );
+
+  await t.test( 'calculates token metrics and contiguous blocks', () => {
+    const stats = analyze( 'hello world', 'hello there', { tokenizer: new Word() } ).tokens();
+
+    assert.deepEqual( stats, {
+      lines: 1, original: 3, modified: 3, equal: 2, inserted: 0, deleted: 0,
+      changed: { original: 1, modified: 1 }, delta: 0, changeRate: 1 / 3,
+      coverage: 1, blocks: 1, largestBlock: 1, averageBlockSize: 1
+    } );
+  } );
 } );
