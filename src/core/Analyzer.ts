@@ -1,7 +1,7 @@
 import type {
   Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric,
-  CharacterStats, MetricBaseStats, MetricStats, OperationStats, PatternRun, PatternSequence,
-  PatternStats, SideDistribution, TokenStats
+  CharacterStats, DistributionStats, MetricBaseStats, MetricStats, OperationStats,
+  PatternRun, PatternSequence, PatternStats, SideDistribution, TokenStats
 } from '../types/analyze';
 import type { Result } from '../types/engine';
 
@@ -263,5 +263,21 @@ export class Analyzer {
       .sort( ( a, b ) => b.count - a.count || a.pattern.localeCompare( b.pattern ) );
 
     return { transitions, sequences, runs, longest };
+  }
+
+  public distribution () : DistributionStats {
+    const blocks = this.blocks(), sizes = blocks.map( ( { size } ) => size );
+    const changed = sizes.reduce( ( sum, size ) => sum + size, 0 );
+    const largest = sizes.reduce( ( max, size ) => Math.max( max, size ), 0 );
+    const { original, modified } = this.lines();
+
+    return {
+      original: this.side( blocks, 'original', original ),
+      modified: this.side( blocks, 'modified', modified ),
+      concentration: changed === 0 ? 0 : largest / changed,
+      blockCount: blocks.length,
+      averageBlockSize: blocks.length ? changed / blocks.length : 0,
+      largestBlock: largest
+    };
   }
 }
