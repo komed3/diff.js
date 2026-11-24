@@ -14,6 +14,7 @@ require( './tokenizers/Word.test.cjs' );
 
 // --- core ---
 
+require( './core/Analyzer.test.cjs' );
 require( './core/Comparator.test.cjs' );
 require( './core/Engine.test.cjs' );
 require( './core/LineParser.test.cjs' );
