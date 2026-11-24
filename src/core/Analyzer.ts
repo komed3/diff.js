@@ -1,14 +1,23 @@
-import type {
-  Block, BlockType, CharacterCounts, CharacterMetric, CharacterStats, DistributionStats,
-  MetricStats, OperationStats, PatternRun, PatternSequence, PatternStats, SideDistribution,
-  TokenStats
-} from '../types/analyze';
-import type { LineScript, Result } from '../types/engine';
-import type { Range } from '../types/operation';
+import type { MetricBaseStats, MetricStats } from '../types/analyze';
+import type { Result } from '../types/engine';
 
 
 export class Analyzer {
   private encoder?: TextEncoder;
+
+  private metric ( { original, modified, equal, inserted, deleted, changed }: MetricBaseStats ) : MetricStats {
+    const delta = modified - original;
+
+    return {
+      original, modified, equal, inserted, deleted, changed, delta,
+      changeRate: Math.max( original, modified ) === 0 ? 0 : ( inserted + deleted + changed ) / Math.max( original, modified ),
+      insertionRate: modified === 0 ? 0 : inserted / modified,
+      deletionRate: original === 0 ? 0 : deleted / original,
+      retentionRate: original === 0 ? 0 : equal / original,
+      growthRate: original === 0 ? null : delta / original,
+      sizeRatio: original === 0 ? null : modified / original
+    };
+  }
 
   public constructor ( private readonly result: Result ) {}
 }
