@@ -14,3 +14,31 @@ export interface MetricStats {
   readonly growthRate: number | null;
   readonly sizeRatio: number | null;
 }
+
+export interface LineStats extends MetricStats {}
+
+export interface CharacterStats {
+  readonly utf16CodeUnits: MetricStats;
+  readonly unicodeCodePoints: MetricStats;
+  readonly utf8Bytes: MetricStats;
+}
+
+export interface OperationStats {
+  readonly total: number;
+  readonly equal: number;
+  readonly insert: number;
+  readonly delete: number;
+  readonly changes: number;
+  readonly changeBlocks: number;
+  readonly insertionBlocks: number;
+  readonly deletionBlocks: number;
+  readonly replacementBlocks: number;
+  readonly insertionOnlyBlocks: number;
+  readonly deletionOnlyBlocks: number;
+}
+
+export interface CharacterCounts {
+  utf16CodeUnits: number;
+  unicodeCodePoints: number;
+  utf8Bytes: number;
+}
