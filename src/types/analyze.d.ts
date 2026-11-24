@@ -21,9 +21,9 @@ export interface MetricStats extends MetricBaseStats {
 }
 
 export interface CharacterCounts {
-  readonly utf16CodeUnits: number;
-  readonly unicodeCodePoints: number;
-  readonly utf8Bytes: number;
+  utf16CodeUnits: number;
+  unicodeCodePoints: number;
+  utf8Bytes: number;
 }
 
 export interface CharacterMetric {

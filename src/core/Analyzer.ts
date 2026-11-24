@@ -29,5 +29,13 @@ export class Analyzer {
     };
   }
 
+  private add ( target: CharacterCounts, text: string ) : void {
+    const { utf16CodeUnits, unicodeCodePoints, utf8Bytes } = this.counts( text );
+
+    target.utf16CodeUnits += utf16CodeUnits;
+    target.unicodeCodePoints += unicodeCodePoints;
+    target.utf8Bytes += utf8Bytes;
+  }
+
   public constructor ( private readonly result: Result ) {}
 }
