@@ -1,5 +1,10 @@
-import type { CharacterCounts, MetricBaseStats, MetricStats } from '../types/analyze';
+import type {
+  Block, BlockType, CharacterCounts, CharacterMetric, CharacterStats, DistributionStats,
+  MetricBaseStats, MetricStats, OperationStats, PatternRun, PatternSequence, PatternStats,
+  SideDistribution, TokenStats
+} from '../types/analyze';
 import type { Result } from '../types/engine';
+import type { Range } from '../types/operation';
 
 
 export class Analyzer {
