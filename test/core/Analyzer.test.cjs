@@ -99,4 +99,37 @@ test( 'Analyzer', async t => {
     assert.deepEqual( stats.magnitude.equal, { runs: 3, lines: 3, longest: 1, average: 1 } );
     assert.deepEqual( stats.magnitude.change, { runs: 3, lines: 3, longest: 1, average: 1 } );
   } );
+
+  await t.test( 'calculates block distribution', () => {
+    const original = [
+      'header', 'keep', 'old title', 'old detail', 'obsolete',
+      'middle', 'gap', 'tail old', 'footer'
+    ].join( '\n' );
+
+    const modified = [
+      'header', 'keep', 'new title', 'new detail',
+      'middle', 'added', 'gap', 'tail new', 'footer'
+    ].join( '\n' );
+
+    const stats = analyze( original, modified ).distribution();
+
+    assert.equal( stats.blockCount, 3 );
+    assert.equal( stats.largestBlock, 3 );
+    assert.equal( stats.averageBlockSize, 5 / 3 );
+    assert.equal( stats.concentration, 3 / 5 );
+
+    assert.equal( stats.original.affected, 4 );
+    assert.equal( stats.original.density, 4 / 9 );
+    assert.equal( stats.original.coverage, 6 / 9 );
+    assert.deepEqual( stats.original.gaps, { count: 1, min: 2, max: 2, average: 2 } );
+
+    assert.equal( stats.modified.affected, 4 );
+    assert.equal( stats.modified.density, 4 / 9 );
+    assert.equal( stats.modified.coverage, 6 / 9 );
+    assert.deepEqual( stats.modified.gaps, { count: 2, min: 1, max: 1, average: 1 } );
+
+    assert.deepEqual( stats.byType.mixed, { count: 1, size: 3, churn: 5, largest: 3, average: 3 } );
+    assert.deepEqual( stats.byType.insert, { count: 1, size: 1, churn: 1, largest: 1, average: 1 } );
+    assert.deepEqual( stats.byType.change, { count: 1, size: 1, churn: 2, largest: 1, average: 1 } );
+  } );
 } );
