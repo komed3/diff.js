@@ -66,6 +66,9 @@ export interface TokenStats {
   };
   readonly delta: number;
   readonly changeRate: number;
+  readonly blocks: number;
+  readonly largestBlock: number;
+  readonly averageBlockSize: number;
 }
 
 export interface OperationStats {
@@ -101,10 +104,19 @@ export interface Block extends Readonly< BlockBase > {
   readonly churn: number;
 }
 
+export type PatternType = 'equal' | 'insert' | 'delete' | 'change';
+
 export interface PatternRun {
-  readonly type: 'equal' | 'insert' | 'delete' | 'change';
+  readonly type: PatternType;
   readonly start: number;
   readonly length: number;
+}
+
+export interface PatternMagnitude {
+  readonly runs: number;
+  readonly lines: number;
+  readonly longest: number;
+  readonly average: number;
 }
 
 export interface PatternSequence {
@@ -117,7 +129,8 @@ export interface PatternStats {
   readonly transitions: Readonly< Record< string, number > >;
   readonly sequences: readonly PatternSequence[];
   readonly runs: readonly PatternRun[];
-  readonly longest: Readonly< Record< string, number > >;
+  readonly longest: Readonly< Record< PatternType, number > >;
+  readonly magnitude: Readonly< Record< PatternType, PatternMagnitude > >;
 }
 
 export interface SideDistribution {
@@ -132,9 +145,18 @@ export interface SideDistribution {
   };
 }
 
+export interface BlockDistribution {
+  readonly count: number;
+  readonly size: number;
+  readonly churn: number;
+  readonly largest: number;
+  readonly average: number;
+}
+
 export interface DistributionStats {
   readonly original: SideDistribution;
   readonly modified: SideDistribution;
+  readonly byType: Readonly< Record< BlockType, BlockDistribution > >;
   readonly concentration: number;
   readonly blockCount: number;
   readonly averageBlockSize: number;
