@@ -1,6 +1,6 @@
 import type {
   Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric,
-  CharacterStats, MetricBaseStats, MetricStats, TokenStats
+  CharacterStats, MetricBaseStats, MetricStats, OperationStats, TokenStats
 } from '../types/analyze';
 import type { Result } from '../types/engine';
 
@@ -175,5 +175,35 @@ export class Analyzer {
 
     finish();
     return blocks;
+  }
+
+  public operations () : OperationStats {
+    const stats = {
+      total: this.result.script.length, equal: 0, insert: 0, delete: 0, change: 0, changes: 0,
+      changeBlocks: 0, insertionBlocks: 0, deletionBlocks: 0, replacementBlocks: 0,
+      insertionOnlyBlocks: 0, deletionOnlyBlocks: 0, changeOnlyBlocks: 0, mixedBlocks: 0
+    };
+
+    for ( const { type, insert, delete: del } of this.blocks() ) {
+      stats.changeBlocks++;
+
+      if ( insert ) stats.insertionBlocks++;
+      if ( del ) stats.deletionBlocks++;
+
+      if ( type === 'insert' ) stats.insertionOnlyBlocks++;
+      else if ( type === 'delete' ) stats.deletionOnlyBlocks++;
+      else if ( type === 'replace' ) stats.replacementBlocks++;
+      else if ( type === 'change' ) stats.changeOnlyBlocks++;
+      else stats.mixedBlocks++;
+    }
+
+    for ( const { operation: { type } } of this.result.script ) {
+      if ( type === 'equal' ) stats.equal++;
+      else if ( type === 'insert' ) stats.insert++, stats.changes++;
+      else if ( type === 'delete' ) stats.delete++, stats.changes++;
+      else stats.change++, stats.changes++;
+    }
+
+    return stats;
   }
 }
