@@ -66,4 +66,15 @@ test( 'Analyzer', async t => {
       insert: 1, delete: 0, change: 1, size: 2, churn: 3
     } ] );
   } );
+
+  await t.test( 'calculates operation statistics', () => {
+    const stats = analyze( 'one\nold', 'one\nnew\nadded' ).operations();
+
+    assert.deepEqual( stats, {
+      total: 3, equal: 1, insert: 1, delete: 0, change: 1, changes: 2,
+      changeBlocks: 1, insertionBlocks: 1, deletionBlocks: 0,
+      replacementBlocks: 0, insertionOnlyBlocks: 0, deletionOnlyBlocks: 0,
+      changeOnlyBlocks: 0, mixedBlocks: 1
+    } );
+  } );
 } );
