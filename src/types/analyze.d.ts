@@ -113,10 +113,10 @@ export interface PatternRun {
 }
 
 export interface PatternMagnitude {
-  readonly runs: number;
-  readonly lines: number;
-  readonly longest: number;
-  readonly average: number;
+  runs: number;
+  lines: number;
+  longest: number;
+  average: number;
 }
 
 export interface PatternSequence {
@@ -130,7 +130,7 @@ export interface PatternStats {
   readonly sequences: readonly PatternSequence[];
   readonly runs: readonly PatternRun[];
   readonly longest: Readonly< Record< PatternType, number > >;
-  readonly magnitude: Readonly< Record< PatternType, PatternMagnitude > >;
+  readonly magnitude: Readonly< Record< PatternType, Readonly< PatternMagnitude > > >;
 }
 
 export interface SideDistribution {
@@ -146,17 +146,17 @@ export interface SideDistribution {
 }
 
 export interface BlockDistribution {
-  readonly count: number;
-  readonly size: number;
-  readonly churn: number;
-  readonly largest: number;
-  readonly average: number;
+  count: number;
+  size: number;
+  churn: number;
+  largest: number;
+  average: number;
 }
 
 export interface DistributionStats {
   readonly original: SideDistribution;
   readonly modified: SideDistribution;
-  readonly byType: Readonly< Record< BlockType, BlockDistribution > >;
+  readonly byType: Readonly< Record< BlockType, Readonly< BlockDistribution > > >;
   readonly concentration: number;
   readonly blockCount: number;
   readonly averageBlockSize: number;
