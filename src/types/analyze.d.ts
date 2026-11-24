@@ -26,7 +26,7 @@ export interface CharacterCounts {
   utf8Bytes: number;
 }
 
-export interface CharacterMetric {
+export interface CharacterBaseMetric {
   readonly original: number;
   readonly modified: number;
   readonly equal: {
@@ -39,6 +39,9 @@ export interface CharacterMetric {
     readonly original: number;
     readonly modified: number;
   };
+}
+
+export interface CharacterMetric extends CharacterBaseMetric {
   readonly delta: number;
   readonly changeRate: number;
 }
