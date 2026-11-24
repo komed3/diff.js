@@ -5,3 +5,9 @@ import type {
 } from '../types/analyze';
 import type { LineScript, Result } from '../types/engine';
 import type { Range } from '../types/operation';
+
+
+export class Analyzer {
+  private readonly result: Result;
+  private encoder?: TextEncoder;
+}
