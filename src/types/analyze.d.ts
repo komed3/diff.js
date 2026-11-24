@@ -1,13 +1,16 @@
 import type { Range } from './operation';
 
 
-export interface MetricStats {
+export interface MetricBaseStats {
   readonly original: number;
   readonly modified: number;
   readonly equal: number;
   readonly inserted: number;
   readonly deleted: number;
   readonly changed: number;
+}
+
+export interface MetricStats extends MetricBaseStats {
   readonly delta: number;
   readonly changeRate: number;
   readonly insertionRate: number;
