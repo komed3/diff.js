@@ -1,4 +1,4 @@
-import type { MetricBaseStats, MetricStats } from '../types/analyze';
+import type { CharacterCounts, MetricBaseStats, MetricStats } from '../types/analyze';
 import type { Result } from '../types/engine';
 
 
@@ -16,6 +16,16 @@ export class Analyzer {
       retentionRate: original === 0 ? 0 : equal / original,
       growthRate: original === 0 ? null : delta / original,
       sizeRatio: original === 0 ? null : modified / original
+    };
+  }
+
+  private counts ( text: string ) : CharacterCounts {
+    let unicodeCodePoints = 0;
+    for ( const _ of text ) unicodeCodePoints++;
+
+    return {
+      utf16CodeUnits: text.length, unicodeCodePoints,
+      utf8Bytes: ( this.encoder ??= new TextEncoder() ).encode( text ).length
     };
   }
 
