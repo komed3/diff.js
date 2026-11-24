@@ -1,6 +1,6 @@
 import type {
-  Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric,
-  CharacterStats, MetricBaseStats, MetricStats, OperationStats, TokenStats
+  Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric, CharacterStats,
+  MetricBaseStats, MetricStats, OperationStats, PatternRun, PatternSequence, PatternStats, TokenStats
 } from '../types/analyze';
 import type { Result } from '../types/engine';
 
@@ -205,5 +205,40 @@ export class Analyzer {
     }
 
     return stats;
+  }
+
+  public patterns () : PatternStats {
+    const types = this.result.script.map( ( { operation: { type } } ) => type );
+    const transitions: Record< string, number > = {}, seq: Record< string, number > = {};
+    const longest: Record< string, number > = { equal: 0, insert: 0, delete: 0, change: 0 };
+    const runs: PatternRun[] = [];
+
+    for ( let i = 0; i < types.length; i++ ) {
+      const type = types[ i ];
+      let length = 1;
+
+      while ( types[ i + length ] === type ) length++;
+
+      runs.push( { type, start: i, length } );
+      longest[ type ] = Math.max( longest[ type ], length );
+      i += length - 1;
+    }
+
+    for ( let i = 1; i < types.length; i++ ) {
+      const key = `${ types[ i - 1 ] }>${ types[ i ] }`;
+      transitions[ key ] = ( transitions[ key ] ?? 0 ) + 1;
+    }
+
+    for ( const length of [ 2, 3 ] ) for ( let i = 0; i <= types.length - length; i++ ) {
+      const pattern = types.slice( i, i + length ).join( '>' );
+      seq[ pattern ] = ( seq[ pattern ] ?? 0 ) + 1;
+    }
+
+    const sequences: PatternSequence[] = Object.entries( seq )
+      .filter( ( [ , count ] ) => count > 1 )
+      .map( ( [ pattern, count ] ) => ( { pattern, length: pattern.split( '>' ).length, count } ) )
+      .sort( ( a, b ) => b.count - a.count || a.pattern.localeCompare( b.pattern ) );
+
+    return { transitions, sequences, runs, longest };
   }
 }
