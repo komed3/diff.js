@@ -8,6 +8,7 @@ import type { Range } from '../types/operation';
 
 
 export class Analyzer {
-  private readonly result: Result;
   private encoder?: TextEncoder;
+
+  public constructor ( private readonly result: Result ) {}
 }
