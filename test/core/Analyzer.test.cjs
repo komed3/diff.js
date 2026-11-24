@@ -57,4 +57,13 @@ test( 'Analyzer', async t => {
       coverage: 1, blocks: 1, largestBlock: 1, averageBlockSize: 1
     } );
   } );
+
+  await t.test( 'groups line operations into blocks', () => {
+    const blocks = analyze( 'one\nold', 'one\nnew\nadded' ).blocks();
+
+    assert.deepEqual( blocks, [ {
+      type: 'mixed', original: { start: 1, length: 1 }, modified: { start: 1, length: 2 },
+      insert: 1, delete: 0, change: 1, size: 2, churn: 3
+    } ] );
+  } );
 } );
