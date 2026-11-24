@@ -1,6 +1,7 @@
 import type {
-  Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric, CharacterStats,
-  MetricBaseStats, MetricStats, OperationStats, PatternRun, PatternSequence, PatternStats, TokenStats
+  Block, BlockBase, BlockType, CharacterBaseMetric, CharacterCounts, CharacterMetric,
+  CharacterStats, MetricBaseStats, MetricStats, OperationStats, PatternRun, PatternSequence,
+  PatternStats, SideDistribution, TokenStats
 } from '../types/analyze';
 import type { Result } from '../types/engine';
 
@@ -45,6 +46,28 @@ export class Analyzer {
       original, modified, equal, inserted, deleted, changed, delta: modified - original,
       changeRate: original + modified === 0 ? 0 : ( inserted + deleted + changed.original +
         changed.modified ) / ( original + modified )
+    };
+  }
+
+  private side ( blocks: Block[], side: 'original' | 'modified', total: number ) : SideDistribution {
+    const r = blocks.map( ( { [ side ]: range } ) => range ).filter( ( { length } ) => length > 0 )
+      .sort( ( a, b ) => a.start - b.start );
+
+    const affected = r.reduce( ( sum, { length } ) => sum + length, 0 );
+    const gaps = r.slice( 1 ).map( ( range, i ) => range.start - ( r[ i ].start + r[ i ].length ) );
+    const first = r[ 0 ], last = r[ r.length - 1 ];
+    const coverage = first && last ? last.start + last.length - first.start : 0;
+
+    return {
+      affected,
+      density: total === 0 ? 0 : affected / total,
+      coverage: total === 0 ? 0 : coverage / total,
+      gaps: {
+        count: gaps.length,
+        min: gaps.length ? Math.min( ...gaps ) : 0,
+        max: gaps.length ? Math.max( ...gaps ) : 0,
+        average: gaps.length ? gaps.reduce( ( sum, gap ) => sum + gap, 0 ) / gaps.length : 0
+      }
     };
   }
 
