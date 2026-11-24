@@ -180,8 +180,13 @@ export class Analyzer {
         insert: 0, delete: 0, change: 0
       };
 
-      curr.original = { ...curr.original, length: original.start + original.length - curr.original.start };
-      curr.modified = { ...curr.modified, length: modified.start + modified.length - curr.modified.start };
+      curr.original = { ...curr.original, length: Math.max(
+        curr.original.length, original.start + original.length - curr.original.start
+      ) };
+
+      curr.modified = { ...curr.modified, length: Math.max(
+        curr.modified.length, modified.start + modified.length - curr.modified.start
+      ) };
 
       if ( type === 'insert' ) curr.insert++;
       else if ( type === 'delete' ) curr.delete++;
