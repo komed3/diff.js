@@ -122,11 +122,8 @@ export class Analyzer {
       }
 
       const changed = Math.min( inserted, deleted );
-
-      stats.changed.original += changed;
-      stats.changed.modified += changed;
-      stats.inserted += inserted - changed;
-      stats.deleted += deleted - changed;
+      stats.changed.original += changed, stats.changed.modified += changed;
+      stats.inserted += inserted - changed, stats.deleted += deleted - changed;
     }
 
     const { lines, original, modified, changed, ...s } = stats;
