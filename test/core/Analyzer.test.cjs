@@ -25,4 +25,26 @@ test( 'Analyzer', async t => {
       retentionRate: 0.5, growthRate: 0.5, sizeRatio: 1.5
     } );
   } );
+
+  await t.test( 'calculates character metrics across encodings', () => {
+    const stats = analyze( 'a\n😀', 'a\n😃' ).characters();
+
+    assert.deepEqual( stats.utf16CodeUnits, {
+      original: 4, modified: 4, equal: { original: 2, modified: 2 },
+      inserted: 0, deleted: 0, changed: { original: 2, modified: 2 },
+      delta: 0, changeRate: 0.5
+    } );
+
+    assert.deepEqual( stats.unicodeCodePoints, {
+      original: 3, modified: 3, equal: { original: 2, modified: 2 },
+      inserted: 0, deleted: 0, changed: { original: 1, modified: 1 },
+      delta: 0, changeRate: 1 / 3
+    } );
+
+    assert.deepEqual( stats.utf8Bytes, {
+      original: 6, modified: 6, equal: { original: 2, modified: 2 },
+      inserted: 0, deleted: 0, changed: { original: 4, modified: 4 },
+      delta: 0, changeRate: 2 / 3
+    } );
+  } );
 } );
