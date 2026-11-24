@@ -132,4 +132,17 @@ test( 'Analyzer', async t => {
     assert.deepEqual( stats.byType.insert, { count: 1, size: 1, churn: 1, largest: 1, average: 1 } );
     assert.deepEqual( stats.byType.change, { count: 1, size: 1, churn: 2, largest: 1, average: 1 } );
   } );
+
+  await t.test( 'handles empty input', () => {
+    const analyzer = analyze( '', '' ), dist = analyzer.distribution();
+
+    assert.deepEqual( analyzer.blocks(), [] );
+    assert.equal( analyzer.operations().changes, 0 );
+    assert.equal( analyzer.tokens().coverage, 0 );
+
+    assert.equal( dist.blockCount, 0 );
+    assert.equal( dist.averageBlockSize, 0 );
+    assert.equal( dist.largestBlock, 0 );
+    assert.equal( dist.concentration, 0 );
+  } );
 } );
