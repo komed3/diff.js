@@ -37,7 +37,7 @@ export class Analyzer {
     target.utf8Bytes += utf8Bytes;
   }
 
-  private characterMetric ( { original, modified, equal, inserted, deleted, changed }: CharacterBaseMetric ) : CharacterMetric {
+  private charMetric ( { original, modified, equal, inserted, deleted, changed }: CharacterBaseMetric ) : CharacterMetric {
     return {
       original, modified, equal, inserted, deleted, changed, delta: modified - original,
       changeRate: original + modified === 0 ? 0 : ( inserted + deleted + changed.original +
@@ -46,4 +46,22 @@ export class Analyzer {
   }
 
   public constructor ( private readonly result: Result ) {}
+
+  public lines () : MetricStats {
+    const stats = { original: 0, modified: 0, equal: 0, inserted: 0, deleted: 0, changed: 0 };
+
+    for ( const { operation: { type, original, modified } } of this.result.script ) {
+      const ol = original.length, ml = modified.length;
+
+      if ( type !== 'insert' ) stats.original += ol;
+      if ( type !== 'delete' ) stats.modified += ml;
+
+      if ( type === 'equal' ) stats.equal += ol;
+      else if ( type === 'insert' ) stats.inserted += ml;
+      else if ( type === 'delete' ) stats.deleted += ol;
+      else stats.changed += Math.max( ol, ml );
+    }
+
+    return this.metric( stats );
+  }
 }
