@@ -118,7 +118,7 @@ export class Analyzer {
   public tokens () : TokenStats {
     const stats = {
       lines: 0, original: 0, modified: 0, equal: 0, inserted: 0, deleted: 0,
-      changed: { original: 0, modified: 0 }, blocks: 0, largestBlock: 0
+      changed: { original: 0, modified: 0 }, blocks: 0, blockSize: 0, largestBlock: 0
     };
 
     for ( const { edit } of this.result.script ) {
@@ -131,7 +131,7 @@ export class Analyzer {
 
       const finish = () => {
         if ( ! block ) return;
-        stats.blocks++;
+        stats.blocks++, stats.blockSize += block;
         stats.largestBlock = Math.max( stats.largestBlock, block );
         block = 0;
       };
@@ -152,15 +152,15 @@ export class Analyzer {
       stats.inserted += inserted - changed, stats.deleted += deleted - changed;
     }
 
-    const { lines, original, modified, changed, blocks, largestBlock, ...s } = stats;
+    const { lines, original, modified, changed, blocks, blockSize, ...s } = stats;
     const changedLines = this.lines().changed;
 
     return {
-      lines, original, modified, changed, ...s, blocks, largestBlock,
+      lines, original, modified, changed, blocks, ...s,
       delta: modified - original, coverage: changedLines === 0 ? 0 : lines / changedLines,
       changeRate: original + modified === 0 ? 0 : ( stats.inserted + stats.deleted +
         changed.original + changed.modified ) / ( original + modified ),
-      averageBlockSize: blocks === 0 ? 0 : ( blocks ? stats.largestBlock : 0 )
+      averageBlockSize: blocks === 0 ? 0 : blockSize / blocks
     };
   }
 
