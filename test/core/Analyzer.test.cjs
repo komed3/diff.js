@@ -9,10 +9,8 @@ const { Word } = require( '../../.test-dist/tokenizers/Word.js' );
 
 
 const algorithm = new Myers();
-const engine = ( options ) => new Engine( { algorithm, ...options } );
-const analyze = ( original, modified, options ) => new Analyzer(
-  engine( options ).process( { original, modified } )
-);
+const engine = ( o ) => new Engine( { algorithm, ...o } );
+const analyze = ( data, o ) => new Analyzer( engine( o ).process( data ) );
 
 
 describe( 'Analyzer', () => {} );
