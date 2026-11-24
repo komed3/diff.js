@@ -1,6 +1,7 @@
 import type {
   CharacterBaseMetric, CharacterCounts, CharacterMetric, CharacterStats,
-  MetricBaseStats, MetricStats
+  MetricBaseStats, MetricStats,
+  TokenStats
 } from '../types/analyze';
 import type { Result } from '../types/engine';
 
@@ -97,6 +98,45 @@ export class Analyzer {
       utf16CodeUnits: this.charMetric( stats.utf16CodeUnits ),
       unicodeCodePoints: this.charMetric( stats.unicodeCodePoints ),
       utf8Bytes: this.charMetric( stats.utf8Bytes )
+    };
+  }
+
+  public tokens () : TokenStats {
+    const stats = {
+      lines: 0, original: 0, modified: 0, equal: 0, inserted: 0,
+      deleted: 0, changed: { original: 0, modified: 0 }
+    };
+
+    for ( const { edit } of this.result.script ) {
+      if ( ! edit ) continue;
+
+      stats.lines++;
+      stats.original += edit.original.length;
+      stats.modified += edit.modified.length;
+      let inserted = 0, deleted = 0;
+
+      for ( const { type, original, modified } of edit.operations ) {
+        if ( type === 'equal' ) stats.equal += original.length;
+        else if ( type === 'insert' ) inserted += modified.length;
+        else deleted += original.length;
+      }
+
+      const changed = Math.min( inserted, deleted );
+
+      stats.changed.original += changed;
+      stats.changed.modified += changed;
+      stats.inserted += inserted - changed;
+      stats.deleted += deleted - changed;
+    }
+
+    const { lines, original, modified, changed, ...s } = stats;
+    const changedTotal = changed.original + changed.modified;
+    const changedLines = this.lines().changed;
+
+    return {
+      lines, original, modified, changed, ...s, delta: modified - original,
+      coverage: changedLines === 0 ? 0 : lines / changedLines,
+      changeRate: original + modified === 0 ? 0 : changedTotal / ( original + modified )
     };
   }
 }
