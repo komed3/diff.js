@@ -16,3 +16,13 @@ const analyze = ( original, modified ) => {
 
   return new Magnitude( hunks, new Analyzer( result ).lines() );
 };
+
+
+test( 'Magnitude', async t => {
+  await t.test( 'calculates absolute magnitude', () => {
+    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+
+    assert.deepEqual( magnitude.absolute(), { value: 1, baseValue: 4, magnitude: 1 } );
+    assert.deepEqual( magnitude.absolute( { metric: 'delta' } ), { value: 0, baseValue: 4, magnitude: 0 } );
+  } );
+} );
