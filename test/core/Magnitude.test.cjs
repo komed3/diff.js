@@ -39,4 +39,12 @@ test( 'Magnitude', async t => {
     assert.deepEqual( magnitude.percentage(), { value: 1, baseValue: 4, percentage: 25 } );
     assert.deepEqual( magnitude.percentage( { metric: 'inserted', precision: 0 } ), { value: 1, baseValue: 4, percentage: 25 } );
   } );
+
+  await t.test( 'calculates box magnitude and operation counts', () => {
+    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+
+    assert.deepEqual( magnitude.boxes( { total: 8 } ), {
+      value: 1, baseValue: 4, insert: 1, delete: 1, change: 1, filled: 2, empty: 6, total: 8
+    } );
+  } );
 } );
