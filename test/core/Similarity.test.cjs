@@ -27,6 +27,15 @@ test( 'Similarity', async t => {
     assert.equal( similarity.get(), 4 / 7 );
   } );
 
+  await t.test( 'weights character similarity by lengths and line similarity by lines', () => {
+    const original = 'unchanged line\nabc', modified = 'unchanged line\nabXY';
+    const characters = analyze( original, modified, { tokenizer: new Character() } );
+    const lines = analyze( original, modified, { tokenizer: new Character(), weighting: 'lines' } );
+
+    assert.equal( characters.get(), ( 'unchanged line'.length + 2 ) / ( 'unchanged line'.length + 4 ) );
+    assert.equal( lines.get(), 0.75 );
+  } );
+
   await t.test( 'returns null for changed lines without a tokenizer', () => {
     const similarity = analyze( 'same\nold', 'same\nnew' );
 
