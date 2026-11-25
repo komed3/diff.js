@@ -9,6 +9,20 @@ export class Similarity {
 
   private entries?: SimilarityLine[];
 
+  private commonLength ( entry: LineScript ) : number | null {
+    if ( ! entry?.edit ) return null;
+
+    const { edit: { original, operations } } = entry;
+    let len = 0;
+
+    for ( const { type, original: { start, length } } of operations ) {
+      if ( type !== 'equal' ) continue;
+      for ( let i = start; i < start + length; i++ ) len += original[ i ].value.length;
+    }
+
+    return len;
+  }
+
   private weight ( { original, originalLength, modifiedLength }: SimilarityLine, mode: 'retention' | 'similarity' ) : number {
     if ( this.weighting === 'lines' ) return mode === 'retention' ? Number( original !== null ) : 1;
     return mode === 'retention' ? originalLength : Math.max( originalLength, modifiedLength );
@@ -37,21 +51,9 @@ export class Similarity {
 
   public lines () : SimilarityLine[] {
     return this.entries ??= this.script.map( entry => {
-      const common = ( entry: LineScript ) => {
-        if ( ! entry?.edit ) return null;
-        let len = 0;
-
-        for ( const { type, original: { start, length } } of entry.edit.operations ) {
-          if ( type !== 'equal' ) continue;
-          for ( let i = start; i < start + length; i++ ) len += entry.edit.original[ i ].value.length;
-        }
-
-        return len;
-      };
-
       const { original, modified, operation: { type } } = entry;
       const oLen = original?.value.length ?? 0, mLen = modified?.value.length ?? 0;
-      const len = type === 'equal' ? Math.min( oLen, mLen ) : type === 'change' ? common( entry ) : 0;
+      const len = type === 'equal' ? Math.min( oLen, mLen ) : type === 'change' ? this.commonLength( entry ) : 0;
 
       const retention = type === 'equal' ? 1 : len === null ? null :
         oLen === 0 ? Number( mLen === 0 ) : Math.min( 1, len / oLen );
