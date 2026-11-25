@@ -25,4 +25,11 @@ test( 'Magnitude', async t => {
     assert.deepEqual( magnitude.absolute(), { value: 1, baseValue: 4, magnitude: 1 } );
     assert.deepEqual( magnitude.absolute( { metric: 'delta' } ), { value: 0, baseValue: 4, magnitude: 0 } );
   } );
+
+  await t.test( 'calculates relative magnitude with different bases', () => {
+    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+
+    assert.deepEqual( magnitude.relative( { metric: 'inserted', base: 'modified' } ), { value: 1, baseValue: 4, ratio: 0.25 } );
+    assert.deepEqual( magnitude.relative( { metric: 'deleted', base: 'combined' } ), { value: 1, baseValue: 8, ratio: 0.125 } );
+  } );
 } );
