@@ -16,6 +16,17 @@ const analyze = ( original, modified, options = {} ) => new Similarity(
 
 
 test( 'Similarity', async t => {
+  await t.test( 'calculates changed-line similarity from token edits', () => {
+    const similarity = analyze( 'kitten', 'sitting', { tokenizer: new Character() } );
+    const [ line ] = similarity.lines();
+
+    assert.equal( line.commonLength, 4 );
+    assert.equal( line.retention, 4 / 6 );
+    assert.equal( line.similarity, 4 / 7 );
+    assert.equal( line.combined, ( 4 / 6 + 4 / 7 ) / 2 );
+    assert.equal( similarity.get(), 4 / 7 );
+  } );
+
   await t.test( 'returns null for changed lines without a tokenizer', () => {
     const similarity = analyze( 'same\nold', 'same\nnew' );
 
