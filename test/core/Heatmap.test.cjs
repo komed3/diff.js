@@ -56,4 +56,13 @@ test( 'Heatmap', async t => {
     assert.equal( change, 3 );
     assert.equal( intensity, 0 );
   } );
+
+  await t.test( 'keeps changes neutral without token information', () => {
+    const heatmap = create( 'old', 'new', { x: 3, y: 1 } );
+
+    assert.deepEqual(
+      heatmap.cells.map( ( { activity, change, intensity } ) => [ activity, change, intensity ] ),
+      [ [ 1, 1, 0 ], [ 1, 1, 0 ], [ 1, 1, 0 ] ]
+    );
+  } );
 } );
