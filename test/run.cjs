@@ -19,3 +19,4 @@ require( './core/Comparator.test.cjs' );
 require( './core/Engine.test.cjs' );
 require( './core/Hunk.test.cjs' );
 require( './core/LineParser.test.cjs' );
+require( './core/Magnitude.test.cjs' );
