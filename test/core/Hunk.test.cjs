@@ -30,13 +30,15 @@ test( 'Hunk', async t => {
     assert.deepEqual( hunks[ 0 ].lines.map( ( { operation: { type } } ) => type ), [ 'equal', 'change', 'equal' ] );
   } );
 
-  /*await t.test( 'merges changes whose context overlaps or touches', () => {
-    const hunks = create( 'a\nb\nc\nd\ne\nf\ng', 'x\nb\nc\nd\ne\nf\ny', { context: 1 } );
+  await t.test( 'merges changes whose context overlaps or touches', () => {
+    const hunks = create( 'a\nb\nc\nd\ne\nf\ng', 'x\nb\nc\ny\ne\nf\ng', { context: 1 } );
 
     assert.equal( hunks.length, 1 );
-    assert.deepEqual( hunks[ 0 ].original, { start: 0, length: 7 } );
-    assert.deepEqual( hunks[ 0 ].modified, { start: 0, length: 7 } );
-  } );*/
+    assert.deepEqual( hunks[ 0 ].original, { start: 0, length: 5 } );
+    assert.deepEqual( hunks[ 0 ].modified, { start: 0, length: 5 } );
+    assert.deepEqual( hunks[ 0 ].header.original, { start: 1, length: 5 } );
+    assert.deepEqual( hunks[ 0 ].header.modified, { start: 1, length: 5 } );
+  } );
 
   await t.test( 'keeps changes separate when the gap exceeds the context', () => {
     const hunks = create( 'a\nb\nc\nd\ne\nf\ng', 'x\nb\nc\nd\ne\nf\ny', { context: 0 } );
