@@ -1,14 +1,16 @@
-import type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from '../types/similarity';
 import type { LineScript, Result } from '../types/engine';
+import type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from '../types/similarity';
 
 
 export class Similarity {
-  private readonly entries?: SimilarityLine[];
+  private readonly script: LineScript[];
   private readonly mode: SimilarityMode;
   private readonly weighting: SimilarityWeight;
 
+  private readonly entries?: SimilarityLine[];
+
   public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters' }: SimilarityOptions = {} ) {
-    this.mode = mode, this.weighting = weighting;
+    this.script = script, this.mode = mode, this.weighting = weighting;
   }
 
   public lines () : SimilarityLine[] {
