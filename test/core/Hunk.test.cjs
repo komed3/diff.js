@@ -20,4 +20,13 @@ test( 'Hunk', async t => {
     assert.deepEqual( hunks[ 0 ].modified, { start: 1, length: 1 } );
     assert.deepEqual( hunks[ 0 ].lines.map( ( { operation: { type } } ) => type ), [ 'change' ] );
   } );
+
+  await t.test( 'includes the requested context', () => {
+    const hunks = create( 'a\nb\nc\nd\ne', 'a\nx\nc\nd\ne', { context: 1 } );
+
+    assert.equal( hunks.length, 1 );
+    assert.deepEqual( hunks[ 0 ].original, { start: 0, length: 3 } );
+    assert.deepEqual( hunks[ 0 ].modified, { start: 0, length: 3 } );
+    assert.deepEqual( hunks[ 0 ].lines.map( ( { operation: { type } } ) => type ), [ 'equal', 'change', 'equal' ] );
+  } );
 } );
