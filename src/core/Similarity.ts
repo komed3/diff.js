@@ -22,4 +22,27 @@ export class Similarity {
       type, similarity: type === 'equal' ? 1 : type === 'change' && edit ? this.score( edit ) : 0
     } ) );
   }
+
+  public tokens () : TokenSimilarity[] {
+    const tokens: TokenSimilarity[] = [];
+
+    for ( const { edit, operation: { original, modified } } of this.result.script ) {
+      if ( ! edit ) continue;
+
+      const originalLine = original.start, modifiedLine = modified.start;
+
+      for ( const { type, original, modified } of edit.operations ) {
+        const count = Math.max( original.length, modified.length );
+
+        for ( let i = 0; i < count; i++ ) tokens.push( {
+          type, originalLine, modifiedLine,
+          original: i < original.length ? original.start + i : null,
+          modified: i < modified.length ? modified.start + i : null,
+          similarity: type === 'equal' ? 1 : 0
+        } );
+      }
+    }
+
+    return tokens;
+  }
 }
