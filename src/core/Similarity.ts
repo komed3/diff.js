@@ -45,4 +45,12 @@ export class Similarity {
       };
     } );
   }
+
+  public get () : number | null {
+    if ( this.mode === 'retention' ) return this.score( 'retention' );
+    if ( this.mode === 'similarity' ) return this.score( 'similarity' );
+
+    const retention = this.score( 'retention' ), similarity = this.score( 'similarity' );
+    return retention === null || similarity === null ? null : ( retention + similarity ) / 2;
+  }
 }
