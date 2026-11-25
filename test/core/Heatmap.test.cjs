@@ -65,4 +65,12 @@ test( 'Heatmap', async t => {
       [ [ 1, 1, 0 ], [ 1, 1, 0 ], [ 1, 1, 0 ] ]
     );
   } );
+
+  await t.test( 'maps token edits to their character positions', () => {
+    const heatmap = create( 'abc', 'axc', { x: 3, y: 1 }, { tokenizer: new Character() } );
+    const [ cell ] = heatmap.cells.filter( ( { activity } ) => activity > 0 );
+
+    assert.deepEqual( [ cell.x, cell.y ], [ 1, 0 ] );
+    assert.deepEqual( [ cell.insert, cell.delete, cell.activity, cell.intensity ], [ 1, 1, 2, 0 ] );
+  } );
 } );
