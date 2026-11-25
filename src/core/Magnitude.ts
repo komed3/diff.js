@@ -29,4 +29,9 @@ export class Magnitude {
     const { value, baseValue } = this.getValue( options );
     return { value, baseValue, magnitude: value === null ? null : Math.abs( value ) };
   }
+
+  public relative ( options: MagnitudeOptions = {} ) : MagnitudeRelative {
+    const { value, baseValue } = this.getValue( options );
+    return { value, baseValue, ratio: value === null || baseValue === 0 ? null : value / baseValue };
+  }
 }
