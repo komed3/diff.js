@@ -29,4 +29,13 @@ test( 'Heatmap', async t => {
     const heatmap = create( 'one\ntwo', 'one\ntwo', { x: 2, y: 2 } );
     assert.ok( heatmap.cells.every( ( { activity, intensity } ) => activity === 0 && intensity === 0 ) );
   } );
+
+  await t.test( 'clusters insertions by their position', () => {
+    const heatmap = create( 'abc', 'abc\nxy', { x: 3, y: 2 } );
+    const first = heatmap.cells.find( ( { x, y } ) => x === 0 && y === 1 );
+    const second = heatmap.cells.find( ( { x, y } ) => x === 1 && y === 1 );
+
+    assert.deepEqual( [ first.insert, first.delete, first.intensity ], [ 1, 0, 1 ] );
+    assert.deepEqual( [ second.insert, second.delete, second.intensity ], [ 1, 0, 1 ] );
+  } );
 } );
