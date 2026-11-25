@@ -15,3 +15,20 @@ export interface MagnitudePercentageOptions extends MagnitudeOptions {
 export interface MagnitudeBoxesOptions extends MagnitudeOptions {
   total?: number;
 }
+
+export interface MagnitudeValue {
+  readonly value: number | null;
+  readonly baseValue: number;
+}
+
+export interface MagnitudeAbsolute extends MagnitudeValue {
+  readonly magnitude: number | null;
+}
+
+export interface MagnitudeRelative extends MagnitudeValue {
+  readonly ratio: number | null;
+}
+
+export interface MagnitudePercentage extends MagnitudeValue {
+  readonly percentage: number | null;
+}
