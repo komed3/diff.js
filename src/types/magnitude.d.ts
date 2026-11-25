@@ -32,3 +32,12 @@ export interface MagnitudeRelative extends MagnitudeValue {
 export interface MagnitudePercentage extends MagnitudeValue {
   readonly percentage: number | null;
 }
+
+export interface MagnitudeBoxes extends MagnitudeValue {
+  readonly insert: number;
+  readonly delete: number;
+  readonly change: number;
+  readonly filled: number | null;
+  readonly empty: number | null;
+  readonly total: number;
+}
