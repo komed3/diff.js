@@ -14,3 +14,14 @@ const create = ( original, modified, options = {}, engineOptions = {} ) => {
   const result = engine( engineOptions ).process( { original, modified } );
   return new Heatmap( result ).create( options );
 };
+
+
+test( 'Heatmap', async t => {
+  await t.test( 'creates a raster with the configured dimensions', () => {
+    const heatmap = create( 'one', 'two', { x: 4, y: 3 } );
+
+    assert.equal( heatmap.width, 4 );
+    assert.equal( heatmap.height, 3 );
+    assert.equal( heatmap.cells.length, 12 );
+  } );
+} );
