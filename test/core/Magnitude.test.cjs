@@ -32,4 +32,11 @@ test( 'Magnitude', async t => {
     assert.deepEqual( magnitude.relative( { metric: 'inserted', base: 'modified' } ), { value: 1, baseValue: 4, ratio: 0.25 } );
     assert.deepEqual( magnitude.relative( { metric: 'deleted', base: 'combined' } ), { value: 1, baseValue: 8, ratio: 0.125 } );
   } );
+
+  await t.test( 'calculates percentages with configurable precision', () => {
+    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+
+    assert.deepEqual( magnitude.percentage(), { value: 1, baseValue: 4, percentage: 25 } );
+    assert.deepEqual( magnitude.percentage( { metric: 'inserted', precision: 0 } ), { value: 1, baseValue: 4, percentage: 25 } );
+  } );
 } );
