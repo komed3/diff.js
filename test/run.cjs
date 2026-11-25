@@ -20,3 +20,4 @@ require( './core/Engine.test.cjs' );
 require( './core/Hunk.test.cjs' );
 require( './core/LineParser.test.cjs' );
 require( './core/Magnitude.test.cjs' );
+require( './core/Similarity.test.cjs' );
