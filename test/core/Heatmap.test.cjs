@@ -73,4 +73,20 @@ test( 'Heatmap', async t => {
     assert.deepEqual( [ cell.x, cell.y ], [ 1, 0 ] );
     assert.deepEqual( [ cell.insert, cell.delete, cell.activity, cell.intensity ], [ 1, 1, 2, 0 ] );
   } );
+
+  await t.test( 'filters token insertions and deletions', () => {
+    const options = { x: 3, y: 1 };
+    const engineOptions = { tokenizer: new Character() };
+    const inserted = create( 'abc', 'axc', { ...options, filter: 'insert' }, engineOptions );
+    const deleted = create( 'abc', 'axc', { ...options, filter: 'delete' }, engineOptions );
+    const changed = create( 'abc', 'axc', { ...options, filter: 'change' }, engineOptions );
+
+    assert.deepEqual( inserted.cells.map( ( { activity } ) => activity ), [ 0, 1, 0 ] );
+    assert.deepEqual( deleted.cells.map( ( { activity } ) => activity ), [ 0, 1, 0 ] );
+    assert.deepEqual( changed.cells.map( ( { activity } ) => activity ), [ 0, 2, 0 ] );
+
+    assert.equal( inserted.cells[ 1 ].intensity, 1 );
+    assert.equal( deleted.cells[ 1 ].intensity, -1 );
+    assert.equal( changed.cells[ 1 ].intensity, 0 );
+  } );
 } );
