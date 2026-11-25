@@ -47,4 +47,12 @@ test( 'Magnitude', async t => {
       value: 1, baseValue: 4, insert: 1, delete: 1, change: 1, filled: 2, empty: 6, total: 8
     } );
   } );
+
+  await t.test( 'ignores context lines when counting operations', () => {
+    const magnitude = analyze( 'a\nold\nb', 'a\nnew\nb' );
+
+    assert.deepEqual( magnitude.boxes(), {
+      value: 1, baseValue: 3, insert: 0, delete: 0, change: 1, filled: 2, empty: 3, total: 5
+    } );
+  } );
 } );
