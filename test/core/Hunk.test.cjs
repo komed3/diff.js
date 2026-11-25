@@ -56,4 +56,9 @@ test( 'Hunk', async t => {
     assert.deepEqual( deleted[ 0 ].original, { start: 0, length: 1 } );
     assert.deepEqual( deleted[ 0 ].modified, { start: 0, length: 0 } );
   } );
+
+  await t.test( 'returns no hunks for equal or empty input', () => {
+    assert.deepEqual( create( 'a\nb', 'a\nb' ), [] );
+    assert.deepEqual( create( '', '' ), [] );
+  } );
 } );
