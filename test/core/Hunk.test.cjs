@@ -46,4 +46,14 @@ test( 'Hunk', async t => {
       { start: 0, length: 1 }, { start: 6, length: 1 }
     ] );
   } );
+
+  await t.test( 'handles insertions and deletions at file boundaries', () => {
+    const inserted = create( 'a\nb', 'x\na\nb', { context: 0 } );
+    const deleted = create( 'a\nb', 'b', { context: 0 } );
+
+    assert.deepEqual( inserted[ 0 ].original, { start: 0, length: 0 } );
+    assert.deepEqual( inserted[ 0 ].modified, { start: 0, length: 1 } );
+    assert.deepEqual( deleted[ 0 ].original, { start: 0, length: 1 } );
+    assert.deepEqual( deleted[ 0 ].modified, { start: 0, length: 0 } );
+  } );
 } );
