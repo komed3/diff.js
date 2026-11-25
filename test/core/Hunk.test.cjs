@@ -10,6 +10,11 @@ const { Hunk } = require( '../../.test-dist/core/Hunk.js' );
 const engine = new Engine( { algorithm: new Myers() } );
 const create = ( original, modified, ops ) => new Hunk( ops ).create( engine.process( { original, modified } ) );
 
+const assertHeader = ( { header: { original, modified } }, o, m ) => {
+  assert.deepEqual( original, o );
+  assert.deepEqual( modified, m );
+};
+
 
 test( 'Hunk', async t => {
   await t.test( 'creates hunks without context', () => {
@@ -19,6 +24,7 @@ test( 'Hunk', async t => {
     assert.deepEqual( hunks[ 0 ].original, { start: 1, length: 1 } );
     assert.deepEqual( hunks[ 0 ].modified, { start: 1, length: 1 } );
     assert.deepEqual( hunks[ 0 ].lines.map( ( { operation: { type } } ) => type ), [ 'change' ] );
+    assertHeader( hunks[ 0 ], { start: 2, length: 1 }, { start: 2, length: 1 } );
   } );
 
   await t.test( 'includes the requested context', () => {
@@ -28,6 +34,7 @@ test( 'Hunk', async t => {
     assert.deepEqual( hunks[ 0 ].original, { start: 0, length: 3 } );
     assert.deepEqual( hunks[ 0 ].modified, { start: 0, length: 3 } );
     assert.deepEqual( hunks[ 0 ].lines.map( ( { operation: { type } } ) => type ), [ 'equal', 'change', 'equal' ] );
+    assertHeader( hunks[ 0 ], { start: 1, length: 3 }, { start: 1, length: 3 } );
   } );
 
   await t.test( 'merges changes whose context overlaps or touches', () => {
@@ -36,8 +43,7 @@ test( 'Hunk', async t => {
     assert.equal( hunks.length, 1 );
     assert.deepEqual( hunks[ 0 ].original, { start: 0, length: 5 } );
     assert.deepEqual( hunks[ 0 ].modified, { start: 0, length: 5 } );
-    assert.deepEqual( hunks[ 0 ].header.original, { start: 1, length: 5 } );
-    assert.deepEqual( hunks[ 0 ].header.modified, { start: 1, length: 5 } );
+    assertHeader( hunks[ 0 ], { start: 1, length: 5 }, { start: 1, length: 5 } );
   } );
 
   await t.test( 'keeps changes separate when the gap exceeds the context', () => {
@@ -55,8 +61,11 @@ test( 'Hunk', async t => {
 
     assert.deepEqual( inserted[ 0 ].original, { start: 0, length: 0 } );
     assert.deepEqual( inserted[ 0 ].modified, { start: 0, length: 1 } );
+    assertHeader( inserted[ 0 ], { start: 0, length: 0 }, { start: 1, length: 1 } );
+
     assert.deepEqual( deleted[ 0 ].original, { start: 0, length: 1 } );
     assert.deepEqual( deleted[ 0 ].modified, { start: 0, length: 0 } );
+    assertHeader( deleted[ 0 ], { start: 1, length: 1 }, { start: 0, length: 0 } );
   } );
 
   await t.test( 'returns no hunks for equal or empty input', () => {
