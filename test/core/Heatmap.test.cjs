@@ -38,4 +38,13 @@ test( 'Heatmap', async t => {
     assert.deepEqual( [ first.insert, first.delete, first.intensity ], [ 1, 0, 1 ] );
     assert.deepEqual( [ second.insert, second.delete, second.intensity ], [ 1, 0, 1 ] );
   } );
+
+  await t.test( 'clusters deletions with negative intensity', () => {
+    const heatmap = create( 'abc\nxy', 'abc', { x: 3, y: 2 } );
+    const first = heatmap.cells.find( ( { x, y } ) => x === 0 && y === 1 );
+    const second = heatmap.cells.find( ( { x, y } ) => x === 1 && y === 1 );
+
+    assert.deepEqual( [ first.insert, first.delete, first.intensity ], [ 0, 1, -1 ] );
+    assert.deepEqual( [ second.insert, second.delete, second.intensity ], [ 0, 1, -1 ] );
+  } );
 } );
