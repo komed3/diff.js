@@ -9,6 +9,11 @@ export class Similarity {
 
   private entries?: SimilarityLine[];
 
+  private weight ( { original, originalLength, modifiedLength }: SimilarityLine, mode: 'retention' | 'similarity' ) : number {
+    if ( this.weighting === 'lines' ) return mode === 'retention' ? Number( original !== null ) : 1;
+    return mode === 'retention' ? originalLength : Math.max( originalLength, modifiedLength );
+  }
+
   public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters' }: SimilarityOptions = {} ) {
     this.script = script, this.mode = mode, this.weighting = weighting;
   }
