@@ -15,4 +15,11 @@ export class Similarity {
   }
 
   public constructor ( private readonly result: Result ) {}
+
+  public lines () : LineSimilarity[] {
+    return this.result.script.map( ( { operation: { type, original, modified }, edit } ) => ( {
+      original: original.length ? original.start : null, modified: modified.length ? modified.start : null,
+      type, similarity: type === 'equal' ? 1 : type === 'change' && edit ? this.score( edit ) : 0
+    } ) );
+  }
 }
