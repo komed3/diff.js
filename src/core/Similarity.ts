@@ -15,6 +15,18 @@ export class Similarity {
 
   public lines () : SimilarityLine[] {
     return this.entries ??= this.script.map( entry => {
+      const common = ( entry: LineScript ) => {
+        if ( ! entry?.edit ) return null;
+        let len = 0;
+
+        for ( const { type, original: { start, length } } of entry.edit.operations ) {
+          if ( type !== 'equal' ) continue;
+          for ( let i = start; i < start + length; i++ ) len += entry.edit.original[ i ].value.length;
+        }
+
+        return len;
+      };
+
       const { original, modified, operation: { type } } = entry;
       const oLen = original?.value.length ?? 0, mLen = modified?.value.length ?? 0;
       const len = type === 'equal' ? Math.min( oLen, mLen ) : type === 'change' ? common( entry ) : 0;
