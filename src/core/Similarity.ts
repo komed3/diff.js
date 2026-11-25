@@ -14,6 +14,23 @@ export class Similarity {
     return mode === 'retention' ? originalLength : Math.max( originalLength, modifiedLength );
   }
 
+  private score ( mode: 'retention' | 'similarity' ) : number | null {
+    const lines = this.lines();
+    let total = 0, weight = 0;
+
+    for ( const entry of lines ) {
+      const value = entry[ mode ], w = this.weight( entry, mode );
+
+      if ( ! w ) continue;
+      if ( value === null ) return null;
+
+      total += value * w, weight += w;
+    }
+
+    if ( weight ) return total / weight;
+    return lines.every( ( { type } ) => type === 'equal' ) ? 1 : 0;
+  }
+
   public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters' }: SimilarityOptions = {} ) {
     this.script = script, this.mode = mode, this.weighting = weighting;
   }
