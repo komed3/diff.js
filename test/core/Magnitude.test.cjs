@@ -55,4 +55,15 @@ test( 'Magnitude', async t => {
       value: 1, baseValue: 3, insert: 0, delete: 0, change: 1, filled: 2, empty: 3, total: 5
     } );
   } );
+
+  await t.test( 'handles empty input and zero bases', () => {
+    const magnitude = analyze( '', '' );
+
+    assert.deepEqual( magnitude.relative( { base: 0 } ), { value: 0, baseValue: 0, ratio: null } );
+    assert.deepEqual( magnitude.percentage( { base: 0 } ), { value: 0, baseValue: 0, percentage: null } );
+
+    assert.deepEqual( magnitude.boxes( { base: 0 } ), {
+      value: 0, baseValue: 0, insert: 0, delete: 0, change: 0, filled: null, empty: null, total: 5
+    } );
+  } );
 } );
