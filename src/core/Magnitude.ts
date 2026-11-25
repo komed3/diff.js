@@ -34,4 +34,11 @@ export class Magnitude {
     const { value, baseValue } = this.getValue( options );
     return { value, baseValue, ratio: value === null || baseValue === 0 ? null : value / baseValue };
   }
+
+  public percentage ( { precision = 1, ...options }: MagnitudePercentageOptions = {} ) : MagnitudePercentage {
+    const { value, baseValue } = this.getValue( options ), factor = 10 ** precision;
+    return { value, baseValue, percentage: value === null || baseValue === 0 ? null
+      : Math.round( value / baseValue * 100 * factor ) / factor
+    };
+  }
 }
