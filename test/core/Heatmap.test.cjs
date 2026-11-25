@@ -115,4 +115,14 @@ test( 'Heatmap', async t => {
     assert.ok( heatmap.height > 0 );
     assert.equal( heatmap.cells.length, heatmap.width * heatmap.height );
   } );
+
+  await t.test( 'derives one automatic dimension from the other', () => {
+    const horizontal = create( 'a\nb', 'x\ny', { x: 8 } );
+    const vertical = create( 'a\nb', 'x\ny', { y: 6 } );
+
+    assert.equal( horizontal.width, 8 );
+    assert.ok( horizontal.height > 0 );
+    assert.equal( vertical.height, 6 );
+    assert.ok( vertical.width > 0 );
+  } );
 } );
