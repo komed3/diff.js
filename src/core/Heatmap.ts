@@ -39,5 +39,42 @@ export class Heatmap {
       if ( ! line.value.length ) return add( line, lines, 0, type, 1 );
       for ( let i = 0; i < line.value.length; i++ ) add( line, lines, i, type, 1 );
     };
+
+    for ( const { original, modified, operation: { type }, edit } of this.result.script ) {
+      if ( type === 'equal' ) continue;
+
+      if ( type === 'insert' || type === 'delete' ) {
+        if ( filter !== 'all' && filter !== type ) continue;
+
+        const line = type === 'insert' ? modified : original;
+        const lines = type === 'insert' ? modifiedLines : originalLines;
+
+        if ( line ) addLine( line, lines, type );
+        continue;
+      }
+
+      if ( ! edit ) {
+        if ( filter === 'all' || filter === 'change' ) if ( modified ) addLine( modified, modifiedLines, 'change' );
+        continue;
+      }
+
+      for ( const { type: t, original: o, modified: m } of edit.operations ) {
+        if ( t === 'equal' ) continue;
+        if ( filter !== 'all' && filter !== 'change' && filter !== t ) continue;
+
+        const insert = t === 'insert';
+        const line = insert ? modified : original;
+        const lines = insert ? modifiedLines : originalLines;
+        const tokens = insert ? edit.modified : edit.original;
+        const range = insert ? m : o;
+
+        if ( ! line ) continue;
+
+        for ( let i = range.start; i < range.start + range.length; i++ ) {
+          const token = tokens[ i ];
+          add( line, lines, token.start, t, Math.max( 1, token.value.length ) );
+        }
+      }
+    }
   }
 }
