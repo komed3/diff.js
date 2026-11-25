@@ -37,4 +37,13 @@ test( 'Hunk', async t => {
     assert.deepEqual( hunks[ 0 ].original, { start: 0, length: 7 } );
     assert.deepEqual( hunks[ 0 ].modified, { start: 0, length: 7 } );
   } );*/
+
+  await t.test( 'keeps changes separate when the gap exceeds the context', () => {
+    const hunks = create( 'a\nb\nc\nd\ne\nf\ng', 'x\nb\nc\nd\ne\nf\ny', { context: 0 } );
+
+    assert.equal( hunks.length, 2 );
+    assert.deepEqual( hunks.map( ( hunk ) => hunk.original ), [
+      { start: 0, length: 1 }, { start: 6, length: 1 }
+    ] );
+  } );
 } );
