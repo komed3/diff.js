@@ -107,4 +107,12 @@ test( 'Heatmap', async t => {
     assert.equal( deleteFilter.cells.reduce( ( sum, { activity } ) => sum + activity, 0 ), 2 );
     assert.equal( insertFilter.cells.reduce( ( sum, { activity } ) => sum + activity, 0 ), 0 );
   } );
+
+  await t.test( 'determines automatic dimensions', () => {
+    const heatmap = create( 'a\nb\nc', 'x\ny\nz' );
+
+    assert.ok( heatmap.width > 0 );
+    assert.ok( heatmap.height > 0 );
+    assert.equal( heatmap.cells.length, heatmap.width * heatmap.height );
+  } );
 } );
