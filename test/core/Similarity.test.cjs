@@ -36,6 +36,13 @@ test( 'Similarity', async t => {
     assert.equal( lines.get(), 0.75 );
   } );
 
+  await t.test( 'scores identical empty input as fully similar', () => {
+    const similarity = analyze( '', '' );
+
+    assert.equal( similarity.lines()[ 0 ].commonLength, 0 );
+    assert.equal( similarity.get(), 1 );
+  } );
+
   await t.test( 'returns null for changed lines without a tokenizer', () => {
     const similarity = analyze( 'same\nold', 'same\nnew' );
 
