@@ -16,3 +16,9 @@ export interface HeatmapCell {
   readonly delete: number;
   readonly change: number;
 }
+
+export interface HeatmapData {
+  readonly width: number;
+  readonly height: number;
+  readonly cells: HeatmapCell[];
+}
