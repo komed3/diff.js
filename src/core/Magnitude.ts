@@ -10,6 +10,14 @@ export class Magnitude {
   private readonly stats: MetricStats;
   private readonly operations = { insert: 0, delete: 0, change: 0 };
 
+  private getValue ( { metric = 'changed', base = 'original' }: MagnitudeOptions = {} ) : MagnitudeValue {
+    return { value: this.stats[ metric ], baseValue: typeof base === 'number' ? base
+      : base === 'original' ? this.stats.original : base === 'modified' ? this.stats.modified
+      : base === 'combined' ? this.stats.original + this.stats.modified
+      : Math.max( this.stats.original, this.stats.modified )
+    };
+  }
+
   public constructor ( hunks: readonly HunkData[], stats: MetricStats ) {
     this.stats = stats;
 
