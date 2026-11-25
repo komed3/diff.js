@@ -24,4 +24,9 @@ export class Magnitude {
     for ( const { lines } of hunks ) for ( const { operation: { type } } of lines )
       if ( type !== 'equal' ) this.operations[ type ]++;
   }
+
+  public absolute ( options: MagnitudeOptions = {} ) : MagnitudeAbsolute {
+    const { value, baseValue } = this.getValue( options );
+    return { value, baseValue, magnitude: value === null ? null : Math.abs( value ) };
+  }
 }
