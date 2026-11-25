@@ -1,7 +1,6 @@
-import type { HeatmapCell, HeatmapData, HeatmapOptions } from '../types/heatmap';
 import type { Result } from '../types/engine';
+import type { HeatmapCell, HeatmapData, HeatmapOptions } from '../types/heatmap';
 import type { Line } from '../types/line';
-import type { Token } from '../types/token';
 
 
 export class Heatmap {
@@ -25,7 +24,7 @@ export class Heatmap {
     const ratio = maxWidth / Math.max( originalLines, modifiedLines );
     const width = Math.max( 1, Math.floor( x === 'auto' ? y === 'auto' ? Math.sqrt( 256 * ratio ) : y * ratio : x ) );
     const height = Math.max( 1, Math.floor( y === 'auto' ? x === 'auto' ? 256 / width : width / ratio : y ) );
-    const values = new Float64Array( width * height * 3 );
+    const values = new Float64Array( width * height * 3 ), cells: HeatmapCell[] = [];
 
     const add = ( line: Line, lines: number, position: number, type: 'insert' | 'delete' | 'change', weight: number ) => {
       const px = Math.min( width - 1, Math.floor( position / maxWidth * width ) );
@@ -76,5 +75,18 @@ export class Heatmap {
         }
       }
     }
+
+    for ( let py = 0; py < height; py++ ) for ( let px = 0; px < width; px++ ) {
+      const index = ( py * width + px ) * 3;
+      const insert = values[ index ], del = values[ index + 1 ], change = values[ index + 2 ];
+      const activity = insert + del + change;
+
+      cells.push( {
+        x: px, y: py, intensity: activity ? ( insert - del ) / activity : 0,
+        activity, insert, delete: del, change
+      } );
+    }
+
+    return { width, height, cells };
   }
 }
