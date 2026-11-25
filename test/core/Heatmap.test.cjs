@@ -47,4 +47,13 @@ test( 'Heatmap', async t => {
     assert.deepEqual( [ first.insert, first.delete, first.intensity ], [ 0, 1, -1 ] );
     assert.deepEqual( [ second.insert, second.delete, second.intensity ], [ 0, 1, -1 ] );
   } );
+
+  await t.test( 'aggregates multiple changes in one cell', () => {
+    const heatmap = create( 'a\nb\nc', 'x\ny\nz', { x: 1, y: 1 } );
+    const [ { activity, change, intensity } ] = heatmap.cells;
+
+    assert.equal( activity, 3 );
+    assert.equal( change, 3 );
+    assert.equal( intensity, 0 );
+  } );
 } );
