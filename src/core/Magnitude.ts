@@ -41,4 +41,15 @@ export class Magnitude {
       : Math.round( value / baseValue * 100 * factor ) / factor
     };
   }
+
+  public boxes ( { total = 5, ...options }: MagnitudeBoxesOptions = {} ) : MagnitudeBoxes {
+    const { value, baseValue } = this.getValue( options );
+    const ratio = value === null || baseValue === 0 ? null : Math.abs( value / baseValue );
+    const filled = ratio === null ? null : Math.min( total, Math.round( ratio * total ) );
+
+    return {
+      value, baseValue, ...this.operations,
+      filled, empty: filled === null ? null : total - filled, total
+    };
+  }
 }
