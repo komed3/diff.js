@@ -21,5 +21,9 @@ export class Heatmap {
         modifiedLines = Math.max( modifiedLines, modified.start + 1 );
       }
     }
+
+    const ratio = maxWidth / Math.max( originalLines, modifiedLines );
+    const width = Math.max( 1, Math.floor( x === 'auto' ? y === 'auto' ? Math.sqrt( 256 * ratio ) : y * ratio : x ) );
+    const height = Math.max( 1, Math.floor( y === 'auto' ? x === 'auto' ? 256 / width : width / ratio : y ) );
   }
 }
