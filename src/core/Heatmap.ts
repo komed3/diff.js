@@ -25,5 +25,19 @@ export class Heatmap {
     const ratio = maxWidth / Math.max( originalLines, modifiedLines );
     const width = Math.max( 1, Math.floor( x === 'auto' ? y === 'auto' ? Math.sqrt( 256 * ratio ) : y * ratio : x ) );
     const height = Math.max( 1, Math.floor( y === 'auto' ? x === 'auto' ? 256 / width : width / ratio : y ) );
+    const values = new Float64Array( width * height * 3 );
+
+    const add = ( line: Line, lines: number, position: number, type: 'insert' | 'delete' | 'change', weight: number ) => {
+      const px = Math.min( width - 1, Math.floor( position / maxWidth * width ) );
+      const py = Math.min( height - 1, Math.floor( line.start / lines * height ) );
+      const index = ( py * width + px ) * 3 + ( type === 'insert' ? 0 : type === 'delete' ? 1 : 2 );
+
+      values[ index ] += weight;
+    };
+
+    const addLine = ( line: Line, lines: number, type: 'insert' | 'delete' | 'change' ) => {
+      if ( ! line.value.length ) return add( line, lines, 0, type, 1 );
+      for ( let i = 0; i < line.value.length; i++ ) add( line, lines, i, type, 1 );
+    };
   }
 }
