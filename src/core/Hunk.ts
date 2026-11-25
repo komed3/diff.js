@@ -20,15 +20,18 @@ export class Hunk {
       if ( start < 0 ) return;
 
       const lines = script.slice( Math.max( 0, start - ctx ), Math.min( script.length, last + ctx + 1 ) );
-      const { original, modified } = lines.reduce( ( acc, { operation: { original, modified } } ) => {
-        acc.original.length += original.length, acc.modified.length += modified.length;
-        return acc;
-      }, {
-        original: { start: lines[ 0 ].operation.original.start, length: 0 },
-        modified: { start: lines[ 0 ].operation.modified.start, length: 0 }
-      } );
+      const original = { start: lines[ 0 ].operation.original.start, length: 0 };
+      const modified = { start: lines[ 0 ].operation.modified.start, length: 0 };
 
-      hunks.push( { original, modified, lines } );
+      for ( const { operation } of lines )
+        original.length += operation.original.length,
+        modified.length += operation.modified.length;
+
+      hunks.push( { original, modified, lines, header: {
+        original: { ...original, start: original.start + Number( original.length > 0 ) },
+        modified: { ...modified, start: modified.start + Number( modified.length > 0 ) }
+      } } );
+
       start = last = -1;
     };
 
@@ -37,6 +40,7 @@ export class Hunk {
 
       if ( start < 0 ) start = i;
       else if ( i - last - 1 > ctx * 2 ) finish(), start = i;
+
       last = i;
     }
 
