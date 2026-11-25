@@ -45,4 +45,19 @@ export class Similarity {
 
     return tokens;
   }
+
+  public overall () : number {
+    const lines = this.lines();
+    let original = 0, modified = 0, total = 0;
+
+    for ( const { operation: { type, original: o, modified: m } } of this.result.script ) {
+      if ( type !== 'insert' ) original += o.length;
+      if ( type !== 'delete' ) modified += m.length;
+    }
+
+    for ( const line of lines ) total += line.similarity;
+
+    const count = Math.max( original, modified );
+    return count === 0 ? 1 : total / count;
+  }
 }
