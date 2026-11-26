@@ -53,7 +53,7 @@ export class Similarity {
     assertOption( [ 'lines', 'characters' ].includes( weighting ), 'similarity weighting' );
     assertOption( ! locale || typeof locale === 'string', 'similarity locale' );
 
-    this.length = text => graphemeLength( text, locale );
+    this.length = ( text ) => graphemeLength( text, locale );
     this.script = script, this.mode = mode, this.weighting = weighting;
   }
 
