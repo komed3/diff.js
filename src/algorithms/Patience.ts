@@ -1,5 +1,6 @@
 import type { Algorithm } from '../types/algorithm';
-import type { Comparable, Sequence } from '../types/context';
+import type { Comparable } from '../types/comparator';
+import type { Sequence } from '../types/context';
 import type { Operation } from '../types/operation';
 import { anchoredDiff } from './internal/anchoredDiff';
 import { findAnchors } from './internal/findAnchors';
