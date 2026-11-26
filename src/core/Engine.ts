@@ -2,8 +2,7 @@ import type { Algorithm } from '../types/algorithm';
 import type { Comparator } from '../types/comparator';
 import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
-import type { Token, TokenMeta } from '../types/token';
-import type { Tokenizer } from '../types/tokenizer';
+import type { Token, Tokenizer, TokenMeta } from '../types/tokenizer';
 import { COMPARATORS } from './Comparator';
 import { LineParser } from './LineParser';
 

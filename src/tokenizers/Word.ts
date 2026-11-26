@@ -1,5 +1,4 @@
-import type { Token } from '../types/token';
-import type { Tokenizer, TokenizerOptions } from '../types/tokenizer';
+import type { Token, Tokenizer, TokenizerOptions } from '../types/tokenizer';
 
 
 export class Word implements Tokenizer {
