@@ -2,30 +2,30 @@ import type { Algorithm } from './algorithm';
 import type { Comparator } from './context';
 import type { Line } from './line';
 import type { LineOperation, Operation } from './operation';
-import type { Token } from './token';
+import type { Token, TokenMeta } from './token';
 import type { Tokenizer } from './tokenizer';
 
 
-export interface EngineOptions {
+export interface EngineOptions< T extends TokenMeta = {} > {
   algorithm: Algorithm;
   comparator?: Comparator< Line >;
 
-  tokenizer?: Tokenizer;
+  tokenizer?: Tokenizer< T >;
   tokenAlgorithm?: Algorithm;
-  tokenComparator?: Comparator< Token >;
+  tokenComparator?: Comparator< Token< T > >;
 }
 
-export interface EditScript {
-  original: Token[];
-  modified: Token[];
+export interface EditScript< T extends TokenMeta = {} > {
+  original: Token< T >[];
+  modified: Token< T >[];
   operations: Operation[];
 }
 
-export interface LineScript {
+export interface LineScript< T extends TokenMeta = {} > {
   original: Line | null;
   modified: Line | null;
   operation: LineOperation;
-  edit?: EditScript;
+  edit?: EditScript< T >;
 }
 
 export interface Input {
@@ -33,8 +33,8 @@ export interface Input {
   modified: string;
 }
 
-export interface Result {
+export interface Result< T extends TokenMeta = {} > {
   original: string;
   modified: string;
-  script: LineScript[];
+  script: LineScript< T >[];
 }
