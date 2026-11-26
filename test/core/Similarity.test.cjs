@@ -67,4 +67,11 @@ test( 'Similarity', async t => {
       commonLength: null, retention: null, similarity: null, combined: null
     } ] );
   } );
+
+  await t.test( 'rejects invalid options', () => {
+    const result = engine().process( { original: 'a', modified: 'b' } );
+
+    assert.throws( () => new Similarity( result, { mode: 'invalid' } ), Error );
+    assert.throws( () => new Similarity( result, { weighting: 'invalid' } ), Error );
+  } );
 } );
