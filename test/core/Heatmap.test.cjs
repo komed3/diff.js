@@ -6,6 +6,7 @@ const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
 const { Engine } = require( '../../.test-dist/core/Engine.js' );
 const { Heatmap } = require( '../../.test-dist/core/Heatmap.js' );
 const { Character } = require( '../../.test-dist/tokenizers/Character.js' );
+const { Word } = require( '../../.test-dist/tokenizers/Word.js' );
 
 
 const algorithm = new Myers();
@@ -134,6 +135,18 @@ test( 'Heatmap', async t => {
 
     assert.equal( active.length, 1 );
     assert.equal( active[ 0 ].y, 2 );
+  } );
+
+  await t.test( 'distributes token edits across their character spans', () => {
+    const heatmap = create( 'one two', 'one three', { x: 9, y: 1 }, { tokenizer: new Word() } );
+
+    assert.deepEqual(
+      heatmap.cells.map( ( { activity, insert, delete: del } ) => [ activity, insert, del ] ),
+      [
+        [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 2, 1, 1 ],
+        [ 2, 1, 1 ], [ 2, 1, 1 ], [ 1, 1, 0 ], [ 1, 1, 0 ]
+      ]
+    );
   } );
 
   await t.test( 'rejects invalid dimensions', () => {
