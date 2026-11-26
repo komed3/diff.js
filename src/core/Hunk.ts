@@ -1,14 +1,13 @@
 import type { Result } from '../types/engine';
 import type { HunkData, HunkOptions } from '../types/hunk';
+import { assertOption } from '../utils';
 
 
 export class Hunk {
   private readonly context: number;
 
   public constructor ( { context = 3 }: HunkOptions = {} ) {
-    if ( ! Number.isSafeInteger( context ) || context < 0 )
-      throw new RangeError( 'Context must be a non-negative integer' );
-
+    assertOption( Number.isSafeInteger( context ) && context >= 0, 'hunk context' );
     this.context = context;
   }
 
