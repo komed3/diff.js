@@ -1,5 +1,5 @@
 const assert = require( 'node:assert/strict' );
-const { describe, it } = require( 'node:test' );
+const { test } = require( 'node:test' );
 
 
 const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
@@ -12,25 +12,25 @@ const algorithm = new Myers();
 const engine = ( options ) => new Engine( { algorithm, ...options } );
 
 
-describe( 'Engine', () => {
-  it( 'preserves unchanged input', () => {
+test( 'Engine', async t => {
+  await t.test( 'preserves unchanged input', () => {
     const result = engine().process( { original: 'one\ntwo', modified: 'one\ntwo' } );
 
     assert.equal( result.script.length, 2 );
     assert.ok( result.script.every( ( { operation: { type } } ) => type === 'equal' ) );
   } );
 
-  it( 'detects inserted lines', () => {
-    const result = engine().process( { original: 'one', modified: 'one\ntwo' } );
+  await t.test( 'detects inserted lines', () => {
+    const result = engine().process( { original: 'one\n', modified: 'one\ntwo' } );
     assert.deepEqual( result.script.map( ( { operation: { type } } ) => type ), [ 'equal', 'insert' ] );
   } );
 
-  it( 'detects deleted lines', () => {
-    const result = engine().process( { original: 'one\ntwo', modified: 'one' } );
+  await t.test( 'detects deleted lines', () => {
+    const result = engine().process( { original: 'one\ntwo', modified: 'one\n' } );
     assert.deepEqual( result.script.map( ( { operation: { type } } ) => type ), [ 'equal', 'delete' ] );
   } );
 
-  it( 'pairs changed lines', () => {
+  await t.test( 'pairs changed lines', () => {
     const result = engine().process( { original: 'old', modified: 'new' } );
 
     assert.equal( result.script.length, 1 );
@@ -39,43 +39,45 @@ describe( 'Engine', () => {
     assert.equal( result.script[ 0 ].modified.value, 'new' );
   } );
 
-  it( 'creates token diffs for changed lines', () => {
-    const result = engine( { tokenizer: new Word() } ).process( {
-      original: 'hello world', modified: 'hello there'
-    } );
+  await t.test( 'creates token diffs for changed lines', () => {
+    const result = engine( { tokenizer: new Word() } ).process( { original: 'hello world', modified: 'hello there' } );
 
     assert.ok( result.script[ 0 ].edit );
-    assert.deepEqual(
-      result.script[ 0 ].edit.operations.map( ( { type } ) => type ),
-      [ 'equal', 'delete', 'insert' ]
-    );
+    assert.deepEqual( result.script[ 0 ].edit.operations.map( ( { type } ) => type ), [ 'equal', 'delete', 'insert' ] );
   } );
 
-  it( 'uses the configured token algorithm', () => {
+  await t.test( 'uses the configured token algorithm', () => {
     let calls = 0;
     const tokenAlgorithm = { diff ( sequence ) { calls++; return algorithm.diff( sequence ) } };
-
-    engine( { tokenizer: new Word(), tokenAlgorithm } ).process( {
-      original: 'hello world', modified: 'hello there'
-    } );
+    engine( { tokenizer: new Word(), tokenAlgorithm } ).process( { original: 'hello world', modified: 'hello there' } );
 
     assert.equal( calls, 1 );
   } );
 
-  it( 'uses custom comparators', () => {
-    const result = engine( { comparator: COMPARATORS.caseInsensitive } ).process( {
-      original: 'Hello', modified: 'hello'
+  await t.test( 'uses custom comparators', () => {
+    const result = engine( { comparator: COMPARATORS.caseInsensitive() } ).process( { original: 'Hello', modified: 'hello' } );
+    assert.equal( result.script[ 0 ].operation.type, 'equal' );
+  } );
+
+  await t.test( 'compares line endings by default', () => {
+    const result = engine().process( { original: 'text\n', modified: 'text\r\n' } );
+    assert.equal( result.script[ 0 ].operation.type, 'change' );
+  } );
+
+  await t.test( 'can ignore line endings', () => {
+    const result = engine( { comparator: COMPARATORS.exact( { lineEndings: false } ) } ).process( {
+      original: 'text\n', modified: 'text\r\n'
     } );
 
     assert.equal( result.script[ 0 ].operation.type, 'equal' );
   } );
 
-  it( 'does not tokenize without a tokenizer', () => {
+  await t.test( 'does not tokenize without a tokenizer', () => {
     const result = engine().process( { original: 'old', modified: 'new' } );
     assert.equal( result.script[ 0 ].edit, undefined );
   } );
 
-  it( 'handles a complex combination of changes', () => {
+  await t.test( 'handles a complex combination of changes', () => {
     const original = [ 'header', 'keep', 'old title', 'old detail', 'obsolete', 'middle', 'gap', 'tail old', 'footer' ].join( '\n' );
     const modified = [ 'header', 'keep', 'new title', 'new detail', 'middle', 'added', 'gap', 'tail new', 'footer' ].join( '\n' );
     const result = engine().process( { original, modified } );
