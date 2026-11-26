@@ -12,12 +12,12 @@ export class Heatmap {
     for ( const { original, modified } of this.result.script ) {
       if ( original ) {
         maxWidth = Math.max( maxWidth, original.value.length );
-        originalLines = Math.max( originalLines, original.start + 1 );
+        originalLines = Math.max( originalLines, original.offset + 1 );
       }
 
       if ( modified ) {
         maxWidth = Math.max( maxWidth, modified.value.length );
-        modifiedLines = Math.max( modifiedLines, modified.start + 1 );
+        modifiedLines = Math.max( modifiedLines, modified.offset + 1 );
       }
     }
 
@@ -26,9 +26,9 @@ export class Heatmap {
     const height = Math.max( 1, Math.floor( y === 'auto' ? x === 'auto' ? 256 / width : width / ratio : y ) );
     const values = new Float64Array( width * height * 3 ), cells: HeatmapCell[] = [];
 
-    const add = ( line: Line, lines: number, position: number, type: 'insert' | 'delete' | 'change', weight: number ) => {
+    const add = ( { offset }: Line, lines: number, position: number, type: 'insert' | 'delete' | 'change', weight: number ) => {
       const px = Math.min( width - 1, Math.floor( position / maxWidth * width ) );
-      const py = Math.min( height - 1, Math.floor( line.start / lines * height ) );
+      const py = Math.min( height - 1, Math.floor( offset / lines * height ) );
       const index = ( py * width + px ) * 3 + ( type === 'insert' ? 0 : type === 'delete' ? 1 : 2 );
 
       values[ index ] += weight;
