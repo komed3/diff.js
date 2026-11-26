@@ -1,14 +1,6 @@
+import type { Comparable, Comparator } from './comparator';
 import type { Operation } from './operation';
 
-
-export interface Comparable< T = string > {
-  value: T;
-}
-
-export interface Comparator< T extends Comparable > {
-  equals: ( o: T, m: T ) => boolean;
-  key?: ( value: T ) => unknown;
-}
 
 export interface Sequence< T extends Comparable > extends Comparator< T > {
   original: readonly T[];
