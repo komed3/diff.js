@@ -66,4 +66,14 @@ test( 'Magnitude', async t => {
       value: 0, baseValue: 0, insert: 0, delete: 0, change: 0, filled: null, empty: null, total: 5
     } );
   } );
+
+  await t.test( 'rejects invalid options', () => {
+    const magnitude = analyze( 'old', 'new' );
+
+    for ( const precision of [ -1, 1.5, 101, NaN, Infinity ] ) assert.throws( () => magnitude.percentage( { precision } ), RangeError );
+    for ( const total of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => magnitude.boxes( { total } ), RangeError );
+    for ( const base of [ -1, NaN, Infinity, 'invalid' ] ) assert.throws( () => magnitude.relative( { base } ), RangeError );
+
+    assert.throws( () => magnitude.absolute( { metric: 'invalid' } ), RangeError );
+  } );
 } );
