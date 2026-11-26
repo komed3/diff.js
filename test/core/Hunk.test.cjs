@@ -72,4 +72,8 @@ test( 'Hunk', async t => {
     assert.deepEqual( create( 'a\nb', 'a\nb' ), [] );
     assert.deepEqual( create( '', '' ), [] );
   } );
+
+  await t.test( 'rejects invalid context', () => {
+    for ( const context of [ -1, 1.5, NaN, Infinity ] ) assert.throws( () => new Hunk( { context } ), Error );
+  } );
 } );
