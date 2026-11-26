@@ -39,8 +39,20 @@ test( 'Similarity', async t => {
   await t.test( 'scores identical empty input as fully similar', () => {
     const similarity = analyze( '', '' );
 
-    assert.equal( similarity.lines()[ 0 ].commonLength, 0 );
+    assert.deepEqual( similarity.lines(), [] );
     assert.equal( similarity.get(), 1 );
+  } );
+
+  await t.test( 'counts Unicode grapheme clusters', () => {
+    const family = '👨‍👩‍👧‍👦';
+    const similarity = analyze( `${ family }a`, `${ family }b`, { tokenizer: new Character() } );
+    const [ line ] = similarity.lines();
+
+    assert.equal( line.originalLength, 2 );
+    assert.equal( line.modifiedLength, 2 );
+    assert.equal( line.commonLength, 1 );
+    assert.equal( line.retention, 0.5 );
+    assert.equal( line.similarity, 0.5 );
   } );
 
   await t.test( 'returns null for changed lines without a tokenizer', () => {
