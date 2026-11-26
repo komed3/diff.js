@@ -1,6 +1,7 @@
 import type { LineScript, Result } from '../types/engine';
 import type { HeatmapCell, HeatmapData, HeatmapOptions } from '../types/heatmap';
 import type { Line } from '../types/line';
+import { assertOption } from '../utils';
 
 
 const MAX_CELLS = 1_000_000;
@@ -14,6 +15,10 @@ export class Heatmap {
   }
 
   public create ( { x = 'auto', y = 'auto', filter = 'all' }: HeatmapOptions = {} ) : HeatmapData {
+    assertOption( x === 'auto' || ( Number.isSafeInteger( x ) && x >= 1 ), 'heatmap width' );
+    assertOption( y === 'auto' || ( Number.isSafeInteger( y ) && y >= 1 ), 'heatmap height' );
+    assertOption( [ 'all', 'insert', 'delete', 'change' ].includes( filter ), 'heatmap filter' );
+
     let maxWidth = 1, oLines = 0, mLines = 0;
 
     for ( const { original, modified, operation } of this.script ) {
@@ -23,10 +28,6 @@ export class Heatmap {
     }
 
     const ratio = maxWidth / Math.max( oLines, mLines, 1 );
-
-    if ( x !== 'auto' && ( ! Number.isSafeInteger( x ) || x < 1 ) ) throw new RangeError( 'Invalid heatmap width' );
-    if ( y !== 'auto' && ( ! Number.isSafeInteger( y ) || y < 1 ) ) throw new RangeError( 'Invalid heatmap height' );
-
     const width = Math.max( 1, Math.floor( x === 'auto' ? y === 'auto' ? Math.sqrt( 256 * ratio ) : y * ratio : x ) );
     const height = Math.max( 1, Math.floor( y === 'auto' ? x === 'auto' ? 256 / width : width / ratio : y ) );
 
