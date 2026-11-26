@@ -6,6 +6,7 @@ const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
 const { Engine } = require( '../../.test-dist/core/Engine.js' );
 const { Similarity } = require( '../../.test-dist/core/Similarity.js' );
 const { Character } = require( '../../.test-dist/tokenizers/Character.js' );
+const { graphemeSegmenter } = require( '../../.test-dist/utils/grapheme.js' );
 
 
 const algorithm = new Myers();
@@ -16,6 +17,12 @@ const analyze = ( original, modified, options = {} ) => new Similarity(
 
 
 test( 'Similarity', async t => {
+  await t.test( 'reuses grapheme segmenters for the same locale', () => {
+    assert.strictEqual( graphemeSegmenter(), graphemeSegmenter() );
+    assert.strictEqual( graphemeSegmenter( 'en' ), graphemeSegmenter( 'en' ) );
+    assert.notStrictEqual( graphemeSegmenter(), graphemeSegmenter( 'en' ) );
+  } );
+
   await t.test( 'calculates changed-line similarity from token edits', () => {
     const similarity = analyze( 'kitten', 'sitting', { tokenizer: new Character() } );
     const [ line ] = similarity.lines();
