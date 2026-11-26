@@ -51,7 +51,6 @@ export class Similarity {
   public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters', locale }: SimilarityOptions = {} ) {
     assertOption( [ 'retention', 'similarity', 'combined' ].includes( mode ), 'similarity mode' );
     assertOption( [ 'lines', 'characters' ].includes( weighting ), 'similarity weighting' );
-    assertOption( ! locale || typeof locale === 'string', 'similarity locale' );
 
     this.length = ( text ) => graphemeLength( text, locale );
     this.script = script, this.mode = mode, this.weighting = weighting;
