@@ -13,7 +13,7 @@ const algorithm = new Myers();
 const engine = ( options ) => new Engine( { algorithm, ...options } );
 const create = ( original, modified, options = {}, engineOptions = {} ) => {
   const result = engine( engineOptions ).process( { original, modified } );
-  return new Heatmap( result ).create( options );
+  return new Heatmap( options ).create( result );
 };
 
 
