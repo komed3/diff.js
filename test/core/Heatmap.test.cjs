@@ -150,8 +150,8 @@ test( 'Heatmap', async t => {
   } );
 
   await t.test( 'rejects invalid dimensions', () => {
-    for ( const x of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => create( 'a', 'b', { x } ), Error );
-    for ( const y of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => create( 'a', 'b', { y } ), Error );
+    for ( const x of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => new Heatmap( { x } ), Error );
+    for ( const y of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => new Heatmap( { y } ), Error );
   } );
 
   await t.test( 'rejects oversized rasters', () => {
@@ -159,6 +159,6 @@ test( 'Heatmap', async t => {
   } );
 
   await t.test( 'rejects invalid filters', () => {
-    assert.throws( () => create( 'a', 'b', { filter: 'invalid' } ), Error );
+    assert.throws( () => new Heatmap( { filter: 'invalid' } ), Error );
   } );
 } );
