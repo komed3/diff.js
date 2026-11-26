@@ -92,12 +92,12 @@ test( 'Heatmap', async t => {
 
   await t.test( 'filters line insertions and deletions', () => {
     const options = { x: 2, y: 2 };
-    const inserted = create( 'a', 'a\nxy', options );
-    const insertOnly = create( 'a', 'a\nxy', { ...options, filter: 'insert' } );
-    const deleteOnly = create( 'a', 'a\nxy', { ...options, filter: 'delete' } );
-    const deleted = create( 'a\nxy', 'a', options );
-    const deleteFilter = create( 'a\nxy', 'a', { ...options, filter: 'delete' } );
-    const insertFilter = create( 'a\nxy', 'a', { ...options, filter: 'insert' } );
+    const inserted = create( 'a\n', 'a\nxy\n', options );
+    const insertOnly = create( 'a\n', 'a\nxy\n', { ...options, filter: 'insert' } );
+    const deleteOnly = create( 'a\n', 'a\nxy\n', { ...options, filter: 'delete' } );
+    const deleted = create( 'a\nxy\n', 'a\n', options );
+    const deleteFilter = create( 'a\nxy\n', 'a\n', { ...options, filter: 'delete' } );
+    const insertFilter = create( 'a\nxy\n', 'a\n', { ...options, filter: 'insert' } );
 
     assert.equal( inserted.cells.reduce( ( sum, { activity } ) => sum + activity, 0 ), 2 );
     assert.equal( insertOnly.cells.reduce( ( sum, { activity } ) => sum + activity, 0 ), 2 );
