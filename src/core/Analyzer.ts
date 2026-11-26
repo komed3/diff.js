@@ -43,9 +43,7 @@ export class Analyzer {
   }
 
   private side ( blocks: Block[], side: 'original' | 'modified', total: number ) : SideDistribution {
-    const r = blocks.map( ( { [ side ]: range } ) => range ).filter( ( { length } ) => length > 0 )
-      .sort( ( a, b ) => a.start - b.start );
-
+    const r = blocks.map( ( { [ side ]: range } ) => range ).filter( ( { length } ) => length > 0 );
     const affected = r.reduce( ( sum, { length } ) => sum + length, 0 );
     const gaps = r.slice( 1 ).map( ( range, i ) => range.start - ( r[ i ].start + r[ i ].length ) );
     const first = r[ 0 ], last = r[ r.length - 1 ], coverage = first && last ? last.start + last.length - first.start : 0;
@@ -54,12 +52,8 @@ export class Analyzer {
     const sum = gaps.reduce( ( value, gap ) => value + gap, 0 );
 
     return {
-      density: total === 0 ? 0 : affected / total,
-      coverage: total === 0 ? 0 : coverage / total,
-      affected, gaps: {
-        count: gaps.length, min: gaps.length ? min : 0, max,
-        average: gaps.length ? sum / gaps.length : 0
-      }
+      density: total === 0 ? 0 : affected / total, coverage: total === 0 ? 0 : coverage / total, affected,
+      gaps: { count: gaps.length, min: gaps.length ? min : 0, max, average: gaps.length ? sum / gaps.length : 0 }
     };
   }
 
