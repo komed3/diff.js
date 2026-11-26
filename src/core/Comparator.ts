@@ -18,16 +18,16 @@ export const createComparator = < T extends Comparable = Comparable > (
 
 
 export const COMPARATORS = {
-  exact: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+  exact: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) =>
     createComparator< T >( v => v, options ),
-  whitespace: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+  whitespace: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) =>
     createComparator< T >( v => v.replace( /\s/gu, '' ), options ),
-  collapsedWhitespace: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+  collapsedWhitespace: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) =>
     createComparator< T >( v => v.trim().replace( /\s+/gu, ' ' ), options ),
-  trimmed: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+  trimmed: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) =>
     createComparator< T >( v => v.trim(), options ),
-  caseInsensitive: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+  caseInsensitive: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) =>
     createComparator< T >( v => v.toLowerCase(), options ),
-  unicode: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+  unicode: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) =>
     createComparator< T >( v => v.normalize( 'NFC' ), options )
 } satisfies Record< string, ComparatorFactory >;
