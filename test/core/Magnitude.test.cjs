@@ -20,28 +20,28 @@ const analyze = ( original, modified ) => {
 
 test( 'Magnitude', async t => {
   await t.test( 'calculates absolute magnitude', () => {
-    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+    const magnitude = analyze( 'a\nold\nremoved\nb\n', 'a\nnew\nb\nadded\n' );
 
     assert.deepEqual( magnitude.absolute(), { value: 1, baseValue: 4, magnitude: 1 } );
     assert.deepEqual( magnitude.absolute( { metric: 'delta' } ), { value: 0, baseValue: 4, magnitude: 0 } );
   } );
 
   await t.test( 'calculates relative magnitude with different bases', () => {
-    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+    const magnitude = analyze( 'a\nold\nremoved\nb\n', 'a\nnew\nb\nadded\n' );
 
     assert.deepEqual( magnitude.relative( { metric: 'inserted', base: 'modified' } ), { value: 1, baseValue: 4, ratio: 0.25 } );
     assert.deepEqual( magnitude.relative( { metric: 'deleted', base: 'combined' } ), { value: 1, baseValue: 8, ratio: 0.125 } );
   } );
 
   await t.test( 'calculates percentages with configurable precision', () => {
-    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+    const magnitude = analyze( 'a\nold\nremoved\nb\n', 'a\nnew\nb\nadded\n' );
 
     assert.deepEqual( magnitude.percentage(), { value: 1, baseValue: 4, percentage: 25 } );
     assert.deepEqual( magnitude.percentage( { metric: 'inserted', precision: 0 } ), { value: 1, baseValue: 4, percentage: 25 } );
   } );
 
   await t.test( 'calculates box magnitude and operation counts', () => {
-    const magnitude = analyze( 'a\nold\nremoved\nb', 'a\nnew\nb\nadded' );
+    const magnitude = analyze( 'a\nold\nremoved\nb\n', 'a\nnew\nb\nadded\n' );
 
     assert.deepEqual( magnitude.boxes( { total: 8 } ), {
       value: 1, baseValue: 4, insert: 1, delete: 1, change: 1, filled: 2, empty: 6, total: 8
