@@ -2,6 +2,9 @@ import type { LineScript, Result } from '../types/engine';
 import type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from '../types/similarity';
 
 
+const segmenter = new Intl.Segmenter( undefined, { granularity: 'grapheme' } );
+
+
 export class Similarity {
   private readonly script: LineScript[];
   private readonly mode: SimilarityMode;
@@ -9,15 +12,22 @@ export class Similarity {
 
   private entries?: SimilarityLine[];
 
+
+  private length ( text: string ) : number {
+    let count = 0;
+    for ( const _ of segmenter.segment( text ) ) count++;
+    return count;
+  };
+
   private commonLength ( entry: LineScript ) : number | null {
     if ( ! entry.edit ) return null;
 
     const { edit: { original, operations } } = entry;
     let len = 0;
 
-    for ( const { type, original: { start, length } } of operations ) {
+    for ( const { type, original: { start, length: count } } of operations ) {
       if ( type !== 'equal' ) continue;
-      for ( let i = start; i < start + length; i++ ) len += original[ i ].value.length;
+      for ( let i = start; i < start + count; i++ ) len += this.length( original[ i ].value );
     }
 
     return len;
@@ -52,7 +62,7 @@ export class Similarity {
   public lines () : SimilarityLine[] {
     return this.entries ??= this.script.map( entry => {
       const { original, modified, operation: { type } } = entry;
-      const oLen = original?.value.length ?? 0, mLen = modified?.value.length ?? 0;
+      const oLen = original ? this.length( original.value ) : 0, mLen = modified ? this.length( modified.value ) : 0;
       const len = type === 'equal' ? Math.min( oLen, mLen ) : type === 'change' ? this.commonLength( entry ) : 0;
 
       const retention = type === 'equal' ? 1 : len === null ? null :
