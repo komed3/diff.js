@@ -4,6 +4,7 @@ export type SimilarityWeight = 'lines' | 'characters';
 export interface SimilarityOptions {
   mode?: SimilarityMode;
   weighting?: SimilarityWeight;
+  locale?: string;
 }
 
 export interface SimilarityLine {
