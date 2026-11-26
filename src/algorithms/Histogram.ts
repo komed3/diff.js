@@ -1,5 +1,6 @@
 import type { Algorithm } from '../types/algorithm';
-import type { Comparable, Sequence } from '../types/context';
+import type { Comparable } from '../types/comparator';
+import type { Sequence } from '../types/context';
 import type { HistogramGroup } from '../types/group';
 import type { Operation, Pair } from '../types/operation';
 import { anchoredDiff } from './internal/anchoredDiff';
