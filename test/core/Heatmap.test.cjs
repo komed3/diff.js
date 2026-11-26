@@ -157,4 +157,8 @@ test( 'Heatmap', async t => {
   await t.test( 'rejects oversized rasters', () => {
     assert.throws( () => create( 'a', 'b', { x: 1001, y: 1000 } ), Error );
   } );
+
+  await t.test( 'rejects invalid filters', () => {
+    assert.throws( () => create( 'a', 'b', { filter: 'invalid' } ), Error );
+  } );
 } );
