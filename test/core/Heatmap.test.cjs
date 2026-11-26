@@ -135,4 +135,9 @@ test( 'Heatmap', async t => {
     assert.equal( active.length, 1 );
     assert.equal( active[ 0 ].y, 2 );
   } );
+
+  await t.test( 'rejects invalid dimensions', () => {
+    for ( const x of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => create( 'a', 'b', { x } ), RangeError );
+    for ( const y of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => create( 'a', 'b', { y } ), RangeError );
+  } );
 } );
