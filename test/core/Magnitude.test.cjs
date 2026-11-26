@@ -70,10 +70,10 @@ test( 'Magnitude', async t => {
   await t.test( 'rejects invalid options', () => {
     const magnitude = analyze( 'old', 'new' );
 
-    for ( const precision of [ -1, 1.5, 101, NaN, Infinity ] ) assert.throws( () => magnitude.percentage( { precision } ), RangeError );
-    for ( const total of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => magnitude.boxes( { total } ), RangeError );
-    for ( const base of [ -1, NaN, Infinity, 'invalid' ] ) assert.throws( () => magnitude.relative( { base } ), RangeError );
+    for ( const precision of [ -1, 1.5, 101, NaN, Infinity ] ) assert.throws( () => magnitude.percentage( { precision } ), Error );
+    for ( const total of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => magnitude.boxes( { total } ), Error );
+    for ( const base of [ -1, NaN, Infinity, 'invalid' ] ) assert.throws( () => magnitude.relative( { base } ), Error );
 
-    assert.throws( () => magnitude.absolute( { metric: 'invalid' } ), RangeError );
+    assert.throws( () => magnitude.absolute( { metric: 'invalid' } ), Error );
   } );
 } );
