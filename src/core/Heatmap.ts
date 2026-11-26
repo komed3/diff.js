@@ -82,7 +82,9 @@ export class Heatmap {
 
         for ( let i = range.start; i < range.start + range.length; i++ ) {
           const { value, start } = tokens[ i ];
-          add( insert ? mRange.start : oRange.start, rows, start, t, Math.max( 1, value.length ) );
+
+          for ( let pos = start; pos < start + value.length; pos++ )
+            add( insert ? mRange.start : oRange.start, rows, pos, t, 1 );
         }
       }
     }
