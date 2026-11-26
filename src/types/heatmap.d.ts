@@ -20,5 +20,5 @@ export interface HeatmapCell {
 export interface HeatmapData {
   readonly width: number;
   readonly height: number;
-  readonly cells: HeatmapCell[];
+  readonly cells: readonly HeatmapCell[];
 }
