@@ -1,24 +1,16 @@
 import type { LineScript, Result } from '../types/engine';
 import type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from '../types/similarity';
 import { assertOption } from '../utils/assert';
-
-
-const segmenter = new Intl.Segmenter( undefined, { granularity: 'grapheme' } );
+import { graphemeLength } from '../utils/grapheme';
 
 
 export class Similarity {
+  private readonly length: ( text: string ) => number;
   private readonly script: LineScript[];
   private readonly mode: SimilarityMode;
   private readonly weighting: SimilarityWeight;
 
   private entries?: SimilarityLine[];
-
-
-  private length ( text: string ) : number {
-    let count = 0;
-    for ( const _ of segmenter.segment( text ) ) count++;
-    return count;
-  };
 
   private commonLength ( entry: LineScript ) : number | null {
     if ( ! entry.edit ) return null;
@@ -56,10 +48,12 @@ export class Similarity {
     return lines.every( ( { type } ) => type === 'equal' ) ? 1 : 0;
   }
 
-  public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters' }: SimilarityOptions = {} ) {
+  public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters', locale }: SimilarityOptions = {} ) {
     assertOption( [ 'retention', 'similarity', 'combined' ].includes( mode ), 'similarity mode' );
     assertOption( [ 'lines', 'characters' ].includes( weighting ), 'similarity weighting' );
+    assertOption( ! locale || typeof locale === 'string', 'similarity locale' );
 
+    this.length = text => graphemeLength( text, locale );
     this.script = script, this.mode = mode, this.weighting = weighting;
   }
 
