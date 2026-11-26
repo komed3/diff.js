@@ -125,4 +125,14 @@ test( 'Heatmap', async t => {
     assert.equal( vertical.height, 6 );
     assert.ok( vertical.width > 0 );
   } );
+
+   await t.test( 'uses line indices instead of text offsets', () => {
+    const original = [ 'a', 'a very long line', 'old', 'd', 'e' ].join( '\n' );
+    const modified = [ 'a', 'a very long line', 'new', 'd', 'e' ].join( '\n' );
+    const heatmap = create( original, modified, { x: 1, y: 5 } );
+    const active = heatmap.cells.filter( ( { activity } ) => activity > 0 );
+
+    assert.equal( active.length, 1 );
+    assert.equal( active[ 0 ].y, 2 );
+  } );
 } );
