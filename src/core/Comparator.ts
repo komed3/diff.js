@@ -1,4 +1,4 @@
-import type { Comparator, ComparatorFactory, Comparable } from '../types/comparator';
+import type { Comparable, Comparator, ComparatorFactory, ComparatorOptions } from '../types/comparator';
 
 
 const ending = ( value: Comparable ) : string | undefined =>
@@ -7,7 +7,7 @@ const ending = ( value: Comparable ) : string | undefined =>
 
 
 export const createComparator = < T extends Comparable = Comparable > (
-  normalize: ( value: string ) => string, lineEndings = true
+  normalize: ( value: string ) => string, { lineEndings = true }: ComparatorOptions = {}
 ) : Comparator< T > => ( {
   equals: ( o, m ) => normalize( o.value ) === normalize( m.value ) && ( ! lineEndings || ending( o ) === ending( m ) ),
   key: v => {
@@ -18,16 +18,16 @@ export const createComparator = < T extends Comparable = Comparable > (
 
 
 export const COMPARATORS = {
-  exact: < T extends Comparable = Comparable > ( lineEndings = true ) =>
-    createComparator< T >( v => v, lineEndings ),
-  whitespace: < T extends Comparable = Comparable > ( lineEndings = true ) =>
-    createComparator< T >( v => v.replace( /\s/gu, '' ), lineEndings ),
-  collapsedWhitespace: < T extends Comparable = Comparable > ( lineEndings = true ) =>
-    createComparator< T >( v => v.trim().replace( /\s+/gu, ' ' ), lineEndings ),
-  trimmed: < T extends Comparable = Comparable > ( lineEndings = true ) =>
-    createComparator< T >( v => v.trim(), lineEndings ),
-  caseInsensitive: < T extends Comparable = Comparable > ( lineEndings = true ) =>
-    createComparator< T >( v => v.toLowerCase(), lineEndings ),
-  unicode: < T extends Comparable = Comparable > ( lineEndings = true ) =>
-    createComparator< T >( v => v.normalize( 'NFC' ), lineEndings )
+  exact: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+    createComparator< T >( v => v, options ),
+  whitespace: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+    createComparator< T >( v => v.replace( /\s/gu, '' ), options ),
+  collapsedWhitespace: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+    createComparator< T >( v => v.trim().replace( /\s+/gu, ' ' ), options ),
+  trimmed: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+    createComparator< T >( v => v.trim(), options ),
+  caseInsensitive: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+    createComparator< T >( v => v.toLowerCase(), options ),
+  unicode: < T extends Comparable = Comparable > ( options: ComparatorOptions = {} ) : Comparator< T > =>
+    createComparator< T >( v => v.normalize( 'NFC' ), options )
 } satisfies Record< string, ComparatorFactory >;

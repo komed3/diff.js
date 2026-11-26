@@ -1,5 +1,5 @@
 import type { Algorithm } from '../types/algorithm';
-import type { Comparator } from '../types/context';
+import type { Comparator } from '../types/comparator';
 import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
 import type { Token, TokenMeta } from '../types/token';
@@ -21,8 +21,8 @@ export class Engine< T extends TokenMeta = {} > {
     this.diff = algorithm.diff.bind( algorithm );
     this.tokenize = tokenizer?.tokenize.bind( tokenizer );
     this.tokenDiff = tokens.diff.bind( tokens );
-    this.comparator = comparator ?? COMPARATORS.exact;
-    this.tokenComparator = tokenComparator ?? COMPARATORS.exact;
+    this.comparator = comparator ?? COMPARATORS.exact();
+    this.tokenComparator = tokenComparator ?? COMPARATORS.exact();
   }
 
   public process ( input: Input ) : Result< T > {
