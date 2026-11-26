@@ -1,5 +1,6 @@
 import type { LineScript, Result } from '../types/engine';
 import type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from '../types/similarity';
+import { assertOption } from '../utils';
 
 
 const segmenter = new Intl.Segmenter( undefined, { granularity: 'grapheme' } );
@@ -56,6 +57,9 @@ export class Similarity {
   }
 
   public constructor ( { script }: Result, { mode = 'similarity', weighting = 'characters' }: SimilarityOptions = {} ) {
+    assertOption( [ 'retention', 'similarity', 'combined' ].includes( mode ), 'similarity mode' );
+    assertOption( [ 'lines', 'characters' ].includes( weighting ), 'similarity weighting' );
+
     this.script = script, this.mode = mode, this.weighting = weighting;
   }
 
