@@ -7,5 +7,10 @@ export interface Comparator< T extends Comparable > {
   key?: ( value: T ) => unknown;
 }
 
-export type ComparatorFactory = < T extends Comparable = Comparable > ( lineEndings?: boolean ) =>
-  Comparator< T >;
+export interface ComparatorOptions {
+  lineEndings?: boolean;
+}
+
+export type ComparatorFactory = < T extends Comparable = Comparable > (
+  options?: ComparatorOptions
+) => Comparator< T >;
