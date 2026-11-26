@@ -1,6 +1,6 @@
 import type { LineScript, Result } from '../types/engine';
 import type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from '../types/similarity';
-import { assertOption } from '../utils';
+import { assertOption } from '../utils/assert';
 
 
 const segmenter = new Intl.Segmenter( undefined, { granularity: 'grapheme' } );

@@ -1,6 +1,6 @@
 import type { Result } from '../types/engine';
 import type { HunkData, HunkOptions } from '../types/hunk';
-import { assertOption } from '../utils';
+import { assertOption } from '../utils/assert';
 
 
 export class Hunk {

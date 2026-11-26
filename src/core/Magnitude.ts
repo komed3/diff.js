@@ -4,7 +4,7 @@ import type {
   MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudeOptions,
   MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative, MagnitudeValue
 } from '../types/magnitude';
-import { assertOption } from '../utils';
+import { assertOption } from '../utils/assert';
 
 
 const bases = [ 'original', 'modified', 'combined', 'maximum' ];

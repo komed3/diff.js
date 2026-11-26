@@ -1,7 +1,7 @@
 import type { LineScript, Result } from '../types/engine';
 import type { HeatmapCell, HeatmapData, HeatmapOptions } from '../types/heatmap';
 import type { Line } from '../types/line';
-import { assertOption } from '../utils';
+import { assertOption } from '../utils/assert';
 
 
 const MAX_CELLS = 1_000_000;
