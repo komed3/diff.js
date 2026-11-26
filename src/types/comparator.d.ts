@@ -11,6 +11,4 @@ export interface ComparatorOptions {
   lineEndings?: boolean;
 }
 
-export type ComparatorFactory = < T extends Comparable = Comparable > (
-  options?: ComparatorOptions
-) => Comparator< T >;
+export type ComparatorFactory = < T extends Comparable > ( options?: ComparatorOptions ) => Comparator< T >;

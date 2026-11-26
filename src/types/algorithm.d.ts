@@ -1,4 +1,5 @@
-import type { Comparable, Sequence } from './context';
+import type { Comparable } from './comparator';
+import type { Sequence } from './context';
 import type { Operation } from './operation';
 
 
