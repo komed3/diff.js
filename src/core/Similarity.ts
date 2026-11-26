@@ -10,7 +10,7 @@ export class Similarity {
   private entries?: SimilarityLine[];
 
   private commonLength ( entry: LineScript ) : number | null {
-    if ( ! entry?.edit ) return null;
+    if ( ! entry.edit ) return null;
 
     const { edit: { original, operations } } = entry;
     let len = 0;
