@@ -33,4 +33,41 @@ test( 'COMPARATORS', async t => {
       }
     } );
   }
+
+  await t.test( 'compares line endings by default', () => {
+    const comparator = COMPARATORS.exact();
+    const original = { value: 'text', ending: '\n', offset: 0, contentEnd: 4, end: 5 };
+    const modified = { value: 'text', ending: '\r\n', offset: 0, contentEnd: 4, end: 6 };
+
+    assert.equal( comparator.equals( original, modified ), false );
+    assert.notEqual( comparator.key( original ), comparator.key( modified ) );
+  } );
+
+  await t.test( 'can ignore line endings', () => {
+    const comparator = COMPARATORS.exact( { lineEndings: false } );
+    const original = { value: 'text', ending: '\n', offset: 0, contentEnd: 4, end: 5 };
+    const modified = { value: 'text', ending: '\r\n', offset: 0, contentEnd: 4, end: 6 };
+
+    assert.equal( comparator.equals( original, modified ), true );
+    assert.equal( comparator.key( original ), comparator.key( modified ) );
+  } );
+
+  await t.test( 'creates unambiguous keys', () => {
+    const comparator = COMPARATORS.exact();
+
+    const a = { value: 'x', ending: 'y', offset: 0, contentEnd: 1, end: 2 };
+    const b = { value: 'xy', ending: '', offset: 0, contentEnd: 2, end: 2 };
+
+    assert.notEqual( comparator.key( a ), comparator.key( b ) );
+  } );
+
+  await t.test( 'does not treat token metadata as line endings', () => {
+    const comparator = COMPARATORS.exact();
+
+    const original = { value: 'text', ending: '\n' };
+    const modified = { value: 'text', ending: '\r\n' };
+
+    assert.equal( comparator.equals( original, modified ), true );
+    assert.equal( comparator.key( original ), comparator.key( modified ) );
+  } );
 } );
