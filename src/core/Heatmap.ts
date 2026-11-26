@@ -1,5 +1,5 @@
-import type { LineScript, Result } from '../types/engine';
-import type { HeatmapCell, HeatmapData, HeatmapOptions } from '../types/heatmap';
+import type { Result } from '../types/engine';
+import type { HeatmapCell, HeatmapData, HeatmapDimension, HeatmapFilter, HeatmapOptions } from '../types/heatmap';
 import type { Line } from '../types/line';
 import { assertOption } from '../utils/assert';
 
@@ -8,20 +8,23 @@ const MAX_CELLS = 1_000_000;
 
 
 export class Heatmap {
-  private readonly script: LineScript[];
+  private readonly x: HeatmapDimension;
+  private readonly y: HeatmapDimension;
+  private readonly filter: HeatmapFilter;
 
-  public constructor ( { script }: Result ) {
-    this.script = script;
-  }
-
-  public create ( { x = 'auto', y = 'auto', filter = 'all' }: HeatmapOptions = {} ) : HeatmapData {
+  public constructor ( { x = 'auto', y = 'auto', filter = 'all' }: HeatmapOptions = {} ) {
     assertOption( x === 'auto' || ( Number.isSafeInteger( x ) && x >= 1 ), 'heatmap width' );
     assertOption( y === 'auto' || ( Number.isSafeInteger( y ) && y >= 1 ), 'heatmap height' );
     assertOption( [ 'all', 'insert', 'delete', 'change' ].includes( filter ), 'heatmap filter' );
 
+    this.x = x, this.y = y, this.filter = filter;
+  }
+
+  public create ( { script }: Result ) : HeatmapData {
+    const { x, y, filter } = this;
     let maxWidth = 1, oLines = 0, mLines = 0;
 
-    for ( const { original, modified, operation } of this.script ) {
+    for ( const { original, modified, operation } of script ) {
       maxWidth = Math.max( maxWidth, original?.value.length ?? 0, modified?.value.length ?? 0 );
       oLines = Math.max( oLines, operation.original.start + operation.original.length );
       mLines = Math.max( mLines, operation.modified.start + operation.modified.length );
@@ -49,7 +52,7 @@ export class Heatmap {
       for ( let pos = 0; pos < value.length; pos++ ) add( row, rows, pos, type, 1 );
     };
 
-    for ( const { original, modified, operation: { type, original: oRange, modified: mRange }, edit } of this.script ) {
+    for ( const { original, modified, operation: { type, original: oRange, modified: mRange }, edit } of script ) {
       if ( type === 'equal' ) continue;
 
       if ( type === 'insert' || type === 'delete' ) {
