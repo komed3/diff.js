@@ -8,15 +8,19 @@ const parser = new LineParser();
 
 test( 'LineParser', async t => {
   await t.test( 'parses a single line without a line ending', () => {
-    assert.deepEqual( parser.parse( 'Hello' ), [ {
-      value: 'Hello', ending: '', offset: 0, contentEnd: 5, end: 5
-    } ] );
+    assert.deepEqual( parser.parse( 'Hello' ), [
+      { value: 'Hello', ending: '', offset: 0, contentEnd: 5, end: 5 }
+    ] );
   } );
 
-  await t.test( 'parses an empty input as one empty line', () => {
-    assert.deepEqual( parser.parse( '' ), [ {
-      value: '', ending: '', offset: 0, contentEnd: 0, end: 0
-    } ] );
+  await t.test( 'parses an empty input without lines', () => {
+    assert.deepEqual( parser.parse( '' ), [] );
+  } );
+
+  await t.test( 'parses an empty line', () => {
+    assert.deepEqual( parser.parse( '\n' ), [
+      { value: '', ending: '\n', offset: 0, contentEnd: 0, end: 1 }
+    ] );
   } );
 
   await t.test( 'parses lines separated by LF', () => {
