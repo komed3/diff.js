@@ -21,8 +21,8 @@ export class Engine< T extends TokenMeta = {} > {
     this.diff = algorithm.diff.bind( algorithm );
     this.tokenize = tokenizer?.tokenize.bind( tokenizer );
     this.tokenDiff = tokens.diff.bind( tokens );
-    this.comparator = comparator ?? COMPARATORS.exact();
-    this.tokenComparator = tokenComparator ?? COMPARATORS.exact();
+    this.comparator = comparator ?? COMPARATORS.exact< Line >();
+    this.tokenComparator = tokenComparator ?? COMPARATORS.exact< Token< T > >();
   }
 
   public process ( input: Input ) : Result< T > {
