@@ -4,6 +4,7 @@ import type {
   MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudeOptions,
   MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative, MagnitudeValue
 } from '../types/magnitude';
+import { assertOption } from '../utils';
 
 
 const bases = [ 'original', 'modified', 'combined', 'maximum' ];
@@ -14,9 +15,8 @@ export class Magnitude {
   private readonly operations = { insert: 0, delete: 0, change: 0 };
 
   private value ( { metric = 'changed', base = 'original' }: MagnitudeOptions = {} ) : MagnitudeValue {
-    if ( ! Object.hasOwn( this.stats, metric ) ) throw new RangeError( 'Invalid magnitude metric' );
-    if ( typeof base === 'number' ? ! Number.isFinite( base ) || base < 0 : ! bases.includes( base ) )
-      throw new RangeError( 'Invalid magnitude base' );
+    assertOption( Object.hasOwn( this.stats, metric ), 'magnitude metric' );
+    assertOption( typeof base === 'number' ? Number.isFinite( base ) && base >= 0 : bases.includes( base ), 'magnitude base' );
 
     return { value: this.stats[ metric ], baseValue: typeof base === 'number' ? base
       : base === 'original' ? this.stats.original : base === 'modified' ? this.stats.modified
@@ -43,18 +43,16 @@ export class Magnitude {
   }
 
   public percentage ( { precision = 1, ...options }: MagnitudePercentageOptions = {} ) : MagnitudePercentage {
-    if ( ! Number.isSafeInteger( precision ) || precision < 0 || precision > 100 )
-      throw new RangeError( 'Invalid magnitude precision' );
-
+    assertOption( Number.isSafeInteger( precision ) && precision >= 0 && precision <= 100, 'magnitude precision' );
     const { value, baseValue } = this.value( options ), factor = 10 ** precision;
-    return { value, baseValue, percentage: value === null || baseValue === 0 ? null
-      : Math.round( value / baseValue * 100 * factor ) / factor
+
+    return { value, baseValue, percentage: value === null || baseValue === 0 ? null :
+      Math.round( value / baseValue * 100 * factor ) / factor
     };
   }
 
   public boxes ( { total = 5, ...options }: MagnitudeBoxesOptions = {} ) : MagnitudeBoxes {
-    if ( ! Number.isSafeInteger( total ) || total < 1 )
-      throw new RangeError( 'Invalid magnitude box count' );
+    assertOption( Number.isSafeInteger( total ) && total >= 1, 'magnitude box count' );
 
     const { value, baseValue } = this.value( options );
     const ratio = value === null || baseValue === 0 ? null : Math.abs( value / baseValue );
