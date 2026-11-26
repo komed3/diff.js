@@ -2,8 +2,7 @@ import type { Algorithm } from './algorithm';
 import type { Comparator } from './comparator';
 import type { Line } from './line';
 import type { LineOperation, Operation } from './operation';
-import type { Token, TokenMeta } from './token';
-import type { Tokenizer } from './tokenizer';
+import type { Token, Tokenizer, TokenMeta } from './tokenizer';
 
 
 export interface EngineOptions< T extends TokenMeta = {} > {
