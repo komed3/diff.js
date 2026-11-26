@@ -140,4 +140,8 @@ test( 'Heatmap', async t => {
     for ( const x of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => create( 'a', 'b', { x } ), RangeError );
     for ( const y of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => create( 'a', 'b', { y } ), RangeError );
   } );
+
+  await t.test( 'rejects oversized rasters', () => {
+    assert.throws( () => create( 'a', 'b', { x: 1001, y: 1000 } ), RangeError );
+  } );
 } );
