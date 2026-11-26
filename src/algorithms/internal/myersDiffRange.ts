@@ -1,4 +1,5 @@
-import type { Bounds, Comparable, Sequence } from '../../types/context';
+import type { Comparable } from '../../types/comparator';
+import type { Bounds, Sequence } from '../../types/context';
 
 
 export function myersDiffRange < T extends Comparable > (

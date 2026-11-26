@@ -1,4 +1,5 @@
-import type { Comparable, Context, Sequence } from '../../types/context';
+import type { Comparable } from '../../types/comparator';
+import type { Context, Sequence } from '../../types/context';
 import { commonEdges } from './commonEdges';
 import { populateOperations } from './populateOperations';
 

@@ -1,4 +1,5 @@
-import type { Bounds, Comparable, Sequence } from '../../types/context';
+import type { Comparable } from '../../types/comparator';
+import type { Bounds, Sequence } from '../../types/context';
 import type { AnchorGroup } from '../../types/group';
 import type { Pair } from '../../types/operation';
 import { addGroup, findGroup } from './group';
