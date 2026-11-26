@@ -2,21 +2,21 @@ import type { Algorithm } from '../types/algorithm';
 import type { Comparator } from '../types/context';
 import type { EngineOptions, Input, LineScript, Result } from '../types/engine';
 import type { Line } from '../types/line';
-import type { Token } from '../types/token';
+import type { Token, TokenMeta } from '../types/token';
 import type { Tokenizer } from '../types/tokenizer';
 import { COMPARATORS } from './Comparator';
 import { LineParser } from './LineParser';
 
 
-export class Engine {
+export class Engine< T extends TokenMeta = {} > {
   private readonly parser = new LineParser();
   private readonly diff: Algorithm[ 'diff' ];
-  private readonly tokenize?: Tokenizer[ 'tokenize' ];
+  private readonly tokenize?: Tokenizer< T >[ 'tokenize' ];
   private readonly tokenDiff: Algorithm[ 'diff' ];
   private readonly comparator: Comparator< Line >;
-  private readonly tokenComparator: Comparator< Token >;
+  private readonly tokenComparator: Comparator< Token< T > >;
 
-  public constructor ( { algorithm, comparator, tokenizer, tokenAlgorithm, tokenComparator }: EngineOptions ) {
+  public constructor ( { algorithm, comparator, tokenizer, tokenAlgorithm, tokenComparator }: EngineOptions< T > ) {
     const tokens = tokenAlgorithm ?? algorithm;
     this.diff = algorithm.diff.bind( algorithm );
     this.tokenize = tokenizer?.tokenize.bind( tokenizer );
@@ -25,17 +25,17 @@ export class Engine {
     this.tokenComparator = tokenComparator ?? COMPARATORS.exact;
   }
 
-  public process ( input: Input ) : Result {
+  public process ( input: Input ) : Result< T > {
     const original = this.parser.parse( input.original ), modified = this.parser.parse( input.modified );
     const operations = this.diff( { original, modified, ...this.comparator } );
-    const script: LineScript[] = [], ins: [ number, number ][] = [], del: [ number, number ][] = [];
+    const script: LineScript< T >[] = [], ins: [ number, number ][] = [], del: [ number, number ][] = [];
 
     const flush = () => {
       const count = Math.min( del.length, ins.length );
 
       for ( let i = 0; i < count; i++ ) {
         const [ o ] = del[ i ], [ m ] = ins[ i ];
-        const entry: LineScript = { original: original[ o ], modified: modified[ m ], operation: {
+        const entry: LineScript< T > = { original: original[ o ], modified: modified[ m ], operation: {
           type: 'change', original: { start: o, length: 1 }, modified: { start: m, length: 1 }
         } };
 
