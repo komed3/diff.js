@@ -4,6 +4,7 @@ const { test } = require( 'node:test' );
 
 const { COMPARATORS } = require( '../../.test-dist/core/Comparator.js' );
 
+
 const cases = {
   exact: [ [ 'text', 'text', true ], [ 'text', 'Text', false ] ],
   whitespace: [ [ 'two words', 'two \t words', true ], [ 'two words', 'tw o words', true ], [ 'two words', 'three words', false ] ],
@@ -15,14 +16,17 @@ const cases = {
 
 
 test( 'COMPARATORS', async t => {
-  for ( const [ name, { equals, key } ] of Object.entries( COMPARATORS ) ) {
+  for ( const [ name, factory ] of Object.entries( COMPARATORS ) ) {
     await t.test( `supports ${ name }`, () => {
+      const { equals, key } = factory();
+
       assert.ok( Object.hasOwn( cases, name ) );
       assert.ok( equals );
       assert.ok( key );
 
       for ( const [ a, b, equal ] of cases[ name ] ) {
         const o = { value: a }, m = { value: b };
+
         assert.equal( equals( o, m ), equal );
         assert.equal( equals( m, o ), equal );
         assert.equal( key( o ) === key( m ), equal );
