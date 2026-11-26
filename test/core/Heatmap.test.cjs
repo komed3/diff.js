@@ -149,6 +149,18 @@ test( 'Heatmap', async t => {
     );
   } );
 
+  await t.test( 'reuses configuration for different results', () => {
+    const heatmap = new Heatmap( { x: 3, y: 1 } );
+    const inserted = heatmap.create( engine().process( { original: 'abc', modified: 'abc\nxy' } ) );
+    const deleted = heatmap.create( engine().process( { original: 'abc\nxy', modified: 'abc' } ) );
+
+    assert.equal( inserted.width, 3 );
+    assert.equal( deleted.width, 3 );
+
+    assert.equal( inserted.cells.reduce( ( sum, { insert } ) => sum + insert, 0 ), 2 );
+    assert.equal( deleted.cells.reduce( ( sum, { delete: del } ) => sum + del, 0 ), 2 );
+  } );
+
   await t.test( 'rejects invalid dimensions', () => {
     for ( const x of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => new Heatmap( { x } ), Error );
     for ( const y of [ 0, -1, 1.5, NaN, Infinity ] ) assert.throws( () => new Heatmap( { y } ), Error );
