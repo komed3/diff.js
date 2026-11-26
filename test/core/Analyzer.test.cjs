@@ -100,6 +100,15 @@ test( 'Analyzer', async t => {
     assert.deepEqual( stats.magnitude.change, { runs: 3, lines: 3, longest: 1, average: 1 } );
   } );
 
+  await t.test( 'counts different line endings', () => {
+    const stats = analyze( 'a\r\nb', 'a\nb' ).characters();
+
+    for ( const metric of Object.values( stats ) ) assert.deepEqual( metric, {
+      original: 4, modified: 3, equal: { original: 1, modified: 1 }, inserted: 0, deleted: 0,
+      changed: { original: 3, modified: 2 }, delta: -1, changeRate: 5 / 7
+    } );
+  } );
+
   await t.test( 'calculates block distribution', () => {
     const original = [
       'header', 'keep', 'old title', 'old detail', 'obsolete',
