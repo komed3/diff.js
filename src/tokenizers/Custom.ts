@@ -1,5 +1,4 @@
-import type { Token, TokenMeta } from '../types/token';
-import type { CustomTokenizerOptions, Tokenizer } from '../types/tokenizer';
+import type { CustomTokenizerOptions, Token, Tokenizer, TokenMeta } from '../types/tokenizer';
 
 
 export class Custom< T extends TokenMeta = {} > implements Tokenizer< T > {
