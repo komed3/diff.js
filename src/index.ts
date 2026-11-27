@@ -19,14 +19,14 @@ import { Character } from './tokenizers/Character';
 import { Custom } from './tokenizers/Custom';
 import { Word } from './tokenizers/Word';
 
-import { Inline } from './formatter/Inline';
-import { SideBySide } from './formatter/SideBySide';
-import { Unified } from './formatter/Unified';
+import { Inline } from './formatters/Inline';
+import { SideBySide } from './formatters/SideBySide';
+import { Unified } from './formatters/Unified';
 
-import { ASCII } from './renderer/ASCII';
-import { CLI } from './renderer/CLI';
-import { HTML } from './renderer/HTML';
-import { Markdown } from './renderer/Markdown';
+import { ASCII } from './renderers/ASCII';
+import { CLI } from './renderers/CLI';
+import { HTML } from './renderers/HTML';
+import { Markdown } from './renderers/Markdown';
 
 
 export {
