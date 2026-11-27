@@ -22,4 +22,14 @@ test( 'Inline', async t => {
       { type: 'delete', value: 'old' }, { type: 'insert', value: 'new' }
     ] } ] } );
   } );
+
+  await t.test( 'preserves unchanged lines', () => {
+    const result = format( 'first\nold\nlast', 'first\nnew\nlast', { context: 1 } );
+
+    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+      [ 1, [ { type: 'equal', value: 'first\n' } ] ],
+      [ 2, [ { type: 'delete', value: 'old' }, { type: 'insert', value: 'new' } ] ],
+      [ 3, [ { type: 'equal', value: 'last' } ] ]
+    ] );
+  } );
 } );
