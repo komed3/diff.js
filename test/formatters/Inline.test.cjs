@@ -40,4 +40,9 @@ test( 'Inline', async t => {
       [ 1, [ { type: 'equal', value: 'first\n' } ] ], [ 2, [ { type: 'equal', value: 'last' } ] ]
     ] );
   } );
+
+  await t.test( 'indicates omitted lines through line numbers', () => {
+    const result = format( 'old\none\ntwo\nthree\nlast', 'new\none\ntwo\nthree\nend', { context: 0 } );
+    assert.deepEqual( result.lines.map( ( { number } ) => number ), [ 1, 5 ] );
+  } );
 } );
