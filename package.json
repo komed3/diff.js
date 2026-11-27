@@ -30,8 +30,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "tsc --outDir .test-dist && node --test test/run.cjs",
-    "benchmark": "tsc --outDir .test-dist && node benchmark/run.cjs",
+    "test": "npm run build && node --test test/run.cjs",
+    "benchmark": "npm run build && node benchmark/run.cjs",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
