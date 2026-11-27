@@ -1,6 +1,6 @@
 // scripts/postbuild.mjs
 
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 
 await mkdir( 'dist/cjs', { recursive: true } );
@@ -8,3 +8,8 @@ await writeFile( 'dist/cjs/package.json', JSON.stringify( { type: 'commonjs' }, 
 
 await mkdir( 'dist/esm', { recursive: true } );
 await writeFile( 'dist/esm/package.json', JSON.stringify( { type: 'module' }, null, 2 ) );
+
+const bundle = await readFile( 'dist/bundle.js', 'utf8' );
+await writeFile( 'dist/bundle.js', bundle.replace( /`(\\r)?(\r\n|\r|\n)`/g,
+  ( _, cr, lb ) => JSON.stringify( ( cr ? '\r' : '' ) + lb )
+) );
