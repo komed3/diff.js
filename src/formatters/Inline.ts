@@ -1,4 +1,4 @@
-import type { Formatter } from '../types/formatter';
+import type { Formatter, InlineData } from '../types/formatter';
 
 
-export class Inline implements Formatter {}
+export class Inline implements Formatter< InlineData > {}

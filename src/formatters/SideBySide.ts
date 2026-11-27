@@ -1,4 +1,4 @@
-import type { Formatter } from '../types/formatter';
+import type { Formatter, SideBySideData } from '../types/formatter';
 
 
-export class SideBySide implements Formatter {}
+export class SideBySide implements Formatter< SideBySideData > {}

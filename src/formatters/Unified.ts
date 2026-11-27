@@ -1,4 +1,4 @@
-import type { Formatter } from '../types/formatter';
+import type { Formatter, UnifiedData } from '../types/formatter';
 
 
-export class Unified implements Formatter {}
+export class Unified implements Formatter< UnifiedData > {}
