@@ -68,13 +68,17 @@ test( 'Inline', async t => {
     } );
 
     assert.deepEqual( lines, [ { number: 1, tokens: [
-      { type: 'equal', value: 'hello ' }, { type: 'delete', value: 'world' },
-      { type: 'insert', value: 'there' }
+      { type: 'equal', value: 'hello ' }, { type: 'delete', value: 'world' }, { type: 'insert', value: 'there' }
     ] } ] );
   } );
 
   await t.test( 'falls back to line granularity without token edits', () => {
     const { lines } = format( 'old', 'new', { context: 0, granularity: 'token' } );
     assert.deepEqual( lines[ 0 ].tokens, [ { type: 'delete', value: 'old' }, { type: 'insert', value: 'new' } ] );
+  } );
+
+  await t.test( 'preserves different line endings', () => {
+    const { lines } = format( 'text\n', 'text\r\n', { context: 0 } );
+    assert.deepEqual( lines[ 0 ].tokens, [ { type: 'delete', value: 'text\n' }, { type: 'insert', value: 'text\r\n' } ] );
   } );
 } );
