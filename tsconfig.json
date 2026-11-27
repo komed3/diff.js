@@ -10,8 +10,7 @@
     "strict": true
   },
   "tsc-alias": {
-    "resolveFullPaths": true,
-    "extension": ".js"
+    "resolveFullPaths": true
   },
   "include": [ "src" ],
   "exclude": [ "node_modules", "dist" ]
