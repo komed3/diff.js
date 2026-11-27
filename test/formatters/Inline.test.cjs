@@ -81,4 +81,8 @@ test( 'Inline', async t => {
     const { lines } = format( 'text\n', 'text\r\n', { context: 0 } );
     assert.deepEqual( lines[ 0 ].tokens, [ { type: 'delete', value: 'text\n' }, { type: 'insert', value: 'text\r\n' } ] );
   } );
+
+  await t.test( 'preserves empty input', () => {
+    assert.deepEqual( format( '', '', { context: 'all' } ), { granularity: 'line', lines: [] } );
+  } );
 } );
