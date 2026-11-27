@@ -19,7 +19,7 @@ export interface InlineData< T extends TokenMeta = {} > extends FormatterData {
 }
 
 export interface SideBySideData< T extends TokenMeta = {} > extends FormatterData {
-  lines: LineScript< T >[];
+  rows: LineScript< T >[];
 }
 
 export interface UnifiedHunk extends HunkData {
