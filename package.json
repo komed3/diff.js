@@ -40,7 +40,7 @@
     "build": "npm run clean && npm run build:all && npm run format && npm run bundle",
     "postbuild": "tsc-alias && node scripts/postbuild.mjs",
     "prepublishOnly": "npm run build",
-    "test": "npm run build && node --test",
+    "test": "npm run build && node --test test/run.cjs",
     "benchmark": "npm run build && node benchmark/run.cjs",
     "lint": "tsc --noEmit"
   },
