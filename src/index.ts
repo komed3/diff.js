@@ -16,7 +16,7 @@ export type {
   MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative, MagnitudeValue
 } from './types/magnitude';
 export type { Change, Delete, Equal, Insert, LineOperation, Operation, Range } from './types/operation';
-export type { Render } from './types/renderer';
+export type { Renderer as Render } from './types/renderer';
 export type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from './types/similarity';
 export type { CustomTokenizerOptions, Token, Tokenizer, TokenizerOptions, TokenMeta } from './types/tokenizer';
 
