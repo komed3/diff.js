@@ -30,6 +30,6 @@ export interface UnifiedData extends FormatterData {
   hunks: UnifiedHunk[];
 }
 
-export interface Formatter< T extends FormatterData > {
-  format ( result: Result ) : T;
+export interface Formatter< O, T extends TokenMeta = {} > {
+  format ( result: Result< T > ) : O;
 }
