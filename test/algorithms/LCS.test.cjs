@@ -3,7 +3,7 @@ const shared = require( './shared.cjs' );
 const { assertMinimal, diff, reconstruct } = require( './utils.cjs' );
 
 
-const { LCS } = require( '../../.test-dist/algorithms/LCS.js' );
+const { LCS } = require( '../../dist/algorithms/LCS.js' );
 const algorithm = new LCS();
 
 
