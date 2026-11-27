@@ -59,10 +59,10 @@ export {
 };
 
 
-export const diffJs = {
-  Analyzer, ASCII, Character, CLI, COMPARATORS, createComparator, Custom, Diff,
+export const diffJs = Object.assign( Diff, {
+  Analyzer, ASCII, Character, CLI, COMPARATORS, createComparator, Custom,
   Engine, Heatmap, Histogram, HTML, Hunk, HuntSzymanski, Inline, LCS, LineParser,
   Magnitude, Markdown, Myers, Patience, SideBySide, Similarity, Unified, Word
-};
+} );
 
 export default diffJs;
