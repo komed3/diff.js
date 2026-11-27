@@ -72,4 +72,9 @@ test( 'Inline', async t => {
       { type: 'insert', value: 'there' }
     ] } ] );
   } );
+
+  await t.test( 'falls back to line granularity without token edits', () => {
+    const { lines } = format( 'old', 'new', { context: 0, granularity: 'token' } );
+    assert.deepEqual( lines[ 0 ].tokens, [ { type: 'delete', value: 'old' }, { type: 'insert', value: 'new' } ] );
+  } );
 } );
