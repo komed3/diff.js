@@ -2,7 +2,7 @@ const shared = require( './shared.cjs' );
 const { assertMinimal, diff } = require( './utils.cjs' );
 
 
-const { HuntSzymanski } = require( '../../dist/algorithms/HuntSzymanski.js' );
+const { HuntSzymanski } = require( '../../dist/cjs/algorithms/HuntSzymanski.js' );
 const algorithm = new HuntSzymanski();
 
 

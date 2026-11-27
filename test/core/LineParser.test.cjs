@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 
-const { LineParser } = require( '../../dist/core/LineParser.js' );
+const { LineParser } = require( '../../dist/cjs/core/LineParser.js' );
 const parser = new LineParser();
 
 

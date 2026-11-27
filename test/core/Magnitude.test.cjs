@@ -2,10 +2,10 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 
-const { Myers } = require( '../../dist/algorithms/Myers.js' );
-const { Engine } = require( '../../dist/core/Engine.js' );
-const { Hunk } = require( '../../dist/core/Hunk.js' );
-const { Magnitude } = require( '../../dist/core/Magnitude.js' );
+const { Myers } = require( '../../dist/cjs/algorithms/Myers.js' );
+const { Engine } = require( '../../dist/cjs/core/Engine.js' );
+const { Hunk } = require( '../../dist/cjs/core/Hunk.js' );
+const { Magnitude } = require( '../../dist/cjs/core/Magnitude.js' );
 
 
 const engine = new Engine( { algorithm: new Myers() } );

@@ -2,7 +2,7 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 
-const { COMPARATORS } = require( '../../dist/core/Comparator.js' );
+const { COMPARATORS } = require( '../../dist/cjs/core/Comparator.js' );
 
 
 const cases = {

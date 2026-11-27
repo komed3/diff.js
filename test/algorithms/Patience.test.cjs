@@ -3,7 +3,7 @@ const shared = require( './shared.cjs' );
 const { assertMinimal, diff, getOperationCount, reconstruct } = require( './utils.cjs' );
 
 
-const { Patience } = require( '../../dist/algorithms/Patience.js' );
+const { Patience } = require( '../../dist/cjs/algorithms/Patience.js' );
 const algorithm = new Patience();
 
 
