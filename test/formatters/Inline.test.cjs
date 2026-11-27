@@ -61,4 +61,15 @@ test( 'Inline', async t => {
       [ 2, [ { type: 'delete', value: 'removed\n' } ] ]
     ] );
   } );
+
+  await t.test( 'uses token granularity for changed lines', () => {
+    const result = format( 'hello world', 'hello there', { context: 0, granularity: 'token' }, {
+      tokenizer: new Word()
+    } );
+
+    assert.deepEqual( result.lines, [ { number: 1, tokens: [
+      { type: 'equal', value: 'hello ' }, { type: 'delete', value: 'world' },
+      { type: 'insert', value: 'there' }
+    ] } ] );
+  } );
 } );
