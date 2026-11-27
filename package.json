@@ -30,11 +30,23 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "npm run build && node --test test/run.cjs",
+    "clean": "rimraf dist",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:dts": "tsc -p tsconfig.dts.json",
+    "build:all": "npm run build:cjs && npm run build:esm && npm run build:dts",
+    "format": "prettier --ignore-path \"\" --write \"./dist/**/*\" --log-level warn",
+    "build": "npm run clean && npm run build:all && npm run format",
+    "postbuild": "tsc-alias && node scripts/postbuild.mjs",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && node --test",
     "benchmark": "npm run build && node benchmark/run.cjs",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
+    "prettier": "^3.10.1",
+    "rimraf": "^6.1.4",
     "tsc-alias": "^1.9.12",
     "typescript": "^7.0.2"
   }
