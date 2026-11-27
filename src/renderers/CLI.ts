@@ -1,4 +1,4 @@
-import type { Render } from '../types/renderer';
+import type { Renderer } from '../types/renderer';
 
 
-export class CLI implements Render {}
+export class CLI implements Renderer {}

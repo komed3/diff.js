@@ -1,4 +1,4 @@
-import type { Render } from '../types/renderer';
+import type { Renderer } from '../types/renderer';
 
 
-export class ASCII implements Render {}
+export class ASCII implements Renderer {}

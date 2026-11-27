@@ -1,4 +1,4 @@
-import type { Render } from '../types/renderer';
+import type { Renderer } from '../types/renderer';
 
 
-export class Markdown implements Render {}
+export class Markdown implements Renderer {}
