@@ -85,4 +85,8 @@ test( 'Inline', async t => {
   await t.test( 'preserves empty input', () => {
     assert.deepEqual( format( '', '', { context: 'all' } ), { granularity: 'line', lines: [] } );
   } );
+
+  await t.test( 'rejects invalid granularity', () => {
+    assert.throws( () => new Inline( { granularity: 'character' } ), Error );
+  } );
 } );
