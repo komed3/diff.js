@@ -1,6 +1,6 @@
 import type { LineScript } from './engine';
 import type { Range } from './operation';
-import { TokenMeta } from './tokenizer';
+import type { TokenMeta } from './tokenizer';
 
 
 export interface HunkOptions {
