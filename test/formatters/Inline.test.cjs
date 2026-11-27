@@ -45,4 +45,12 @@ test( 'Inline', async t => {
     const result = format( 'old\none\ntwo\nthree\nlast', 'new\none\ntwo\nthree\nend', { context: 0 } );
     assert.deepEqual( result.lines.map( ( { number } ) => number ), [ 1, 5 ] );
   } );
+
+  await t.test( 'numbers inserted lines on the modified side', () => {
+    const result = format( 'first\nlast', 'first\nadded\nlast', { context: 0 } );
+
+    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+      [ 2, [ { type: 'insert', value: 'added\n' } ] ]
+    ] );
+  } );
 } );
