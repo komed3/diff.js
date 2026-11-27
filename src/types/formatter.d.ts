@@ -24,7 +24,6 @@ export interface InlinePart {
 }
 
 export interface InlineData extends FormatterData {
-  readonly granularity: Granularity;
   readonly parts: readonly InlinePart[];
 }
 
