@@ -1,1 +1,4 @@
-export class SideBySide {}
+import type { Formatter } from '../types/formatter';
+
+
+export class SideBySide implements Formatter {}
