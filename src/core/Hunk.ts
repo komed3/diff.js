@@ -4,15 +4,15 @@ import { assertOption } from '../utils/assert';
 
 
 export class Hunk {
-  private readonly context: number;
+  private readonly context: number | 'all';
 
   public constructor ( { context = 3 }: HunkOptions = {} ) {
-    assertOption( Number.isSafeInteger( context ) && context >= 0, 'hunk context' );
+    assertOption( context === 'all' || Number.isSafeInteger( context ) && context >= 0, 'hunk context' );
     this.context = context;
   }
 
   public create ( { script }: Result ) : HunkData[] {
-    const ctx = this.context, hunks: HunkData[] = [];
+    const ctx = this.context === 'all' ? script.length : this.context, hunks: HunkData[] = [];
     let start = -1, last = -1;
 
     const finish = () => {
