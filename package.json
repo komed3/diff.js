@@ -1,6 +1,6 @@
 {
   "name": "@komed3/diff.js",
-  "description": "Fast text diff library, written in TypeScript",
+  "description": "A modular text diff library with multiple algorithms, token-level analysis, formatting and rendering.",
   "license": "MIT",
   "version": "1.0.0",
   "author": {
@@ -9,7 +9,30 @@
     "url": "https://komed3.de"
   },
   "homepage": "https://github.com/komed3/diff.js",
-  "keywords": [],
+  "keywords": [
+    "diff",
+    "difference",
+    "diffing",
+    "text-diff",
+    "text-comparison",
+    "comparison",
+    "string",
+    "typescript",
+    "javascript",
+    "algorithms",
+    "myers",
+    "lcs",
+    "patience-diff",
+    "histogram-diff",
+    "word-diff",
+    "character-diff",
+    "unified-diff",
+    "side-by-side",
+    "html",
+    "markdown",
+    "react",
+    "cli"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/komed3/diff.js.git"
