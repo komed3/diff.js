@@ -22,3 +22,7 @@ require( './core/Hunk.test.cjs' );
 require( './core/LineParser.test.cjs' );
 require( './core/Magnitude.test.cjs' );
 require( './core/Similarity.test.cjs' );
+
+// --- formatters ---
+
+require( './formatters/Inline.test.cjs' );
