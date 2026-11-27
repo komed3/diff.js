@@ -6,6 +6,11 @@ import { Myers } from './algorithms/Myers';
 import { Patience } from './algorithms/Patience';
 
 
+export {
+  Diff, Histogram, HuntSzymanski, LCS, Myers, Patience
+};
+
+
 export const diffJs = {
   Diff,
   algorithm: { Myers, LCS, HuntSzymanski, Histogram, Patience }
