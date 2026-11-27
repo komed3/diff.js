@@ -1,6 +1,6 @@
 import type { Result } from './engine';
 import type { HunkData, HunkOptions } from './hunk';
-import type { MagnitudeBoxes, MagnitudeBoxesOptions } from './magnitude';
+import type { MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudePercentage, MagnitudeRelative } from './magnitude';
 import type { LineOperation } from './operation';
 import type { TokenMeta } from './tokenizer';
 
@@ -40,7 +40,11 @@ export interface SideBySideData extends FormatterData {
 }
 
 export interface UnifiedHunk extends HunkData {
-  readonly magnitude: MagnitudeBoxes;
+  readonly magnitude:
+    | MagnitudeAbsolute
+    | MagnitudeRelative
+    | MagnitudePercentage
+    | MagnitudeBoxes;
 }
 
 export interface UnifiedData extends FormatterData {
