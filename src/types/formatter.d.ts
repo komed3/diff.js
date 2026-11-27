@@ -18,6 +18,18 @@ export interface InlineData< T extends TokenMeta = {} > extends FormatterData {
   lines: LineScript< T >[];
 }
 
+export interface SideBySideData< T extends TokenMeta = {} > extends FormatterData {
+  lines: LineScript< T >[];
+}
+
+export interface UnifiedHunk extends HunkData {
+  magnitude: Magnitude;
+}
+
+export interface UnifiedData extends FormatterData {
+  hunks: UnifiedHunk[];
+}
+
 export interface Formatter< T extends FormatterData > {
   format ( result: Result ) : T;
 }
