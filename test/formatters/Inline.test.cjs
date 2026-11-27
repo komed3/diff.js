@@ -53,4 +53,12 @@ test( 'Inline', async t => {
       [ 2, [ { type: 'insert', value: 'added\n' } ] ]
     ] );
   } );
+
+  await t.test( 'numbers deleted lines on the original side', () => {
+    const result = format( 'first\nremoved\nlast', 'first\nlast', { context: 0 } );
+
+    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+      [ 2, [ { type: 'delete', value: 'removed\n' } ] ]
+    ] );
+  } );
 } );
