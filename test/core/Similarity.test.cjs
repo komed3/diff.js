@@ -2,11 +2,11 @@ const assert = require( 'node:assert/strict' );
 const { test } = require( 'node:test' );
 
 
-const { Myers } = require( '../../.test-dist/algorithms/Myers.js' );
-const { Engine } = require( '../../.test-dist/core/Engine.js' );
-const { Similarity } = require( '../../.test-dist/core/Similarity.js' );
-const { Character } = require( '../../.test-dist/tokenizers/Character.js' );
-const { graphemeSegmenter } = require( '../../.test-dist/utils/grapheme.js' );
+const { Myers } = require( '../../dist/algorithms/Myers.js' );
+const { Engine } = require( '../../dist/core/Engine.js' );
+const { Similarity } = require( '../../dist/core/Similarity.js' );
+const { Character } = require( '../../dist/tokenizers/Character.js' );
+const { graphemeSegmenter } = require( '../../dist/utils/grapheme.js' );
 
 
 const algorithm = new Myers();

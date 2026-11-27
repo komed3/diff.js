@@ -3,7 +3,7 @@ const { test } = require( 'node:test' );
 const { assertTokenComplete } = require( './utils.cjs' );
 
 
-const { Character } = require( '../../.test-dist/tokenizers/Character.js' );
+const { Character } = require( '../../dist/tokenizers/Character.js' );
 const tokenizer = new Character();
 
 
