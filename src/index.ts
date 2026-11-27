@@ -21,8 +21,6 @@ export type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeigh
 export type { CustomTokenizerOptions, Token, Tokenizer, TokenizerOptions, TokenMeta } from './types/tokenizer';
 
 
-import { Diff } from './Diff';
-
 import { Analyzer } from './core/Analyzer';
 import { COMPARATORS, createComparator } from './core/Comparator';
 import { Engine } from './core/Engine';
@@ -50,6 +48,8 @@ import { ASCII } from './renderers/ASCII';
 import { CLI } from './renderers/CLI';
 import { HTML } from './renderers/HTML';
 import { Markdown } from './renderers/Markdown';
+
+import { Diff } from './Diff';
 
 
 export {
