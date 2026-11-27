@@ -4,7 +4,6 @@ import type {
   MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudeOptions,
   MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative
 } from './magnitude';
-import type { LineOperation } from './operation';
 import type { TokenMeta } from './tokenizer';
 
 
@@ -18,20 +17,21 @@ export interface FormatterData {
   readonly granularity: Granularity;
 }
 
-export interface InlinePart {
+export interface InlineToken {
   readonly type: 'equal' | 'insert' | 'delete';
   readonly value: string;
 }
 
-export interface InlineData extends FormatterData {
-  readonly parts: readonly InlinePart[];
+export interface InlineLine {
+  readonly number: number;
+  readonly tokens: readonly InlineToken[];
 }
 
-export interface SideBySideRow {
-  readonly operation: LineOperation[ 'type' ];
-  readonly original: readonly InlinePart[] | null;
-  readonly modified: readonly InlinePart[] | null;
+export interface InlineData extends FormatterData {
+  readonly lines: readonly InlineLine[];
 }
+
+export interface SideBySideRow {}
 
 export interface SideBySideData extends FormatterData {
   readonly rows: readonly SideBySideRow[];
