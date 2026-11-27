@@ -1,5 +1,6 @@
 import type { LineScript } from './engine';
 import type { Range } from './operation';
+import { TokenMeta } from './tokenizer';
 
 
 export interface HunkOptions {
@@ -11,9 +12,9 @@ export interface HunkHeader {
   readonly modified: Range;
 }
 
-export interface HunkData {
+export interface HunkData< T extends TokenMeta = {} > {
   readonly original: Range;
   readonly modified: Range;
   readonly header: HunkHeader;
-  readonly lines: readonly LineScript[];
+  readonly lines: readonly LineScript< T >[];
 }

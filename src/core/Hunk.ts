@@ -1,5 +1,6 @@
 import type { Result } from '../types/engine';
 import type { HunkData, HunkOptions } from '../types/hunk';
+import type { TokenMeta } from '../types/tokenizer';
 import { assertOption } from '../utils/assert';
 
 
@@ -11,8 +12,8 @@ export class Hunk {
     this.context = context;
   }
 
-  public create ( { script }: Result ) : HunkData[] {
-    const ctx = this.context === 'all' ? script.length : this.context, hunks: HunkData[] = [];
+  public create < T extends TokenMeta = {} > ( { script }: Result< T > ) : HunkData< T >[] {
+    const ctx = this.context === 'all' ? script.length : this.context, hunks: HunkData< T >[] = [];
     let start = -1, last = -1;
 
     const finish = () => {
