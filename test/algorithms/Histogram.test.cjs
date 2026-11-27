@@ -3,7 +3,7 @@ const shared = require( './shared.cjs' );
 const { assertMinimal, diff, getEqualLength, reconstruct } = require( './utils.cjs' );
 
 
-const { Histogram } = require( '../../.test-dist/algorithms/Histogram.js' );
+const { Histogram } = require( '../../dist/algorithms/Histogram.js' );
 const algorithm = new Histogram();
 
 
