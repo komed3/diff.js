@@ -48,21 +48,24 @@ import { ASCII } from './renderers/ASCII';
 import { CLI } from './renderers/CLI';
 import { HTML } from './renderers/HTML';
 import { Markdown } from './renderers/Markdown';
+import { React } from './renderers/React';
 
 import { Diff } from './Diff';
 
 
 export {
-  Analyzer, ASCII, Character, CLI, COMPARATORS, createComparator, Custom, Diff,
-  Engine, Heatmap, Histogram, HTML, Hunk, HuntSzymanski, Inline, LCS, LineParser,
-  Magnitude, Markdown, Myers, Patience, SideBySide, Similarity, Unified, Word
+  Analyzer, ASCII, Character, CLI, COMPARATORS, createComparator,
+  Custom, Diff, Engine, Heatmap, Histogram, HTML, Hunk, HuntSzymanski,
+  Inline, LCS, LineParser, Magnitude, Markdown, Myers, Patience,
+  React, SideBySide, Similarity, Unified, Word
 };
 
 
 export const diffJs = Object.assign( Diff, {
-  Analyzer, ASCII, Character, CLI, COMPARATORS, createComparator, Custom,
-  Engine, Heatmap, Histogram, HTML, Hunk, HuntSzymanski, Inline, LCS, LineParser,
-  Magnitude, Markdown, Myers, Patience, SideBySide, Similarity, Unified, Word
+  Analyzer, ASCII, Character, CLI, COMPARATORS, createComparator,
+  Custom, Engine, Heatmap, Histogram, HTML, Hunk, HuntSzymanski,
+  Inline, LCS, LineParser, Magnitude, Markdown, Myers, Patience,
+  React, SideBySide, Similarity, Unified, Word
 } );
 
 export default diffJs;
