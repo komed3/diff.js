@@ -1,6 +1,9 @@
 import type { Result } from './engine';
 import type { HunkData, HunkOptions } from './hunk';
-import type { MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudePercentage, MagnitudeRelative } from './magnitude';
+import type {
+  MagnitudeAbsolute, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudeOptions,
+  MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative
+} from './magnitude';
 import type { LineOperation } from './operation';
 import type { TokenMeta } from './tokenizer';
 
@@ -9,10 +12,6 @@ export type Granularity = 'line' | 'token';
 
 export interface FormatterOptions extends HunkOptions {
   granularity?: Granularity;
-}
-
-export interface UnifiedOptions extends FormatterOptions {
-  magnitude?: MagnitudeBoxesOptions;
 }
 
 export interface FormatterData {
@@ -39,12 +38,22 @@ export interface SideBySideData extends FormatterData {
   readonly rows: readonly SideBySideRow[];
 }
 
+export interface UnifiedOptions extends FormatterOptions {
+  magnitude?: {
+    absolute?: MagnitudeOptions;
+    relative?: MagnitudeOptions;
+    percentage?: MagnitudePercentageOptions;
+    boxes?: MagnitudeBoxesOptions;
+  };
+}
+
 export interface UnifiedHunk extends HunkData {
-  readonly magnitude:
-    | MagnitudeAbsolute
-    | MagnitudeRelative
-    | MagnitudePercentage
-    | MagnitudeBoxes;
+  readonly magnitude: {
+    absolute?: MagnitudeAbsolute;
+    relative?: MagnitudeRelative;
+    percentage?: MagnitudePercentage;
+    boxes?: MagnitudeBoxes;
+  };
 }
 
 export interface UnifiedData extends FormatterData {
