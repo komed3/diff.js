@@ -24,9 +24,9 @@ test( 'Inline', async t => {
   } );
 
   await t.test( 'preserves unchanged lines', () => {
-    const result = format( 'first\nold\nlast', 'first\nnew\nlast', { context: 1 } );
+    const { lines } = format( 'first\nold\nlast', 'first\nnew\nlast', { context: 1 } );
 
-    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+    assert.deepEqual( lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
       [ 1, [ { type: 'equal', value: 'first\n' } ] ],
       [ 2, [ { type: 'delete', value: 'old' }, { type: 'insert', value: 'new' } ] ],
       [ 3, [ { type: 'equal', value: 'last' } ] ]
@@ -34,40 +34,40 @@ test( 'Inline', async t => {
   } );
 
   await t.test( 'preserves unchanged input with all context', () => {
-    const result = format( 'first\nlast', 'first\nlast', { context: 'all' } );
+    const { lines } = format( 'first\nlast', 'first\nlast', { context: 'all' } );
 
-    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+    assert.deepEqual( lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
       [ 1, [ { type: 'equal', value: 'first\n' } ] ], [ 2, [ { type: 'equal', value: 'last' } ] ]
     ] );
   } );
 
   await t.test( 'indicates omitted lines through line numbers', () => {
-    const result = format( 'old\none\ntwo\nthree\nlast', 'new\none\ntwo\nthree\nend', { context: 0 } );
-    assert.deepEqual( result.lines.map( ( { number } ) => number ), [ 1, 5 ] );
+    const { lines } = format( 'old\none\ntwo\nthree\nlast', 'new\none\ntwo\nthree\nend', { context: 0 } );
+    assert.deepEqual( lines.map( ( { number } ) => number ), [ 1, 5 ] );
   } );
 
   await t.test( 'numbers inserted lines on the modified side', () => {
-    const result = format( 'first\nlast', 'first\nadded\nlast', { context: 0 } );
+    const { lines } = format( 'first\nlast', 'first\nadded\nlast', { context: 0 } );
 
-    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+    assert.deepEqual( lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
       [ 2, [ { type: 'insert', value: 'added\n' } ] ]
     ] );
   } );
 
   await t.test( 'numbers deleted lines on the original side', () => {
-    const result = format( 'first\nremoved\nlast', 'first\nlast', { context: 0 } );
+    const { lines } = format( 'first\nremoved\nlast', 'first\nlast', { context: 0 } );
 
-    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+    assert.deepEqual( lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
       [ 2, [ { type: 'delete', value: 'removed\n' } ] ]
     ] );
   } );
 
   await t.test( 'uses token granularity for changed lines', () => {
-    const result = format( 'hello world', 'hello there', { context: 0, granularity: 'token' }, {
+    const { lines } = format( 'hello world', 'hello there', { context: 0, granularity: 'token' }, {
       tokenizer: new Word()
     } );
 
-    assert.deepEqual( result.lines, [ { number: 1, tokens: [
+    assert.deepEqual( lines, [ { number: 1, tokens: [
       { type: 'equal', value: 'hello ' }, { type: 'delete', value: 'world' },
       { type: 'insert', value: 'there' }
     ] } ] );
