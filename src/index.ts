@@ -15,6 +15,9 @@ import { LCS } from './algorithms/LCS';
 import { Myers } from './algorithms/Myers';
 import { Patience } from './algorithms/Patience';
 
+import { Inline } from './formatter/Inline';
+import { SideBySide } from './formatter/SideBySide';
+import { Unified } from './formatter/Unified';
 
 import { ASCII } from './renderer/ASCII';
 import { CLI } from './renderer/CLI';
@@ -24,15 +27,15 @@ import { Markdown } from './renderer/Markdown';
 
 export {
   Analyzer, ASCII, CLI, COMPARATORS, createComparator, Diff, Engine,
-  Heatmap, Histogram, HTML, Hunk, HuntSzymanski, LCS, LineParser, Magnitude,
-  Markdown, Myers, Patience, Similarity
+  Heatmap, Histogram, HTML, Hunk, HuntSzymanski, Inline, LCS, LineParser,
+  Magnitude, Markdown, Myers, Patience, SideBySide, Similarity, Unified
 };
 
 
 export const diffJs = {
   Analyzer, ASCII, CLI, COMPARATORS, createComparator, Diff, Engine,
-  Heatmap, Histogram, HTML, Hunk, HuntSzymanski, LCS, LineParser, Magnitude,
-  Markdown, Myers, Patience, Similarity
+  Heatmap, Histogram, HTML, Hunk, HuntSzymanski, Inline, LCS, LineParser,
+  Magnitude, Markdown, Myers, Patience, SideBySide, Similarity, Unified
 };
 
 export default diffJs;
