@@ -1,6 +1,7 @@
-import type { Magnitude } from '../core/Magnitude';
-import type { LineScript, Result } from './engine';
+import type { Result } from './engine';
 import type { HunkData, HunkOptions } from './hunk';
+import type { MagnitudeBoxes, MagnitudeBoxesOptions } from './magnitude';
+import type { LineOperation } from './operation';
 import type { TokenMeta } from './tokenizer';
 
 
@@ -10,24 +11,40 @@ export interface FormatterOptions extends HunkOptions {
   granularity?: Granularity;
 }
 
+export interface UnifiedOptions extends FormatterOptions {
+  magnitude?: MagnitudeBoxesOptions;
+}
+
 export interface FormatterData {
-  granularity: Granularity;
+  readonly granularity: Granularity;
 }
 
-export interface InlineData< T extends TokenMeta = {} > extends FormatterData {
-  lines: LineScript< T >[];
+export interface InlinePart {
+  readonly type: 'equal' | 'insert' | 'delete';
+  readonly value: string;
 }
 
-export interface SideBySideData< T extends TokenMeta = {} > extends FormatterData {
-  rows: LineScript< T >[];
+export interface InlineData extends FormatterData {
+  readonly granularity: Granularity;
+  readonly parts: readonly InlinePart[];
+}
+
+export interface SideBySideRow {
+  readonly operation: LineOperation[ 'type' ];
+  readonly original: readonly InlinePart[] | null;
+  readonly modified: readonly InlinePart[] | null;
+}
+
+export interface SideBySideData extends FormatterData {
+  readonly rows: readonly SideBySideRow[];
 }
 
 export interface UnifiedHunk extends HunkData {
-  magnitude: Magnitude;
+  readonly magnitude: MagnitudeBoxes;
 }
 
 export interface UnifiedData extends FormatterData {
-  hunks: UnifiedHunk[];
+  readonly hunks: readonly UnifiedHunk[];
 }
 
 export interface Formatter< O, T extends TokenMeta = {} > {
