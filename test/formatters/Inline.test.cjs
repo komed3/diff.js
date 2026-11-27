@@ -32,4 +32,12 @@ test( 'Inline', async t => {
       [ 3, [ { type: 'equal', value: 'last' } ] ]
     ] );
   } );
+
+  await t.test( 'preserves unchanged input with all context', () => {
+    const result = format( 'first\nlast', 'first\nlast', { context: 'all' } );
+
+    assert.deepEqual( result.lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
+      [ 1, [ { type: 'equal', value: 'first\n' } ] ], [ 2, [ { type: 'equal', value: 'last' } ] ]
+    ] );
+  } );
 } );
