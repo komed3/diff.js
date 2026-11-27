@@ -30,21 +30,24 @@ export class Inline< T extends TokenMeta = {} > implements Formatter< InlineData
     for ( const { original, modified, operation: { type, original: { start: os }, modified: { start: ms } }, edit } of lines ) {
       const tokens: InlineToken[] = [];
 
-      if ( type === 'change' && this.granularity === 'token' && edit ) for ( const item of edit.operations ) {
-        const side = item.type === 'insert' ? 'modified' : 'original', { start, length } = item[ side ];
-        this.append( tokens, item.type, edit[ side ].slice( start, start + length ).map( ( { value } ) => value ).join( '' ) );
-      } else if ( type === 'change' ) {
-        this.append( tokens, 'delete', original!.value );
-        this.append( tokens, 'insert', modified!.value );
-      } else {
-        this.append( tokens, type, ( original ?? modified )!.value );
-      }
+      if ( type === 'change' ) {
+        const end = original!.ending !== modified!.ending, tokenized = this.granularity === 'token' && edit;
 
-      if ( original?.ending === modified?.ending ) {
-        this.append( tokens, 'equal', original?.ending ?? '' );
+        if ( tokenized ) for ( const item of edit.operations ) {
+          const side = item.type === 'insert' ? 'modified' : 'original', { start, length } = item[ side ];
+          this.append( tokens, item.type, edit[ side ].slice( start, start + length ).map( ( { value } ) => value ).join( '' ) );
+        } else {
+          this.append( tokens, 'delete', original!.value + ( end ? original!.ending : '' ) );
+          this.append( tokens, 'insert', modified!.value + ( end ? modified!.ending : '' ) );
+        }
+
+        if ( tokenized && end ) {
+          this.append( tokens, 'delete', original!.ending );
+          this.append( tokens, 'insert', modified!.ending );
+        }
       } else {
-        this.append( tokens, 'delete', original?.ending ?? '' );
-        this.append( tokens, 'insert', modified?.ending ?? '' );
+        const line = original ?? modified;
+        this.append( tokens, type, line!.value + line!.ending );
       }
 
       output.push( { number: ( type === 'delete' ? os : ms ) + 1, tokens } );
