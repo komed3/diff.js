@@ -1,3 +1,26 @@
+export type { Algorithm } from './types/algorithm';
+export type {
+  Block, BlockDistribution, BlockType, CharacterMetric, CharacterStats, DistributionStats,
+  MetricStats, OperationStats, PatternMagnitude, PatternRun, PatternSequence, PatternStats,
+  PatternType, SideDistribution, TokenStats
+} from './types/analyze';
+export type { Comparable, Comparator, ComparatorFactory, ComparatorOptions } from './types/comparator';
+export type { Sequence } from './types/context';
+export type { EditScript, EngineOptions, Input, LineScript, Result } from './types/engine';
+export type { Formatter } from './types/formatter';
+export type { HeatmapCell, HeatmapData, HeatmapDimension, HeatmapFilter, HeatmapOptions } from './types/heatmap';
+export type { HunkData, HunkHeader, HunkOptions } from './types/hunk';
+export type { Line } from './types/line';
+export type {
+  MagnitudeAbsolute, MagnitudeBase, MagnitudeBoxes, MagnitudeBoxesOptions, MagnitudeOptions,
+  MagnitudePercentage, MagnitudePercentageOptions, MagnitudeRelative, MagnitudeValue
+} from './types/magnitude';
+export type { Change, Delete, Equal, Insert, LineOperation, Operation, Range } from './types/operation';
+export type { Render } from './types/renderer';
+export type { SimilarityLine, SimilarityMode, SimilarityOptions, SimilarityWeight } from './types/similarity';
+export type { CustomTokenizerOptions, Token, Tokenizer, TokenizerOptions, TokenMeta } from './types/tokenizer';
+
+
 import { Diff } from './Diff';
 
 import { Analyzer } from './core/Analyzer';
