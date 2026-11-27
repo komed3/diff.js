@@ -2,6 +2,7 @@ import { Hunk } from '../core/Hunk';
 import type { Result } from '../types/engine';
 import type { Formatter, FormatterOptions, Granularity, InlineData, InlinePart } from '../types/formatter';
 import type { TokenMeta } from '../types/tokenizer';
+import { assertOption } from '../utils/assert';
 
 
 export class Inline< T extends TokenMeta = {} > implements Formatter< InlineData, T > {
@@ -18,6 +19,7 @@ export class Inline< T extends TokenMeta = {} > implements Formatter< InlineData
   }
 
   public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
+    assertOption( [ 'line', 'token' ].includes( granularity ), 'inline formatter granularity' );
     this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
   }
 
