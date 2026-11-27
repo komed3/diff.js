@@ -3,7 +3,7 @@ import type { Range } from './operation';
 
 
 export interface HunkOptions {
-  context?: number;
+  context?: number | 'all';
 }
 
 export interface HunkHeader {
