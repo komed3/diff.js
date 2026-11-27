@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ES2024",
-    "esModuleInterop": true,
-    "strict": true,
-    "rootDir": "./src"
+    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true
   },
-  "include": [ "src" ]
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "extension": ".js"
+  },
+  "include": [ "src" ],
+  "exclude": [ "node_modules", "dist", ".test-dist" ]
 }
