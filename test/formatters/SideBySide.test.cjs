@@ -27,6 +27,15 @@ test( 'SideBySide', async t => {
     ] );
   } );
 
+  await t.test( 'keeps inserted and deleted lines on their own sides', () => {
+    const { rows } = format( 'first\nremoved\nlast', 'first\nadded\nlast', { context: 0 } );
+
+    assert.deepEqual( rows, [ {
+      original: { number: 2, tokens: [ { type: 'delete', value: 'removed\n' } ] },
+      modified: { number: 2, tokens: [ { type: 'insert', value: 'added\n' } ] }
+    } ] );
+  } );
+
   await t.test( 'preserves independent line numbers', () => {
     const { rows } = format( 'first\nlast', 'first\nadded\nlast', { context: 'all' } );
 
