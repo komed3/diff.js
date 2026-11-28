@@ -16,13 +16,13 @@ export class BaseFormatter< T extends TokenMeta = {} > {
     this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
   }
 
-  protected getLines < T extends TokenMeta > ( result: Result< T > ) : LineScript< T >[] {
+  protected getLines ( result: Result< T > ) : LineScript< T >[] {
     return this.context === 'all' ? result.script : this.hunk.create( result ).flatMap( ( { lines } ) => lines );
   }
 
   protected append ( tokens: InlineToken[], type: InlineToken[ 'type' ], value: string ) : void {
     if ( ! value ) return;
-  
+
     const last = tokens[ tokens.length - 1 ];
     if ( last?.type === type ) tokens[ tokens.length - 1 ] = { type, value: last.value + value };
     else tokens.push( { type, value } );
