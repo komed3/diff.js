@@ -8,6 +8,7 @@ import type { TokenMeta } from './tokenizer';
 
 
 export type Granularity = 'line' | 'token';
+export type FormatSide = 'inline' | 'original' | 'modified';
 
 export interface FormatterOptions extends HunkOptions {
   granularity?: Granularity;
