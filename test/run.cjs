@@ -27,3 +27,4 @@ require( './core/Similarity.test.cjs' );
 
 require( './formatters/Inline.test.cjs' );
 require( './formatters/SideBySide.test.cjs' );
+require( './formatters/Unified.test.cjs' );
