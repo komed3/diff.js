@@ -4,7 +4,7 @@ import type { TokenMeta } from '../types/tokenizer';
 import { BaseFormatter } from './BaseFormatter';
 
 
-export class SideBySide< T extends TokenMeta = {} > extends BaseFormatter implements Formatter< SideBySideData, T > {
+export class SideBySide< T extends TokenMeta = {} > extends BaseFormatter< T > implements Formatter< SideBySideData, T > {
   public format ( result: Result< T > ) : SideBySideData {
     const lines = this.getLines( result ), rows: SideBySideRow[] = [];
 

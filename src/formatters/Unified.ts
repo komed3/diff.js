@@ -4,7 +4,7 @@ import type { TokenMeta } from '../types/tokenizer';
 import { BaseFormatter } from './BaseFormatter';
 
 
-export class Unified< T extends TokenMeta = {} > extends BaseFormatter implements Formatter< UnifiedData, T > {
+export class Unified< T extends TokenMeta = {} > extends BaseFormatter< T > implements Formatter< UnifiedData, T > {
   public format ( result: Result< T > ) : UnifiedData {
     return {} as UnifiedData;
   }
