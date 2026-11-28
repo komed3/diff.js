@@ -12,3 +12,18 @@ const algorithm = new Myers();
 const engine = ( options ) => new Engine( { algorithm, ...options } );
 const format = ( original, modified, options = {}, engineOptions = {} ) =>
   new SideBySide( options ).format( engine( engineOptions ).process( { original, modified } ) );
+
+
+test( 'SideBySide', async t => {
+  await t.test( 'aligns changed and unchanged lines', () => {
+    const { rows } = format( 'first\nold\nlast', 'first\nnew\nlast', { context: 'all' } );
+
+    assert.deepEqual( rows.map( ( { original, modified } ) => [
+      original?.number, original?.tokens, modified?.number, modified?.tokens
+    ] ), [
+      [ 1, [ { type: 'equal', value: 'first\n' } ], 1, [ { type: 'equal', value: 'first\n' } ] ],
+      [ 2, [ { type: 'delete', value: 'old' } ], 2, [ { type: 'insert', value: 'new' } ] ],
+      [ 3, [ { type: 'equal', value: 'last' } ], 3, [ { type: 'equal', value: 'last' } ] ]
+    ] );
+  } );
+} );
