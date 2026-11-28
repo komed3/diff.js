@@ -7,9 +7,12 @@ import { assertOption } from '../utils/assert';
 
 
 export class SideBySide implements Formatter< SideBySideData > {
-  public constructor ( {}: FormatterOptions ) {}
+  private readonly hunk: Hunk;
+  private readonly context: number | 'all';
+  private readonly granularity: Granularity;
 
-  public format ( result: Result ) : SideBySideData {
-    return {} as SideBySideData;
+  public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
+    assertOption( [ 'line', 'token' ].includes( granularity ), 'side-by-side formatter granularity' );
+    this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
   }
 }
