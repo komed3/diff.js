@@ -10,3 +10,10 @@ function append ( tokens: InlineToken[], type: InlineToken[ 'type' ], value: str
   if ( last?.type === type ) tokens[ tokens.length - 1 ] = { type, value: last.value + value };
   else tokens.push( { type, value } );
 }
+
+
+export function formatLine < T extends TokenMeta = {} > (
+  line: LineScript< T >, granularity: Granularity, side: 'inline' | 'original' | 'modified' = 'inline'
+) : InlineToken[] {
+  const { original, modified, operation: { type }, edit } = line, tokens: InlineToken[] = [];
+}
