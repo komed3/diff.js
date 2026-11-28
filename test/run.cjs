@@ -26,3 +26,4 @@ require( './core/Similarity.test.cjs' );
 // --- formatters ---
 
 require( './formatters/Inline.test.cjs' );
+require( './formatters/SideBySide.test.cjs' );
