@@ -3,8 +3,10 @@ import type { Range } from './operation';
 import type { TokenMeta } from './tokenizer';
 
 
+export type HunkContext = number | 'all';
+
 export interface HunkOptions {
-  context?: number | 'all';
+  context?: HunkContext;
 }
 
 export interface HunkHeader {
