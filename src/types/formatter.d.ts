@@ -63,6 +63,6 @@ export interface UnifiedData extends FormatterData {
   readonly hunks: readonly UnifiedHunk[];
 }
 
-export interface Formatter< O, T extends TokenMeta = {} > {
+export interface Formatter< O extends FormatterData, T extends TokenMeta = {} > {
   format ( result: Result< T > ) : O;
 }
