@@ -22,7 +22,7 @@ test( 'SideBySide', async t => {
       original?.number, original?.tokens, modified?.number, modified?.tokens
     ] ), [
       [ 1, [ { type: 'equal', value: 'first\n' } ], 1, [ { type: 'equal', value: 'first\n' } ] ],
-      [ 2, [ { type: 'delete', value: 'old' } ], 2, [ { type: 'insert', value: 'new' } ] ],
+      [ 2, [ { type: 'delete', value: 'old\n' } ], 2, [ { type: 'insert', value: 'new\n' } ] ],
       [ 3, [ { type: 'equal', value: 'last' } ], 3, [ { type: 'equal', value: 'last' } ] ]
     ] );
   } );
