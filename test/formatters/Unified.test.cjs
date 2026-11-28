@@ -42,4 +42,13 @@ test( 'Unified', async t => {
     assert.deepEqual( hunks[ 0 ].modified, { start: 1, length: 1 } );
     assert.deepEqual( hunks[ 0 ].header, { original: { start: 1, length: 0 }, modified: { start: 2, length: 1 } } );
   } );
+
+  await t.test( 'handles deleted lines and empty modified ranges', () => {
+    const { hunks } = format( 'first\nremoved\nlast', 'first\nlast', { context: 0 } );
+
+    assert.equal( hunks.length, 1 );
+    assert.deepEqual( hunks[ 0 ].original, { start: 1, length: 1 } );
+    assert.deepEqual( hunks[ 0 ].modified, { start: 1, length: 0 } );
+    assert.deepEqual( hunks[ 0 ].header, { original: { start: 2, length: 1 }, modified: { start: 1, length: 0 } } );
+  } );
 } );
