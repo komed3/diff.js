@@ -28,7 +28,7 @@ test( 'Inline', async t => {
 
     assert.deepEqual( lines.map( ( { number, tokens } ) => [ number, tokens ] ), [
       [ 1, [ { type: 'equal', value: 'first\n' } ] ],
-      [ 2, [ { type: 'delete', value: 'old' }, { type: 'insert', value: 'new' } ] ],
+      [ 2, [ { type: 'delete', value: 'old\n' }, { type: 'insert', value: 'new\n' } ] ],
       [ 3, [ { type: 'equal', value: 'last' } ] ]
     ] );
   } );
