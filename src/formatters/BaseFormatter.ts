@@ -5,4 +5,8 @@ import type { TokenMeta } from '../types/tokenizer';
 import { assertOption } from '../utils/assert';
 
 
-export class BaseFormatter {}
+export class BaseFormatter {
+  protected readonly granularity: Granularity;
+  private readonly hunk: Hunk;
+  private readonly context: number | 'all';
+}
