@@ -51,4 +51,8 @@ test( 'Unified', async t => {
     assert.deepEqual( hunks[ 0 ].modified, { start: 1, length: 0 } );
     assert.deepEqual( hunks[ 0 ].header, { original: { start: 2, length: 1 }, modified: { start: 1, length: 0 } } );
   } );
+
+  await t.test( 'returns no hunks for unchanged input', () => {
+    assert.deepEqual( format( 'first\nlast', 'first\nlast' ), { granularity: 'line', hunks: [] } );
+  } );
 } );
