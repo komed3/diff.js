@@ -34,4 +34,15 @@ test( 'SideBySide', async t => {
       original?.number ?? null, modified?.number ?? null
     ] ), [ [ 1, 1 ], [ null, 2 ], [ 2, 3 ] ] );
   } );
+
+  await t.test( 'splits token operations across both sides', () => {
+    const { rows } = format( 'hello world', 'hello there', { context: 0, granularity: 'token' }, {
+      tokenizer: new Word()
+    } );
+
+    assert.deepEqual( rows, [ {
+      original: { number: 1, tokens: [ { type: 'equal', value: 'hello ' }, { type: 'delete', value: 'world' } ] },
+      modified: { number: 1, tokens: [ { type: 'equal', value: 'hello ' }, { type: 'insert', value: 'there' } ] }
+    } ] );
+  } );
 } );
