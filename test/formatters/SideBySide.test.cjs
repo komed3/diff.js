@@ -26,4 +26,12 @@ test( 'SideBySide', async t => {
       [ 3, [ { type: 'equal', value: 'last' } ], 3, [ { type: 'equal', value: 'last' } ] ]
     ] );
   } );
+
+  await t.test( 'preserves independent line numbers', () => {
+    const { rows } = format( 'first\nlast', 'first\nadded\nlast', { context: 'all' } );
+
+    assert.deepEqual( rows.map( ( { original, modified } ) => [
+      original?.number ?? null, modified?.number ?? null
+    ] ), [ [ 1, 1 ], [ null, 2 ], [ 2, 3 ] ] );
+  } );
 } );
