@@ -23,32 +23,26 @@ export class Base< T extends TokenMeta = {} > {
     else tokens.push( { type, value } );
   }
 
-  protected formatLine ( line: LineScript< T >, granularity: Granularity, side: FormatSide = 'inline' ) : InlineToken[] {
-    const { original, modified, operation: { type }, edit } = line, tokens: InlineToken[] = [];
+  protected formatLine ( { original, modified, operation: { type }, edit }: LineScript< T >, side: FormatSide = 'inline' ) : InlineToken[] {
+    const tokens: InlineToken[] = [];
 
-    if ( type === 'change' && granularity === 'token' && edit ) {
-      for ( const { type: t, original, modified } of edit.operations ) {
-        const source = t === 'insert' ? 'modified' : t === 'delete' ? 'original' : side === 'modified' ? 'modified' : 'original';
-        if ( side !== 'inline' && t !== 'equal' && source !== side ) continue;
+    if ( type === 'change' && this.granularity === 'token' && edit ) {
+      for ( const { type: t, original: o, modified: m } of edit.operations ) {
+        if ( side === 'original' && t === 'insert' || side === 'modified' && t === 'delete' ) continue;
 
-        const { start, length } = source === 'modified' ? modified : original;
-        this.append( tokens, t, edit[ source ].slice( start, start + length ).map( ( { value } ) => value ).join( '' ) );
+        const source = t === 'insert' || t === 'equal' && side === 'modified' ? 'modified' : 'original';
+        const { start, length } = source === 'modified' ? m : o;
+        this.append( tokens, t, edit[ source ].slice( start, start + length ).map( token => token.value ).join( '' ) );
       }
 
-      if ( original!.ending !== modified!.ending ) {
+      if ( original!.ending === modified!.ending ) this.append( tokens, 'equal', original!.ending );
+      else {
         if ( side !== 'modified' ) this.append( tokens, 'delete', original!.ending );
         if ( side !== 'original' ) this.append( tokens, 'insert', modified!.ending );
       }
     } else if ( type === 'change' ) {
-      const endingsDiffer = original!.ending !== modified!.ending;
-
-      if ( side === 'inline' ) {
-        this.append( tokens, 'delete', original!.value + ( endingsDiffer ? original!.ending : '' ) );
-        this.append( tokens, 'insert', modified!.value + ( endingsDiffer ? modified!.ending : '' ) );
-      } else {
-        const source = side === 'original' ? original! : modified!;
-        this.append( tokens, side === 'original' ? 'delete' : 'insert', source.value + ( endingsDiffer ? source.ending : '' ) );
-      }
+      if ( side !== 'modified' ) this.append( tokens, 'delete', original!.value + original!.ending );
+      if ( side !== 'original' ) this.append( tokens, 'insert', modified!.value + modified!.ending );
     } else {
       const source = side === 'original' ? original : side === 'modified' ? modified : original ?? modified;
       if ( source ) this.append( tokens, type, source.value + source.ending );
