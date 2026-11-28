@@ -55,4 +55,17 @@ test( 'Unified', async t => {
   await t.test( 'returns no hunks for unchanged input', () => {
     assert.deepEqual( format( 'first\nlast', 'first\nlast' ), { granularity: 'line', hunks: [] } );
   } );
+
+  await t.test( 'calculates requested magnitude values', () => {
+    const { hunks } = format( 'first\nold\nlast', 'first\nnew\nlast', {
+      context: 1, magnitude: { absolute: {}, relative: {}, percentage: {}, boxes: {} }
+    } );
+
+    assert.deepEqual( hunks[ 0 ].magnitude, {
+      absolute: { value: 1, baseValue: 3, magnitude: 1 },
+      relative: { value: 1, baseValue: 3, ratio: 1 / 3 },
+      percentage: { value: 1, baseValue: 3, percentage: 33.3 },
+      boxes: { value: 1, baseValue: 3, insert: 0, delete: 0, change: 1, filled: 2, empty: 3, total: 5 }
+    } );
+  } );
 } );
