@@ -25,9 +25,7 @@ export function formatLine < T extends TokenMeta = {} > (
 
     if ( granularity === 'token' && edit ) {
       for ( const item of edit.operations ) {
-        const source = item.type === 'insert' ? 'modified' : item.type === 'delete' ? 'original' :
-          side === 'modified' ? 'modified' : 'original';
-
+        const source = item.type === 'insert' ? 'modified' : item.type === 'delete' ? 'original' : side === 'modified' ? 'modified' : 'original';
         if ( side !== 'inline' && item.type !== 'equal' && source !== side ) continue;
 
         const { start, length } = item[ source ];
