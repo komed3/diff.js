@@ -31,7 +31,10 @@ export interface InlineData extends FormatterData {
   readonly lines: readonly InlineLine[];
 }
 
-export interface SideBySideRow {}
+export interface SideBySideRow {
+  readonly original: InlineLine | null;
+  readonly modified: InlineLine | null;
+}
 
 export interface SideBySideData extends FormatterData {
   readonly rows: readonly SideBySideRow[];
