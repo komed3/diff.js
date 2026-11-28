@@ -30,9 +30,10 @@ test( 'SideBySide', async t => {
   await t.test( 'preserves independent line numbers', () => {
     const { rows } = format( 'first\nlast', 'first\nadded\nlast', { context: 'all' } );
 
-    assert.deepEqual( rows.map( ( { original, modified } ) => [
-      original?.number ?? null, modified?.number ?? null
-    ] ), [ [ 1, 1 ], [ null, 2 ], [ 2, 3 ] ] );
+    assert.deepEqual(
+      rows.map( ( { original, modified } ) => [ original?.number ?? null, modified?.number ?? null ] ),
+      [ [ 1, 1 ], [ null, 2 ], [ 2, 3 ] ]
+    );
   } );
 
   await t.test( 'splits token operations across both sides', () => {
