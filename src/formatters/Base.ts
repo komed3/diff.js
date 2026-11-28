@@ -30,7 +30,7 @@ export class Base< T extends TokenMeta = {} > {
 
   protected formatLine ( line: LineScript< T >, granularity: Granularity, side: FormatSide = 'inline' ) : InlineToken[] {
     const { original, modified, operation: { type }, edit } = line, tokens: InlineToken[] = [];
-  
+
     if ( type === 'change' && granularity === 'token' && edit ) {
       for ( const { type: t, original, modified } of edit.operations ) {
         const source = t === 'insert' ? 'modified' : t === 'delete' ? 'original' : side === 'modified' ? 'modified' : 'original';
