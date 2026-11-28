@@ -14,4 +14,8 @@ export class BaseFormatter {
     assertOption( granularity === 'line' || granularity === 'token', 'formatter granularity' );
     this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
   }
+
+  protected getLines < T extends TokenMeta > ( result: Result< T > ) : LineScript< T >[] {
+    return this.context === 'all' ? result.script : this.hunk.create( result ).flatMap( ( { lines } ) => lines );
+  }
 }
