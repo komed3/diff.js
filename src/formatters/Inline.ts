@@ -1,10 +1,10 @@
 import type { Result } from '../types/engine';
 import type { Formatter, InlineData, InlineLine } from '../types/formatter';
 import type { TokenMeta } from '../types/tokenizer';
-import { BaseFormatter } from './BaseFormatter';
+import { Base } from './Base';
 
 
-export class Inline< T extends TokenMeta = {} > extends BaseFormatter< T > implements Formatter< InlineData, T > {
+export class Inline< T extends TokenMeta = {} > extends Base< T > implements Formatter< InlineData, T > {
   public format ( result: Result< T > ) : InlineData {
     const lines = this.getLines( result ), output: InlineLine[] = [];
 

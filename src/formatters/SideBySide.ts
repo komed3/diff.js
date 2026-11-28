@@ -1,10 +1,10 @@
 import type { Result } from '../types/engine';
 import type { Formatter, SideBySideData, SideBySideRow } from '../types/formatter';
 import type { TokenMeta } from '../types/tokenizer';
-import { BaseFormatter } from './BaseFormatter';
+import { Base } from './Base';
 
 
-export class SideBySide< T extends TokenMeta = {} > extends BaseFormatter< T > implements Formatter< SideBySideData, T > {
+export class SideBySide< T extends TokenMeta = {} > extends Base< T > implements Formatter< SideBySideData, T > {
   public format ( result: Result< T > ) : SideBySideData {
     const lines = this.getLines( result ), rows: SideBySideRow[] = [];
 
