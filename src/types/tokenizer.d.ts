@@ -1,4 +1,4 @@
-export type TokenMeta = Record< string, unknown >;
+export type TokenMeta = object;
 
 export type Token< T extends TokenMeta = {} > = T & {
   readonly type: string;
