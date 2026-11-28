@@ -73,4 +73,13 @@ test( 'Unified', async t => {
     const { hunks } = format( 'old', 'new', { context: 0, magnitude: { absolute: { metric: 'delta' } } } );
     assert.deepEqual( hunks[ 0 ].magnitude, { absolute: { value: 0, baseValue: 1, magnitude: 0 } } );
   } );
+
+  await t.test( 'uses token edits when token granularity is selected', () => {
+    const { hunks, granularity } = format( 'hello world', 'hello there', { context: 0, granularity: 'token' }, {
+      tokenizer: new Word()
+    } );
+
+    assert.equal( granularity, 'token' );
+    assert.deepEqual( hunks[ 0 ].lines[ 0 ].edit.operations.map( ( { type } ) => type ), [ 'equal', 'delete', 'insert' ] );
+  } );
 } );
