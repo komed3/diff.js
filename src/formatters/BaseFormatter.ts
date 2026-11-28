@@ -1,6 +1,7 @@
 import { Hunk } from '../core/Hunk';
-import type { Result, LineScript } from '../types/engine';
+import type { LineScript, Result } from '../types/engine';
 import type { FormatterOptions, Granularity } from '../types/formatter';
+import type { HunkContext } from '../types/hunk';
 import type { TokenMeta } from '../types/tokenizer';
 import { assertOption } from '../utils/assert';
 
@@ -8,7 +9,7 @@ import { assertOption } from '../utils/assert';
 export class BaseFormatter {
   protected readonly granularity: Granularity;
   private readonly hunk: Hunk;
-  private readonly context: number | 'all';
+  private readonly context: HunkContext;
 
   public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
     assertOption( granularity === 'line' || granularity === 'token', 'formatter granularity' );
