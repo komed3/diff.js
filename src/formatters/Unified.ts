@@ -1,11 +1,11 @@
 import type { Result } from '../types/engine';
-import type { Formatter, FormatterOptions, UnifiedData } from '../types/formatter';
+import type { Formatter, UnifiedData } from '../types/formatter';
+import type { TokenMeta } from '../types/tokenizer';
+import { BaseFormatter } from './BaseFormatter';
 
 
-export class Unified implements Formatter< UnifiedData > {
-  public constructor ( {}: FormatterOptions ) {}
-
-  public format ( result: Result ) : UnifiedData {
+export class Unified< T extends TokenMeta = {} > extends BaseFormatter implements Formatter< UnifiedData, T > {
+  public format ( result: Result< T > ) : UnifiedData {
     return {} as UnifiedData;
   }
 }
