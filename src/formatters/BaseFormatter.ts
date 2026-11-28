@@ -9,4 +9,9 @@ export class BaseFormatter {
   protected readonly granularity: Granularity;
   private readonly hunk: Hunk;
   private readonly context: number | 'all';
+
+  public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
+    assertOption( granularity === 'line' || granularity === 'token', 'formatter granularity' );
+    this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
+  }
 }
