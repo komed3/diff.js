@@ -11,11 +11,6 @@ export class Base< T extends TokenMeta = {} > {
   private readonly hunk: Hunk;
   private readonly context: HunkContext;
 
-  public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
-    assertOption( granularity === 'line' || granularity === 'token', 'formatter granularity' );
-    this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
-  }
-
   protected getLines ( result: Result< T > ) : LineScript< T >[] {
     return this.context === 'all' ? result.script : this.hunk.create( result ).flatMap( ( { lines } ) => lines );
   }
@@ -60,5 +55,10 @@ export class Base< T extends TokenMeta = {} > {
     }
 
     return tokens;
+  }
+
+  public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
+    assertOption( granularity === 'line' || granularity === 'token', 'formatter granularity' );
+    this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
   }
 }
