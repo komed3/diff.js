@@ -50,7 +50,7 @@ export interface UnifiedOptions extends FormatterOptions {
   };
 }
 
-export interface UnifiedHunk extends HunkData {
+export interface UnifiedHunk< T extends TokenMeta = {} > extends HunkData< T > {
   readonly magnitude: {
     absolute?: MagnitudeAbsolute;
     relative?: MagnitudeRelative;
@@ -59,8 +59,8 @@ export interface UnifiedHunk extends HunkData {
   };
 }
 
-export interface UnifiedData extends FormatterData {
-  readonly hunks: readonly UnifiedHunk[];
+export interface UnifiedData< T extends TokenMeta = {} > extends FormatterData {
+  readonly hunks: readonly UnifiedHunk< T >[];
 }
 
 export interface Formatter< O extends FormatterData, T extends TokenMeta = {} > {
