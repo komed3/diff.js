@@ -1,31 +1,19 @@
-import { Hunk } from '../core/Hunk';
 import type { Result } from '../types/engine';
-import type { Formatter, FormatterOptions, Granularity, SideBySideData, SideBySideRow } from '../types/formatter';
+import type { Formatter, SideBySideData, SideBySideRow } from '../types/formatter';
 import type { TokenMeta } from '../types/tokenizer';
-import { assertOption } from '../utils/assert';
-import { formatLine } from './internal/formatLine';
+import { BaseFormatter } from './BaseFormatter';
 
 
-export class SideBySide< T extends TokenMeta = {} > implements Formatter< SideBySideData, T > {
-  private readonly hunk: Hunk;
-  private readonly context: number | 'all';
-  private readonly granularity: Granularity;
-
-  public constructor ( { context = 3, granularity = 'line' }: FormatterOptions ) {
-    assertOption( [ 'line', 'token' ].includes( granularity ), 'side-by-side formatter granularity' );
-    this.hunk = new Hunk( { context } ), this.context = context, this.granularity = granularity;
-  }
-
+export class SideBySide< T extends TokenMeta = {} > extends BaseFormatter implements Formatter< SideBySideData, T > {
   public format ( result: Result< T > ) : SideBySideData {
-    const lines = this.context === 'all' ? result.script : this.hunk.create( result ).flatMap( ( { lines } ) => lines );
-    const rows: SideBySideRow[] = [];
+    const lines = this.getLines( result ), rows: SideBySideRow[] = [];
 
     for ( const line of lines ) {
       const { original, modified, operation: { original: os, modified: ms } } = line;
 
       rows.push( {
-        original: original ? { number: os.start + 1, tokens: formatLine( line, this.granularity, 'original' ) } : null,
-        modified: modified ? { number: ms.start + 1, tokens: formatLine( line, this.granularity, 'modified' ) } : null
+        original: original ? { number: os.start + 1, tokens: this.formatLine( line, this.granularity, 'original' ) } : null,
+        modified: modified ? { number: ms.start + 1, tokens: this.formatLine( line, this.granularity, 'modified' ) } : null
       } );
     }
 
