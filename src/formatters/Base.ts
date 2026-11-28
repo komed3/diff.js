@@ -1,7 +1,7 @@
 import { Hunk } from '../core/Hunk';
 import type { LineScript, Result } from '../types/engine';
 import type { FormatSide, FormatterOptions, Granularity, InlineToken } from '../types/formatter';
-import type { HunkContext } from '../types/hunk';
+import type { HunkContext, HunkData } from '../types/hunk';
 import type { TokenMeta } from '../types/tokenizer';
 import { assertOption } from '../utils/assert';
 
@@ -11,8 +11,12 @@ export class Base< T extends TokenMeta = {} > {
   private readonly hunk: Hunk;
   private readonly context: HunkContext;
 
+  protected getHunks ( result: Result< T > ) : HunkData< T >[] {
+    return this.hunk.create( result );
+  }
+
   protected getLines ( result: Result< T > ) : LineScript< T >[] {
-    return this.context === 'all' ? result.script : this.hunk.create( result ).flatMap( ( { lines } ) => lines );
+    return this.context === 'all' ? result.script : this.getHunks( result ).flatMap( ( { lines } ) => lines );
   }
 
   protected append ( tokens: InlineToken[], type: InlineToken[ 'type' ], value: string ) : void {
