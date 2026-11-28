@@ -33,4 +33,13 @@ test( 'Unified', async t => {
       [ { start: 3, length: 1 }, { start: 3, length: 1 }, { original: { start: 4, length: 1 }, modified: { start: 4, length: 1 } } ]
     ] );
   } );
+
+  await t.test( 'handles inserted lines and empty original ranges', () => {
+    const { hunks } = format( 'first\nlast', 'first\nadded\nlast', { context: 0 } );
+
+    assert.equal( hunks.length, 1 );
+    assert.deepEqual( hunks[ 0 ].original, { start: 1, length: 0 } );
+    assert.deepEqual( hunks[ 0 ].modified, { start: 1, length: 1 } );
+    assert.deepEqual( hunks[ 0 ].header, { original: { start: 1, length: 0 }, modified: { start: 2, length: 1 } } );
+  } );
 } );
