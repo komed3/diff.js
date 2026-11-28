@@ -24,4 +24,13 @@ test( 'Unified', async t => {
     assert.deepEqual( hunks[ 0 ].header, { original: { start: 1, length: 3 }, modified: { start: 1, length: 3 } } );
     assert.deepEqual( hunks[ 0 ].lines.map( ( { operation: { type } } ) => type ), [ 'equal', 'change', 'equal' ] );
   } );
+
+  await t.test( 'uses exact engine positions', () => {
+    const { hunks } = format( 'first\nold\nmiddle\nremoved\nlast', 'first\nnew\nmiddle\nadded\nlast', { context: 0 } );
+
+    assert.deepEqual( hunks.map( ( { original, modified, header } ) => [ original, modified, header ] ), [
+      [ { start: 1, length: 1 }, { start: 1, length: 1 }, { original: { start: 2, length: 1 }, modified: { start: 2, length: 1 } } ],
+      [ { start: 3, length: 1 }, { start: 3, length: 1 }, { original: { start: 4, length: 1 }, modified: { start: 4, length: 1 } } ]
+    ] );
+  } );
 } );
