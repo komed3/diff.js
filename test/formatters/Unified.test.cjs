@@ -68,4 +68,9 @@ test( 'Unified', async t => {
       boxes: { value: 1, baseValue: 3, insert: 0, delete: 0, change: 1, filled: 2, empty: 3, total: 5 }
     } );
   } );
+
+  await t.test( 'omits unrequested magnitude values', () => {
+    const { hunks } = format( 'old', 'new', { context: 0, magnitude: { absolute: { metric: 'delta' } } } );
+    assert.deepEqual( hunks[ 0 ].magnitude, { absolute: { value: 0, baseValue: 1, magnitude: 0 } } );
+  } );
 } );
