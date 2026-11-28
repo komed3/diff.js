@@ -12,8 +12,8 @@ export class SideBySide< T extends TokenMeta = {} > extends Base< T > implements
       const { original, modified, operation: { original: os, modified: ms } } = line;
 
       rows.push( {
-        original: original ? { number: os.start + 1, tokens: this.formatLine( line, this.granularity, 'original' ) } : null,
-        modified: modified ? { number: ms.start + 1, tokens: this.formatLine( line, this.granularity, 'modified' ) } : null
+        original: original ? { number: os.start + 1, tokens: this.formatLine( line, 'original' ) } : null,
+        modified: modified ? { number: ms.start + 1, tokens: this.formatLine( line, 'modified' ) } : null
       } );
     }
 
