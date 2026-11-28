@@ -10,7 +10,7 @@ export class Inline< T extends TokenMeta = {} > extends Base< T > implements For
 
     for ( const line of lines ) output.push( {
       number: ( line.operation.type === 'delete' ? line.operation.original.start : line.operation.modified.start ) + 1,
-      tokens: this.formatLine( line, this.granularity )
+      tokens: this.formatLine( line )
     } );
 
     return { granularity: this.granularity, lines: output };
